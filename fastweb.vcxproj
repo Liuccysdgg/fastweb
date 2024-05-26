@@ -62,6 +62,9 @@
     <None Include="scripts\lib\dkjson.lua" />
     <None Include="scripts\lib\website.lua" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENSE.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
