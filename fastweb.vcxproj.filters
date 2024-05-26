@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{edadfc2f-873d-4876-be12-0f0a346c671a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{a7a813c2-1819-4d9e-97b1-553df4fc20f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\module">
+      <UniqueIdentifier>{feb78a4c-cec1-4b7c-850b-6d1451e57962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts">
+      <UniqueIdentifier>{6f9c72e6-2a8a-4407-a277-1c83c92fd6b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts\app">
+      <UniqueIdentifier>{cfc62d45-db7b-4cb5-9d11-8caf2977dfb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts\lib">
+      <UniqueIdentifier>{573b85d6-db05-4a81-af04-172fe83306e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{2b04f1f8-4027-4d87-a828-f18f2b918b8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\module\http">
+      <UniqueIdentifier>{a6112717-e5e3-426e-9132-03cd4315deb0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\main.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\fastweb.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\statemanager.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\config.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\logutils.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\mysql.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\http\session.cpp">
+      <Filter>src\module\http</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\http\request.cpp">
+      <Filter>src\module\http</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\http\response.cpp">
+      <Filter>src\module\http</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\bytecodemanager.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\luautils.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\global.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\localstorage.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\globalfuns.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\fastweb.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\statemanager.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\structs.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\define.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\config.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\logutils.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\mysql.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\http\session.h">
+      <Filter>src\module\http</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\http\request.h">
+      <Filter>src\module\http</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\http\response.h">
+      <Filter>src\module\http</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\bytecodemanager.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\luautils.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\global.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\imodule.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\localstorage.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\globalfuns.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
+    <None Include="scripts\app\index.lua">
+      <Filter>scripts\app</Filter>
+    </None>
+    <None Include="scripts\lib\dkjson.lua">
+      <Filter>scripts\lib</Filter>
+    </None>
+    <None Include="scripts\lib\website.lua">
+      <Filter>scripts\lib</Filter>
+    </None>
+    <None Include="scripts\init.lua">
+      <Filter>scripts</Filter>
+    </None>
+    <None Include="scripts\interceptor.lua">
+      <Filter>scripts</Filter>
+    </None>
+    <None Include="README.md" />
+  </ItemGroup>
+</Project>
