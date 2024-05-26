@@ -53,6 +53,7 @@
     <ClInclude Include="src\utils\luautils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="config.ini" />
     <None Include="README.md" />
     <None Include="scripts\app\index.lua" />

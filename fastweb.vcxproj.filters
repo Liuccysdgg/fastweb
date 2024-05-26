@@ -138,5 +138,6 @@
       <Filter>scripts</Filter>
     </None>
     <None Include="README.md" />
+    <None Include=".gitignore" />
   </ItemGroup>
 </Project>
