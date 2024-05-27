@@ -6,8 +6,8 @@
 static ylib::counter<uint64> s_counter_guid;
 void module::regist_globalfuns(sol::state& lua)
 {
-	//lua.set_function("global_get", module::global_get);
-	//lua.set_function("global_regist", module::global_regist);
+	lua.set_function("global_get", module::global_get);
+	lua.set_function("global_set", module::global_set);
 	lua.set_function("make_software_guid", module::make_software_guid);
 	lua.set_function("throw_string", module::throw_string);
 }
@@ -19,6 +19,16 @@ std::string module::make_software_guid()
 bool module::global_regist(const std::string& name, void* ptr, sol::this_state ts)
 {
 	return global::getInstance()->regist_ptr(name,ptr, ts);
+}
+
+void module::global_set(const std::string& name, VarType value)
+{
+	global::getInstance()->set(name,value);
+}
+
+VarType module::global_get(const std::string& name, sol::this_state s)
+{
+	return global::getInstance()->get(name,s);
 }
 
 #if 0

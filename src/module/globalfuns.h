@@ -16,12 +16,9 @@ namespace module
 	/// </summary>
 	/// <returns></returns>
 	bool global_regist(const std::string& name, void* ptr, sol::this_state ts);
-	/// <summary>
-	/// 取全局指针(已废弃)
-	/// </summary>
-	/// <param name="name"></param>
-	/// <returns></returns>
-	void* global_get(const std::string& name) = delete;
+
+	void global_set(const std::string& name, VarType value);
+	VarType global_get(const std::string& name, sol::this_state s);
 	/// <summary>
 	/// 抛出异常
 	/// </summary>

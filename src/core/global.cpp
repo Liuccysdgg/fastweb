@@ -28,3 +28,18 @@ bool global::regist_ptr(const std::string& name, void* value, sol::this_state ts
 	}
 	return m_value_ptr.add(name, value);
 }
+
+VarType global::get(const std::string& name, sol::this_state s)
+{
+	VarType value;
+	if (m_values.get(name, value))
+	{
+		return value;
+	}
+	return sol::make_object(s, sol::nil);
+}
+
+void global::set(const std::string& name, VarType value)
+{
+	m_values.set(name, value, true);
+}

@@ -13,7 +13,7 @@ namespace ylib
 		void close();
         std::string read(const std::string& name,const std::string& key,const std::string& default_value = "") const;
         bool write(const std::string& name,const std::string& key,const std::string& value);
-#ifndef _WIN32
+#ifndef _WIN321
 		bool del(const std::string& name, const std::string& key);
 
 		// 一级NAME

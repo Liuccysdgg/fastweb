@@ -64,6 +64,7 @@ void config::cache()
 	website.session_dir = m_ini.read("website", "session_dir");
 	website.session_timeout_sec = ylib::stoi(m_ini.read("website", "session_timeout_sec"));
 	website.Initialization_script = m_ini.read("website", "Initialization_script");
+	website.debug = m_ini.read("website", "debug") == "1";
 
 	{
 		ylib::json interceptors = ylib::json::from(m_ini.read("website", "interceptor_scripts"));

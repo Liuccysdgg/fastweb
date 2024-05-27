@@ -25,12 +25,17 @@
     <ClCompile Include="src\core\global.cpp" />
     <ClCompile Include="src\core\main.cpp" />
     <ClCompile Include="src\core\statemanager.cpp" />
+    <ClCompile Include="src\module\codec.cpp" />
     <ClCompile Include="src\module\globalfuns.cpp" />
+    <ClCompile Include="src\module\http\httpclient.cpp" />
     <ClCompile Include="src\module\http\request.cpp" />
     <ClCompile Include="src\module\http\response.cpp" />
     <ClCompile Include="src\module\http\session.cpp" />
     <ClCompile Include="src\module\localstorage.cpp" />
+    <ClCompile Include="src\module\mssql.cpp" />
+    <ClCompile Include="src\module\mutex.cpp" />
     <ClCompile Include="src\module\mysql.cpp" />
+    <ClCompile Include="src\module\time.cpp" />
     <ClCompile Include="src\utils\logutils.cpp" />
     <ClCompile Include="src\utils\luautils.cpp" />
   </ItemGroup>
@@ -42,13 +47,18 @@
     <ClInclude Include="src\core\global.h" />
     <ClInclude Include="src\core\statemanager.h" />
     <ClInclude Include="src\core\structs.h" />
+    <ClInclude Include="src\module\codec.h" />
     <ClInclude Include="src\module\globalfuns.h" />
+    <ClInclude Include="src\module\http\httpclient.h" />
     <ClInclude Include="src\module\http\request.h" />
     <ClInclude Include="src\module\http\response.h" />
     <ClInclude Include="src\module\http\session.h" />
     <ClInclude Include="src\module\imodule.h" />
     <ClInclude Include="src\module\localstorage.h" />
+    <ClInclude Include="src\module\mssql.h" />
+    <ClInclude Include="src\module\mutex.h" />
     <ClInclude Include="src\module\mysql.h" />
+    <ClInclude Include="src\module\time.h" />
     <ClInclude Include="src\utils\logutils.h" />
     <ClInclude Include="src\utils\luautils.h" />
   </ItemGroup>
@@ -56,11 +66,6 @@
     <None Include=".gitignore" />
     <None Include="config.ini" />
     <None Include="README.md" />
-    <None Include="scripts\app\index.lua" />
-    <None Include="scripts\init.lua" />
-    <None Include="scripts\interceptor.lua" />
-    <None Include="scripts\lib\dkjson.lua" />
-    <None Include="scripts\lib\website.lua" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />
@@ -156,18 +161,18 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\lua;$(SolutionDir)3rdparty\ylib\include;$(SolutionDir)3rdparty\HP-Socket\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\soci\include;$(SolutionDir)src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\lua;D:\lib\ylib\include;$(SolutionDir)3rdparty\HP-Socket\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>User32.lib;Advapi32.lib;IPHLPAPI.lib;WS2_32.lib;Shell32.lib;leveldb.lib;libzip.lib;lua.lib;sqlite3.lib;ylib.lib;zlib.lib;mysqlcppconn.lib;HPSocket_D.lib;libcrypto_static.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\ylib\lib\$(Configuration);$(SolutionDir)3rdparty\mysql\lib\$(Configuration);$(SolutionDir)3rdparty\HP-Socket\lib;$(SolutionDir)3rdparty</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libsoci_core_4_1.lib;libsoci_empty_4_1.lib;libsoci_odbc_4_1.lib;soci_core_4_1.lib;soci_empty_4_1.lib;soci_odbc_4_1.lib;odbc32.lib;User32.lib;Advapi32.lib;IPHLPAPI.lib;WS2_32.lib;Shell32.lib;leveldb.lib;libzip.lib;lua.lib;sqlite3.lib;D:\lib\ylib_vs_build\lib\Debug\ylib.lib;zlib.lib;mysqlcppconn.lib;HPSocket_D.lib;libcrypto_static.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\ylib\lib\$(Configuration);$(SolutionDir)3rdparty\mysql\lib\$(Configuration);$(SolutionDir)3rdparty\HP-Socket\lib;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\soci\lib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,10 +180,10 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\lua;$(SolutionDir)3rdparty\ylib\include;$(SolutionDir)3rdparty\HP-Socket\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\soci\include;$(SolutionDir)src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\lua;D:\lib\ylib\include;$(SolutionDir)3rdparty\HP-Socket\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -187,8 +192,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>User32.lib;Advapi32.lib;IPHLPAPI.lib;WS2_32.lib;Shell32.lib;leveldb.lib;libzip.lib;lua.lib;sqlite3.lib;ylib.lib;zlib.lib;mysqlcppconn.lib;HPSocket.lib;libcrypto_static.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\ylib\lib\$(Configuration);$(SolutionDir)3rdparty\mysql\lib\$(Configuration);$(SolutionDir)3rdparty\HP-Socket\lib;$(SolutionDir)3rdparty</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libsoci_core_4_1.lib;libsoci_empty_4_1.lib;libsoci_odbc_4_1.lib;soci_core_4_1.lib;soci_empty_4_1.lib;soci_odbc_4_1.lib;odbc32.lib;User32.lib;Advapi32.lib;IPHLPAPI.lib;WS2_32.lib;Shell32.lib;leveldb.lib;libzip.lib;lua.lib;sqlite3.lib;ylib.lib;zlib.lib;mysqlcppconn.lib;HPSocket.lib;libcrypto_static.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\ylib\lib\$(Configuration);$(SolutionDir)3rdparty\mysql\lib\$(Configuration);$(SolutionDir)3rdparty\HP-Socket\lib;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\soci\lib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

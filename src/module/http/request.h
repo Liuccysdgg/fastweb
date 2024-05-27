@@ -3,6 +3,7 @@
 #include "net/http_response.h"
 
 #include "sol/sol.hpp"
+#include "core/define.h"
 namespace module
 {
     class session;
@@ -16,14 +17,15 @@ namespace module
         network::http::method method();
         std::string filepath();
         std::string host();
-        std::string pstring(const std::string& name);
-        int64 pinteger(const std::string& name);
-        double pnumber(const std::string& name);
+        VarType param(const std::string& name,bool throw_,sol::this_state s);
         std::string remote_ipaddress(bool find_header = false, const std::string& inside_ipaddress = "");
         ushort remote_port();
 
         std::string token();
         module::session* session(const std::string& token);
+
+        sol::table body_param(sol::this_state s);
+        sol::table url_param(sol::this_state s);
 
         void* website();
 

@@ -1,16 +1,25 @@
 ﻿#include "statemanager.h"
+
 #include "util/file.h"
 #include "util/system.h"
 #include "util/time.h"
-#include "module/http/request.h"
-#include "module/http/response.h"
-#include "module/http/session.h"
-#include "module/mysql.h"
-#include "module/localstorage.h"
-#include "module/globalfuns.h"
+
 #include "core/define.h"
 #include "core/config.h"
 #include "core/global.h"
+
+#include "module/http/request.h"
+#include "module/http/response.h"
+#include "module/http/session.h"
+#include "module/http/httpclient.h"
+#include "module/mysql.h"
+#include "module/mssql.h"
+#include "module/localstorage.h"
+#include "module/globalfuns.h"
+#include "module/mutex.h"
+#include "module/codec.h"
+#include "module/time.h"
+
 #define LOOP_STATE_USE 1
 bool state_manager::start()
 {
@@ -35,7 +44,21 @@ void state_manager::close()
 sol::state* state_manager::create_state()
 {
 	sol::state* lua = new sol::state();
-	lua->open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::string, sol::lib::table);
+	lua->open_libraries(
+		sol::lib::base, 
+		sol::lib::package, 
+		sol::lib::math, 
+		sol::lib::string,
+		sol::lib::table,
+		sol::lib::utf8,
+		sol::lib::bit32,
+		sol::lib::coroutine,
+		sol::lib::count,
+		sol::lib::ffi,
+		sol::lib::io,
+		sol::lib::jit,
+		sol::lib::os
+	);
 	{
 		// 获取当前的package.path，添加新的搜索路径
 		std::string current_path = (*lua)["package"]["path"];  // 获取当前的路径
@@ -45,9 +68,15 @@ sol::state* state_manager::create_state()
 	module::request::regist(*lua);
 	module::response::regist(*lua);
 	module::session::regist(*lua);
+	module::httpclient::regist(*lua);
 	module::mysql_regist(*lua);
+	module::mssql::regist(*lua);
 	module::regist_globalfuns(*lua);
 	module::local_storage::regist(lua);
+	module::mutex::regist(lua);
+	module::auto_lock::regist(lua);
+	module::codec::regist(lua);
+	module::time::regist(lua);
 
 	global::getInstance()->regist_lua(lua);
 	return lua;
@@ -106,3 +135,4 @@ bool state_manager::run()
 	return false;
 #endif
 }
+

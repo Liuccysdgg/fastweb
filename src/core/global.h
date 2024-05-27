@@ -13,7 +13,12 @@ public:
 	bool regist_ptr(const std::string& name,void* value, sol::this_state ts);
 
 
+	VarType get(const std::string& name, sol::this_state s);
+	void set(const std::string& name,VarType value);
 
 private:
 	ylib::map<std::string, void*> m_value_ptr;
+
+	ylib::map<std::string,VarType> m_values;
 };
+

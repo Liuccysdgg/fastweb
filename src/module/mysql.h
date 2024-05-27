@@ -50,7 +50,7 @@ namespace module
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		VarType get(const std::string& name);
+		VarType get(sol::object obj, sol::this_state s);
 		/// <summary>
 		/// 取结果集到table
 		/// </summary>
@@ -77,7 +77,7 @@ namespace module
 		module::select& where_str(const std::string& name, const std::string& expression, const std::string& value);
 		module::select& where_expression(const std::string& expression);
 		module::select& table(const std::string& table_name);
-		module::select& field(const std::vector<std::string>& field);
+		module::select& field(sol::table table);
 		module::select& page(uint32 page, uint32 count);
 		module::select& limit(uint32 start, uint32 count);
 		module::select& orderby(const std::string& field, int sort);

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <functional>
-
+#include <mutex>
 #include "sol/sol.hpp"
 
 #include "base/define.h"
@@ -27,4 +27,4 @@
 
 
 
-using VarType = std::variant<std::monostate,int, double, std::string,long long>;
+#define VarType sol::object

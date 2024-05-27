@@ -55,7 +55,8 @@ bool fastweb::start()
 		for_iter(iter, luas) {
 			if (iter->second == IS_DIRECTORY)
 				continue;
-			if (service_bytecode.create(iter->first, sConfig->scripts.app_dir + "/" + iter->first, true) == false)
+			std::string path = strutils::replace(iter->first, '\\', '/');
+			if (service_bytecode.create(path, sConfig->scripts.app_dir + "/" + path, true) == false)
 			{
 				m_lastErrorDesc = service_bytecode.last_error();
 				return false;
@@ -190,6 +191,8 @@ void fastweb::subscribe_service(network::http::request* request, network::http::
 	catch (const std::exception& e)
 	{
 		exception_string = e.what();
+		if(sConfig->website.debug)
+			LOG_ERROR("[subscribe_service]["+ request->filepath() + "]: "+e.what());
 	}
 	lua->collect_garbage();
 	sStateMgr->push_state(lua);
@@ -234,6 +237,8 @@ bool fastweb::subscribe_interceptor(network::http::reqpack* reqpack, const std::
 	catch (const std::exception& e)
 	{
 		exception_string = e.what();
+		if (sConfig->website.debug)
+			LOG_ERROR("[subscribe_interceptor][" + reqpack->request()->filepath() + "]: " + e.what());
 	}
 	sStateMgr->push_state(lua);
 

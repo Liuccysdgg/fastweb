@@ -10,15 +10,6 @@
     <Filter Include="src\module">
       <UniqueIdentifier>{feb78a4c-cec1-4b7c-850b-6d1451e57962}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scripts">
-      <UniqueIdentifier>{6f9c72e6-2a8a-4407-a277-1c83c92fd6b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripts\app">
-      <UniqueIdentifier>{cfc62d45-db7b-4cb5-9d11-8caf2977dfb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripts\lib">
-      <UniqueIdentifier>{573b85d6-db05-4a81-af04-172fe83306e5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\utils">
       <UniqueIdentifier>{2b04f1f8-4027-4d87-a828-f18f2b918b8f}</UniqueIdentifier>
     </Filter>
@@ -68,6 +59,21 @@
     </ClCompile>
     <ClCompile Include="src\module\globalfuns.cpp">
       <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\mutex.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\codec.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\mssql.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\time.cpp">
+      <Filter>src\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\http\httpclient.cpp">
+      <Filter>src\module\http</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,24 +125,24 @@
     <ClInclude Include="src\module\globalfuns.h">
       <Filter>src\module</Filter>
     </ClInclude>
+    <ClInclude Include="src\module\mutex.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\codec.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\mssql.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\time.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\module\http\httpclient.h">
+      <Filter>src\module\http</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />
-    <None Include="scripts\app\index.lua">
-      <Filter>scripts\app</Filter>
-    </None>
-    <None Include="scripts\lib\dkjson.lua">
-      <Filter>scripts\lib</Filter>
-    </None>
-    <None Include="scripts\lib\website.lua">
-      <Filter>scripts\lib</Filter>
-    </None>
-    <None Include="scripts\init.lua">
-      <Filter>scripts</Filter>
-    </None>
-    <None Include="scripts\interceptor.lua">
-      <Filter>scripts</Filter>
-    </None>
     <None Include="README.md" />
     <None Include=".gitignore" />
   </ItemGroup>

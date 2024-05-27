@@ -19,6 +19,24 @@ module::session* module::request::session(const std::string& token)
         m_session = new module::session(&m_request->session(token));
     return m_session;
 }
+sol::table module::request::body_param(sol::this_state s)
+{
+    sol::state_view lua(s);
+    sol::table result_table = lua.create_table();
+    auto map = m_request->parser()->body_param();
+    for_iter(iter,map)
+        result_table[iter->first] = iter->second;
+    return result_table;
+}
+sol::table module::request::url_param(sol::this_state s)
+{
+    sol::state_view lua(s);
+    sol::table result_table = lua.create_table();
+    auto map = m_request->parser()->url_param();
+    for_iter(iter, map)
+        result_table[iter->first] = iter->second;
+    return result_table;
+}
 void* module::request::website()
 {
     return m_request->website();
@@ -33,11 +51,11 @@ void module::request::regist(sol::state& state)
         "host", &module::request::host,
         "remote_ipaddress", &module::request::remote_ipaddress,
         "remote_port", &module::request::remote_port,
-        "pstring", &module::request::pstring,
-        "pinteger", &module::request::pinteger,
-        "pnumber", &module::request::pnumber,
+        "param", &module::request::param,
         "session", &module::request::session,
-        "token", &module::request::token
+        "token", &module::request::token,
+        "body_param", &module::request::body_param,
+        "url_param", &module::request::url_param
     );
 }
 
@@ -60,35 +78,18 @@ std::string module::request::host()
 {
     return m_request->host();
 }
-std::string module::request::pstring(const std::string& name)
+VarType module::request::param(const std::string& name, bool throw_,sol::this_state s)
 {
     std::string value;
     bool result = request_param(name, value);
-    if (result == false) {
-        throw ylib::exception("request parameter '" + name + "' was not found");
+    if (result == false){
+        if (throw_)
+            throw ylib::exception("request parameter '" + name + "' was not found");
+        else
+            return sol::make_object(s, sol::nil);
     }
-    return value;
+    return sol::make_object(s,value);
 }
-int64 module::request::pinteger(const std::string& name)
-{
-    std::string value;
-    bool result = request_param(name, value);
-    if (result == false) {
-        throw ylib::exception("request parameter '" + name + "' was not found");
-    }
-    return ylib::stoll(value);
-}
-double module::request::pnumber(const std::string& name)
-{
-    std::string value;
-    bool result = request_param(name, value);
-    if (result == false) {
-        throw ylib::exception("request parameter '" + name + "' was not found");
-    }
-    return ylib::stod(value);
-}
-
-
 
 std::string module::request::remote_ipaddress(bool find_header, const std::string& inside_ipaddress)
 {

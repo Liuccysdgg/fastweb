@@ -24,6 +24,7 @@ public:
 		uint32 session_timeout_sec;
 		std::string Initialization_script;
 		std::vector<__interceptor> interceptor_scripts;
+		bool debug = false;
 	};
 	struct server {
 		std::string address;

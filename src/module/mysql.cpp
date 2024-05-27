@@ -45,9 +45,17 @@ module::select& module::select::table(const std::string& table_name)
     return *this;
 }
 
-module::select& module::select::field(const std::vector<std::string>& field)
+module::select& module::select::field(sol::table table)
 {
-    m_select->field(field);
+    std::vector<std::string> strings;
+    for (auto& pair : table) {
+        if (pair.second.get_type() != sol::type::string)
+        {
+            throw ylib::exception("module::select::field:  attempting to obtain field name that is not a string");
+        }
+        strings.push_back(pair.second.as<std::string>());
+    }
+    m_select->field(strings);
     return *this;
 }
 
@@ -409,7 +417,6 @@ void module::mysql_regist(sol::state& lua)
 
 module::mysql::mysql()
 {
-    std::cout << this << std::endl;
 }
 
 module::mysql::~mysql()
@@ -502,19 +509,39 @@ bool module::mysql_result::next()
     return m_result->next();
 }
 
-VarType module::mysql_result::get(const std::string& name)
+VarType module::mysql_result::get(sol::object obj, sol::this_state s)
 {
-    auto type = m_result->field_type(name);
+    std::string type;
+    if (obj.get_type() == sol::type::string)
+        type = m_result->field_type(obj.as<std::string>());
+    else if (obj.get_type() == sol::type::number)
+        type = m_result->field_type(obj.as<int>());
+
+#define GET_VALUE(FUNCTION)                                                                                             \
+    if (obj.get_type() == sol::type::string)                                                                                    \
+        return sol::make_object(s, m_result->FUNCTION(obj.as<std::string>()));                          \
+    else if (obj.get_type() == sol::type::number)                                                                           \
+        return sol::make_object(s, m_result->FUNCTION(obj.as<uint32>()))
+
     if (type == "int" || type == "tinyint")
-        return m_result->get_int32(name);
+    {
+        GET_VALUE(get_int32);
+    }
+      
     else if (type == "varchar")
-        return m_result->get_string(name);
+    {
+        GET_VALUE(get_string);
+    }
     else if (type == "int unsigned")
-        return m_result->get_uint32(name);
+    {
+        GET_VALUE(get_uint32);
+    }
     else if (type == "bigint")
-        return m_result->get_int64(name);
-    else
-        return std::monostate();
+    {
+        GET_VALUE(get_int64);
+    }
+    return sol::make_object(s, sol::nil);
+    
 }
 
 sol::table module::mysql_result::table(sol::this_state s)
@@ -526,8 +553,7 @@ sol::table module::mysql_result::table(sol::this_state s)
     while (next()) {
         sol::table row = lua.create_table();
         for (uint32_t i = 0; i < field_count(); ++i) {
-            std::string field = field_name(i+1);
-            row[field] = get(field);
+            row[field_name(i+1)] = get(sol::make_object(s, i+1), s);
         }
         result_table[row_num++] = row;
     }

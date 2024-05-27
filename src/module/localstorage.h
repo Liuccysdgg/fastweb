@@ -1,7 +1,4 @@
 ﻿#pragma once
-#include "db/mysql.h"
-#include "db/sqler.h"
-#include "sol/sol.hpp"
 #include "util/localstorage.h"
 #include "imodule.h"
 namespace module

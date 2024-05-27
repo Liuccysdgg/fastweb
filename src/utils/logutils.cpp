@@ -34,11 +34,11 @@ void LogUtils::info(const std::string& msg, const std::string& filepath, const s
 
 void LogUtils::error(const std::string& msg, const std::string& filepath, const std::string& func, int line)
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
     ::print("[ERROR] ", msg, filepath, func, line, ylib::ConsoleTextColor::RED | FOREGROUND_INTENSITY);
-#else
+//#else
     
-#endif
+//#endif
 }
 
 void LogUtils::warn(const std::string& msg, const std::string& filepath, const std::string& func, int line)
