@@ -384,7 +384,8 @@ void module::delete_::regist(sol::state& lua)
 
 void module::mysql_regist(sol::state& lua)
 {
-
+    lua["DESC"] = ylib::sort::DESC;
+    lua["ASC"] = ylib::sort::ASC;
     
     lua.new_usertype<ylib::mysql::conn>("mysql_conn",
         "clear", &ylib::mysql::conn::clear,
@@ -528,7 +529,7 @@ VarType module::mysql_result::get(sol::object obj, sol::this_state s)
         GET_VALUE(get_int32);
     }
       
-    else if (type == "varchar")
+    else if (type == "varchar" || type == "char" || type == "text")
     {
         GET_VALUE(get_string);
     }
