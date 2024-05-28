@@ -75,7 +75,66 @@ bool fastweb::start()
 	{
 		auto map = service_bytecode.map();
 		for_iter(iter, map)
-			router->subscribe(sConfig->scripts.app_mapping_dir + iter->first, ALL, &fastweb::subscribe_service);
+		{
+			auto state = sStateMgr->get_state();
+			std::string route_pattern;
+			network::http::method method = network::http::ALL;
+			try
+			{
+				auto result = state->script_file(iter->second->filepath);
+				if (result.valid()) {
+					auto router = (*state)["route"];
+					auto type = router.get_type();
+					if (router.is<sol::table>())
+					{
+						sol::optional<std::string> route_pattern_param = router[1];
+						sol::optional<int> method_param = router[2];
+						if (route_pattern_param && route_pattern_param->empty() == false)
+							route_pattern = *route_pattern_param;
+						if (method_param)
+							method = (network::http::method)*method_param;
+					}
+				}
+			}
+			catch (const std::exception& e)
+			{
+				LOG_ERROR(e.what());
+			}
+			if (route_pattern.empty())
+				route_pattern = sConfig->scripts.app_mapping_dir + iter->first;
+
+			// OutPutLog
+			{
+				std::string log;
+				log = "[subscribe] lua: " + iter->first + "\t pattern: " + route_pattern + "\t method: ";
+				switch (method)
+				{
+				case ylib::network::http::GET:
+					log.append("GET");
+					break;
+				case ylib::network::http::POST:
+					log.append("POST");
+					break;
+				case ylib::network::http::PUT:
+					log.append("PUT");
+					break;
+				case ylib::network::http::DEL:
+					log.append("DEL");
+					break;
+				case ylib::network::http::HEAD:
+					log.append("HEAD");
+					break;
+				case ylib::network::http::ALL:
+					log.append("ALL");
+					break;
+				default:
+					break;
+				}
+				LOG_INFO(log);
+			}
+			router->subscribe(route_pattern, method, &fastweb::subscribe_service,new std::string(iter->first));
+		}
+			
 	}
 	
 	// 加入拦截器
@@ -132,11 +191,7 @@ bool fastweb::initialization_script()
 	try
 	{
 		state->set_function("global_regist", module::global_regist);
-
 		auto result = state->script_file(script_filepath);
-
-		
-
 		if (!result.valid()) {
 			sol::error err = result;
 			throw ylib::exception(err.what());
@@ -155,10 +210,12 @@ bool fastweb::initialization_script()
 	return m_lastErrorDesc == "";
 }
 
-void fastweb::subscribe_service(network::http::request* request, network::http::response* response)
+void fastweb::subscribe_service(network::http::request* request, network::http::response* response,void *extra)
 {
+	std::string lua_name = *(std::string*)extra;
+
 	// 文件原路径(非绝对路径)
-	std::string lua_name = strutils::right(request->filepath(), request->filepath().length() - sConfig->scripts.app_mapping_dir.length());
+	//std::string lua_name = strutils::right(request->filepath(), request->filepath().length() - sConfig->scripts.app_mapping_dir.length());
 
 
 	auto lua = sStateMgr->get_state();

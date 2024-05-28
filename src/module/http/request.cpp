@@ -57,6 +57,11 @@ void module::request::regist(sol::state& state)
         "body_param", &module::request::body_param,
         "url_param", &module::request::url_param
     );
+    state["GET"] = (int)network::http::GET;
+    state["POST"] = (int)network::http::POST;
+    state["DEL"] = (int)network::http::DEL;
+    state["HEAD"] = (int)network::http::HEAD;
+    state["PUT"] = (int)network::http::PUT;
 }
 
 

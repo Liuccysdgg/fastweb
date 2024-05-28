@@ -1,4 +1,5 @@
-﻿#include "mssql.h"
+#ifdef _WIN32
+#include "mssql.h"
 #include "soci/odbc/soci-odbc.h"
 module::mssql::mssql(const std::string& connstring)
 {
@@ -42,9 +43,10 @@ void module::mssql::query(const std::string& sql)
     m_rows = (m_session->prepare << sql);
     //m_iter = m_rows.begin();
 }
-uint64 module::mssql::update(const std::string& sql)
+int64 module::mssql::update(const std::string& sql)
 {
-    soci::statement st = (m_session->prepare << sql);
+    soci::statement st = m_session->prepare << sql;
+    st.execute();
     return st.get_affected_rows();
 }
 bool module::mssql::next()
@@ -74,3 +76,4 @@ void module::mssql::regist(sol::state& lua)
         "update", &module::mssql::update
     );
 }
+#endif

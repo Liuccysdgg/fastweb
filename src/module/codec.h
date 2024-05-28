@@ -21,8 +21,8 @@ namespace module
 		/// GBK转UTF8
 		/// </summary>
 		/// <returns></returns>
-		static std::string gbk_to_utf8(const std::string& value);
-		static std::string utf8_to_gbk(const std::string& value);
+		static std::string to_utf8(const std::string& value);
+		static std::string to_gbk(const std::string& value);
 		/// <summary>
 		/// MD5校验
 		/// </summary>

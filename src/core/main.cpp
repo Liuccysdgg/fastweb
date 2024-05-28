@@ -9,7 +9,7 @@ int main()
 	std::cout << "=========== [fastweb engine] ============" << std::endl;
 
 
-	if(sConfig->open(system::current_dir() + "\\config.ini") == false)
+	if(sConfig->open(system::current_dir() + "/config.ini") == false)
 	{
 		LOG_ERROR("open config failed,"+sConfig->last_error());
 		return -1;

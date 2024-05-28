@@ -34,7 +34,7 @@ private:
 	/// </summary>
 	/// <param name="request"></param>
 	/// <param name="response"></param>
-	static void subscribe_service(network::http::request* request, network::http::response* response);
+	static void subscribe_service(network::http::request* request, network::http::response* response, void* extra);
 	/// <summary>
 	/// 拦截器回调
 	/// </summary>

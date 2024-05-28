@@ -17,14 +17,14 @@ namespace ylib::mysql
     class result;
     class conn;
     class prepare_statement;
-    struct field{
+    struct field {
         uint32 index = 0;
         std::string name;
         std::string type_name;
     };
     struct mysql_conn_info
     {
-        mysql_conn_info(){
+        mysql_conn_info() {
             port = 0;
         }
         std::string ipaddress;
@@ -81,21 +81,21 @@ namespace ylib::mysql
         std::vector<ylib::mysql::field> m_fields;
     };
 
-    class prepare_statement:public ylib::error_base{
+    class prepare_statement :public ylib::error_base {
     public:
         prepare_statement();
         ~prepare_statement();
-        void set_bigint(uint32 index,const std::string& value);
-        void set_boolean(uint32 index,bool value);
-        void set_datetime(uint32 index,const std::string& value);
-        void set_double(uint32 index,double value);
-        void set_int32(uint32 index,int32 value);
-        void set_uint32(uint32 index,uint32 value);
-        void set_int64(uint32 index,int64 value);
-        void set_uint64(uint32 index,uint64 value);
+        void set_bigint(uint32 index, const std::string& value);
+        void set_boolean(uint32 index, bool value);
+        void set_datetime(uint32 index, const std::string& value);
+        void set_double(uint32 index, double value);
+        void set_int32(uint32 index, int32 value);
+        void set_uint32(uint32 index, uint32 value);
+        void set_int64(uint32 index, int64 value);
+        void set_uint64(uint32 index, uint64 value);
         void set_null(uint32 index);
-        void set_string(uint32 index,const std::string& value);
-        void set_blob(uint32 index,const ylib::buffer& value);
+        void set_string(uint32 index, const std::string& value);
+        void set_blob(uint32 index, const ylib::buffer& value);
         void clear();
         uint64 update();
         ylib::mysql::result* query();
@@ -105,12 +105,12 @@ namespace ylib::mysql
         ylib::mysql::result* m_result = nullptr;
         void* m_handle = nullptr;
     };
-    class conn :public ylib::example<ylib::mysql::mysql_conn_info>,public ylib::error_base
+    class conn :public ylib::example<ylib::mysql::mysql_conn_info>, public ylib::error_base
     {
     public:
         conn();
         ~conn();
-        virtual EXAMPLE_START_RESULT start(const ylib::mysql::mysql_conn_info&info) override;
+        virtual EXAMPLE_START_RESULT start(const ylib::mysql::mysql_conn_info& info) override;
         virtual void close() override;
 
 
@@ -130,7 +130,7 @@ namespace ylib::mysql
 
         friend class ylib::mysql::pool;
     private:
-        void *m_handle = nullptr;
+        void* m_handle = nullptr;
         ylib::mysql::mysql_conn_info m_info;
         class prepare_statement* m_ppst = nullptr;
         // 事务状态 0=未开启 1=已开启 2=执行完毕
@@ -138,7 +138,7 @@ namespace ylib::mysql
     };
 
 
-    class pool: public ylib::pool<ylib::mysql::conn, ylib::mysql::mysql_conn_info>
+    class pool : public ylib::pool<ylib::mysql::conn, ylib::mysql::mysql_conn_info>
     {
     public:
         pool()

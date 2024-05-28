@@ -36,7 +36,7 @@ namespace ylib
                 // 请求类型
                 network::http::method method;
                 // 回调函数
-                std::function<void(network::http::request*, network::http::response*)> callback;
+                std::function<void(network::http::request*, network::http::response*,void *extra)> callback;
                 // 控制器。为控制器则启动下面两个属性
                 bool controller;
                 // 创建控制器类指针
@@ -49,6 +49,8 @@ namespace ylib
                 // LUA虚拟机初始化回调
                 std::function<void(sol::state& state)> lua_init_state;
 #endif
+                // 附加数据
+                void* extra = nullptr;
             };
             /*************************************************************************
              * class：路由中专服务
@@ -94,9 +96,10 @@ namespace ylib
                  *      同一地址不允许订阅两次
                  ******************************************************************/
                 void subscribe(
-                    const std::string& path,
+                    const std::string& path, 
                     network::http::method method,
-                    std::function<void(network::http::request*, network::http::response*)> callback
+                    std::function<void(network::http::request*, network::http::response*, void*)> callback,
+                    void* extra = nullptr
                 );
 #define SUBSCRIBE(ROUTER,CONTROLLER,FUNCTION,PATH,METHOD) ROUTER->subscribe([]()->void*{return new CONTROLLER;},(ylib::network::http::HTTP_CTR_FUNCTION)&CONTROLLER::FUNCTION,PATH,METHOD)
 

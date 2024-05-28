@@ -14,6 +14,8 @@ bool config::open(const std::string& ini_filepath)
 		return false;
 	}
 	std::string src_content = ylib::file::read(temp_filepath);
+	src_content = strutils::replace(src_content, "${current_dir}", strutils::replace(system::current_dir(),'\\','/'));
+	ylib::file::write(temp_filepath,src_content);
 	if (m_ini.open(temp_filepath))
 	{
 		auto vars = extractVariableNames(ylib::file::read(temp_filepath));

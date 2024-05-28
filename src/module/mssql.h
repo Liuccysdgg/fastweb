@@ -1,4 +1,5 @@
 ﻿#pragma once
+#ifdef _WIN32
 #include "sol/sol.hpp"
 #include "imodule.h"
 #include "soci/soci.h"
@@ -35,7 +36,7 @@ namespace module
 		bool next();
 
 
-		uint64 update(const std::string& sql);
+		int64 update(const std::string& sql);
 		/// <summary>
 		/// 注册
 		/// </summary>
@@ -52,3 +53,4 @@ namespace module
 
 }
 
+#endif

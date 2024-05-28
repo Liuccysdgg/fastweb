@@ -21,7 +21,7 @@ namespace ylib
 	};
 	struct order_by {
 		std::string field;
-		sort sort;
+		ylib::sort sort;
 	};
 	struct keyvalue {
 		std::string name;
@@ -31,7 +31,7 @@ namespace ylib
 	/// <summary>
 	/// MYSQL SELECT 查询器
 	/// </summary>
-	class select:public ylib::error_base {
+	class select :public ylib::error_base {
 	public:
 		select(mysql::conn* conn);
 		~select();
@@ -51,11 +51,11 @@ namespace ylib
 		/// <summary>
 		/// 条件[A=B]
 		/// </summary>
-		select& where(const std::string& name,const std::string& expression,const std::any& value);
+		select& where(const std::string& name, const std::string& expression, const std::any& value);
 		/// <summary>
 		/// 条件[模糊查询]
 		/// </summary>
-		select& where_like(const std::string& name,const std::string& value);
+		select& where_like(const std::string& name, const std::string& value);
 		/// <summary>
 		/// 条件[自定义]
 		/// </summary>
@@ -63,7 +63,7 @@ namespace ylib
 		/// <summary>
 		/// LIMIT[页]
 		/// </summary>
-		select& page(uint32 page,uint32 count);
+		select& page(uint32 page, uint32 count);
 		/// <summary>
 		/// LIMIT
 		/// </summary>
@@ -96,7 +96,7 @@ namespace ylib
 		/// <param name="where"></param>
 		/// <param name="orderby"></param>
 		/// <param name="limit"></param>
-		void make_sql(std::string& field_name,std::string& where,std::string& orderby,std::string& limit,std::vector<std::any>& insert_values);
+		void make_sql(std::string& field_name, std::string& where, std::string& orderby, std::string& limit, std::vector<std::any>& insert_values);
 	private:
 		mysql::conn* m_conn = nullptr;
 		std::vector<ylib::where> m_wheres;
@@ -106,18 +106,6 @@ namespace ylib
 		order_by m_orderby;
 
 	};
-#if 0
-	class Lselect :public ylib::select {
-	public:
-		Lselect(void* conn);
-		~Lselect();
-		void where_i32(const std::string& name, const std::string& expression,int32 value);
-		void where_i64(const std::string& name, const std::string& expression,int64 value);
-		void where_dob(const std::string& name, const std::string& expression,double value);
-		void where_str(const std::string& name, const std::string& expression, const std::string& value);
-		void where_expression(const std::string& expression);
-	};
-#endif
 	/// <summary>
 	/// MYSQL UPDATE
 	/// </summary>
@@ -189,26 +177,6 @@ namespace ylib
 		order_by m_orderby;
 
 	};
-#if 0
-	class Lupdate :public ylib::update {
-	public:
-		Lupdate(mysql::conn* conn);
-		~Lupdate();
-
-		void set_i32(const std::string& name, int32 value);
-		void set_i64(const std::string& name, int64 value);
-		void set_dob(const std::string& name, double value);
-		void set_str(const std::string& name, const std::string& value);
-
-		void where_i32(const std::string& name, const std::string& expression, int32 value);
-		void where_i64(const std::string& name, const std::string& expression, int64 value);
-		void where_dob(const std::string& name, const std::string& expression, double value);
-		void where_str(const std::string& name, const std::string& expression, const std::string& value);
-
-		void where_expression(const std::string& expression);
-	};
-
-#endif
 	/// <summary>
 	/// MYSQL INSERT
 	/// </summary>
@@ -236,17 +204,6 @@ namespace ylib
 		std::string m_table_name;
 		std::vector<keyvalue> m_sets;
 	};
-#if 0
-	class Linsert :public ylib::insert {
-	public:
-		Linsert(mysql::conn* conn);
-		~Linsert();
-		void i32(const std::string& name, int32 value);
-		void i64(const std::string& name, int64 value);
-		void dob(const std::string& name, double value);
-		void str(const std::string& name, const std::string& value);
-	};
-#endif
 	/// <summary>
 	/// MYSQL DELETE
 	/// </summary>
@@ -304,16 +261,4 @@ namespace ylib
 		order_by m_orderby;
 
 	};
-#if 0
-	class Ldelete :public ylib::delete_ {
-	public:
-		Ldelete(mysql::conn* conn);
-		~Ldelete(); 
-		void where_i32(const std::string& name, const std::string& expression, int32 value);
-		void where_i64(const std::string& name, const std::string& expression, int64 value);
-		void where_dob(const std::string& name, const std::string& expression, double value);
-		void where_str(const std::string& name, const std::string& expression, const std::string& value);
-		void where_expression(const std::string& expression);
-	};
-#endif
 }

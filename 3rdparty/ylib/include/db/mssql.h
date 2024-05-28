@@ -19,7 +19,7 @@ namespace ylib::mssql
     class prepare_statement;
     struct mssql_conn_info
     {
-        mssql_conn_info(){
+        mssql_conn_info() {
         }
         std::string odbcname;
         std::string username;
@@ -68,19 +68,19 @@ namespace ylib::mssql
         std::map<std::string, short> m_field_name_index;
     };
 
-    class prepare_statement:public ylib::error_base{
+    class prepare_statement :public ylib::error_base {
     public:
         prepare_statement();
         ~prepare_statement();
-        void set_boolean(uint32 index,bool value);
-        void set_datetime(uint32 index,const std::string& value);
-        void set_double(uint32 index,double value);
-        void set_int32(uint32 index,int32 value);
-        void set_uint32(uint32 index,uint32 value);
-        void set_int64(uint32 index,int64 value);
-        void set_uint64(uint32 index,uint64 value);
+        void set_boolean(uint32 index, bool value);
+        void set_datetime(uint32 index, const std::string& value);
+        void set_double(uint32 index, double value);
+        void set_int32(uint32 index, int32 value);
+        void set_uint32(uint32 index, uint32 value);
+        void set_int64(uint32 index, int64 value);
+        void set_uint64(uint32 index, uint64 value);
         void set_null(uint32 index);
-        void set_string(uint32 index,const std::string& value);
+        void set_string(uint32 index, const std::string& value);
         void clear();
         uint64 update();
         ylib::mssql::result* query();
@@ -90,12 +90,12 @@ namespace ylib::mssql
         ylib::mssql::result* m_result = nullptr;
         void* m_handle = nullptr;
     };
-    class conn :public ylib::example<ylib::mssql::mssql_conn_info>,public ylib::error_base
+    class conn :public ylib::example<ylib::mssql::mssql_conn_info>, public ylib::error_base
     {
     public:
         conn();
         ~conn();
-        virtual EXAMPLE_START_RESULT start(const ylib::mssql::mssql_conn_info&info) override;
+        virtual EXAMPLE_START_RESULT start(const ylib::mssql::mssql_conn_info& info) override;
         virtual void close() override;
 
 
@@ -110,14 +110,14 @@ namespace ylib::mssql
         void rollback();
         friend class ylib::mssql::pool;
     private:
-        void *m_handle = nullptr;
+        void* m_handle = nullptr;
         ylib::mssql::mssql_conn_info m_info;
         class prepare_statement* m_ppst = nullptr;
         int m_sw = 0;
     };
 
 
-    class pool: public ylib::pool<ylib::mssql::conn, ylib::mssql::mssql_conn_info>
+    class pool : public ylib::pool<ylib::mssql::conn, ylib::mssql::mssql_conn_info>
     {
     public:
         pool();

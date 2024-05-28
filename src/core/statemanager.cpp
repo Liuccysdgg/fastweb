@@ -13,7 +13,9 @@
 #include "module/http/session.h"
 #include "module/http/httpclient.h"
 #include "module/mysql.h"
+#ifdef _WIN32
 #include "module/mssql.h"
+#endif
 #include "module/localstorage.h"
 #include "module/globalfuns.h"
 #include "module/mutex.h"
@@ -70,7 +72,9 @@ sol::state* state_manager::create_state()
 	module::session::regist(*lua);
 	module::httpclient::regist(*lua);
 	module::mysql_regist(*lua);
+	#ifdef _WIN32
 	module::mssql::regist(*lua);
+	#endif
 	module::regist_globalfuns(*lua);
 	module::local_storage::regist(lua);
 	module::mutex::regist(lua);

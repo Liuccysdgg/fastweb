@@ -1,9 +1,7 @@
-﻿function access()
-
-	if request:pstring("key") == "123456" then
-		return true
+﻿require "website"
+function access()
+	if param("key") == nil or param("key") ~= "123465" then
+		print("is not found key")
 	end
-
-	response:send("密钥不正确,已被拦截器拦截.")	
-	return false
+	return true
 end
