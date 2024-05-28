@@ -43,7 +43,7 @@ if(MSVC)
 	add_compile_options(/W3 /wd4819)
 else()
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
-    include_directories(/usr/include/lua5.4/)
+    include_directories(/usr/include/lua5.3/)
 endif()
 
 
@@ -109,7 +109,7 @@ else()
 			soci_postgresql
 			soci_sqlite3
 			crypto
-			lua5.4
+			lua5.3
 			mysqlcppconn
 	)
 
