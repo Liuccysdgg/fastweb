@@ -57,7 +57,7 @@ add_library(${FASTWEBCORE} SHARED ${SOURCE_FILES}  ${HEADER_FILES})
 set_target_properties(${FASTWEBCORE} PROPERTIES OUTPUT_NAME_DEBUG "${FASTWEBCORE}_d" OUTPUT_NAME_RELEASE ${FASTWEBCORE})
 
 
-add_executable(${PROJECT_NAME} tests/main.cpp)
+
 
 
 link_directories(/usr/lib/x86_64-linux-gnu)
@@ -106,7 +106,7 @@ if(MSVC)
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_odbc_4_1.lib>
 	)
 
-	target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
+	
 else()
 	target_link_libraries(${FASTWEBCORE} 
 			hpsocket
@@ -126,8 +126,8 @@ else()
 
 endif()
 
-
-
+target_link_libraries(${PROJECT_NAME} PRIVATE ${FASTWEBCORE})
+add_executable(${PROJECT_NAME} tests/main.cpp)
 ########################  安装  ########################
 install(TARGETS ${FASTWEBCORE} DESTINATION bin)
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
