@@ -4,7 +4,7 @@
 #include "core/define.h"
 #include "core/config.h"
 extern "C" {
-	__declspec(dllexport) int fastweb(const char* config_filepath)
+	int fastweb(const char* config_filepath)
 	{
 		std::cout << "=========== [fastweb engine] ============" << std::endl;
 		if (sConfig->open(config_filepath) == false)
