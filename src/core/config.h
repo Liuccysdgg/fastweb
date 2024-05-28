@@ -3,8 +3,14 @@
 #include "base/error.h"
 #include "base/singleton.hpp"
 #include "util/ini.h"
+#include "net/http_define.h"
 class config:public ylib::error_base,public ylib::singleton<config>{
 public:
+	struct domain {
+		bool https = false;
+		ushort port = 0;
+		network::http::ssl_config ssl;
+	};
 	struct scripts {
 		std::string app_dir;
 		std::string lib_dir;
@@ -25,14 +31,17 @@ public:
 		std::string Initialization_script;
 		std::vector<__interceptor> interceptor_scripts;
 		bool debug = false;
-	};
-	struct server {
-		std::string address;
-		ushort port = 0;
+		std::vector<std::string> domain;
 	};
 public:
 	config() = default;
 	bool open(const std::string& ini_filepath);
+
+	/// <summary>
+	/// 是否含有https
+	/// </summary>
+	/// <returns></returns>
+	bool have_https();
 private:
 	// INI配置文件
 	ylib::ini m_ini;
@@ -50,5 +59,5 @@ private:
 public:
 	scripts scripts;
 	website website;
-	server server;
+	std::map<std::string, domain> domain;
 };

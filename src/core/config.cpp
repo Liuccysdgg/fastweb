@@ -35,6 +35,15 @@ bool config::open(const std::string& ini_filepath)
 	cache();
 	return true;
 }
+bool config::have_https()
+{
+	for_iter(iter, domain)
+	{
+		if (iter->second.https)
+			return true;
+	}
+	return false;
+}
 std::vector<std::string> config::extractVariableNames(const std::string& text)
 {
 	std::regex pattern("\\$\\{([^}]+)\\}"); // 使用捕获组提取中间的内容
@@ -51,8 +60,6 @@ std::vector<std::string> config::extractVariableNames(const std::string& text)
 
 void config::cache()
 {
-	server.address =  m_ini.read("server", "address");
-	server.port = ylib::stoi(m_ini.read("server", "port"));
 
 	scripts.app_dir = m_ini.read("scripts","app_dir");
 	scripts.lib_dir = m_ini.read("scripts", "lib_dir");
@@ -67,6 +74,7 @@ void config::cache()
 	website.session_timeout_sec = ylib::stoi(m_ini.read("website", "session_timeout_sec"));
 	website.Initialization_script = m_ini.read("website", "Initialization_script");
 	website.debug = m_ini.read("website", "debug") == "1";
+	website.domain = ylib::json::from(m_ini.read("website", "domain")).to<std::vector<std::string>>();
 
 	{
 		ylib::json interceptors = ylib::json::from(m_ini.read("website", "interceptor_scripts"));
@@ -82,5 +90,46 @@ void config::cache()
 			inr.regex_express = interceptors[i][1].to<std::string>();
 			website.interceptor_scripts.push_back(inr);
 		}
+	}
+
+	// website 域名参数
+	for(size_t i=0;i< website.domain.size();i++)
+	{
+		if (website.domain[i].empty())
+			continue;
+
+		struct config::domain dm;
+		dm.port = ylib::stoi(m_ini.read(website.domain[i], "port"));
+		dm.https = m_ini.read(website.domain[i],"https")=="1";
+		dm.ssl.pem_key = ylib::file::read(m_ini.read(website.domain[i], "ssl_key"));
+		dm.ssl.pem_cert = ylib::file::read(m_ini.read(website.domain[i], "ssl_pem"));
+		dm.ssl.pem_ca = ylib::file::read(m_ini.read(website.domain[i], "ssl_ca"));
+		dm.ssl.pem_password = m_ini.read(website.domain[i], "ssl_pwd");
+		dm.ssl.type = (network::http::ssl_verify_type)ylib::stoi(m_ini.read(website.domain[i], "ssl_ver_type"));
+		if (dm.port == 0)
+		{
+			LOG_ERROR("domain("+website.domain[i] + ") name unavailable, port is 0");
+			continue;
+		}
+		if (dm.https)
+		{
+			dm.ssl.enable = true;
+			if (dm.ssl.pem_key.empty())
+			{
+				LOG_ERROR("domain(" + website.domain[i] + ") ssl_key file is read as empty, please check the ssl_key");
+				continue;
+			}
+			if (dm.ssl.pem_cert.empty())
+			{
+				LOG_ERROR("domain(" + website.domain[i] + ") ssl_pem file is read as empty, please check the ssl_pem");
+				continue;
+			}
+			if (dm.ssl.type < 0 || dm.ssl.type > 3)
+			{
+				LOG_ERROR("domain(" + website.domain[i] + ") ssl_ver_type is not filled in correctly, it should be: 0~3");
+				continue;
+			}
+		}
+		domain.emplace(website.domain[i],dm);
 	}
 }

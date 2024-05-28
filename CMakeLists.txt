@@ -59,6 +59,8 @@ set_target_properties(${FASTWEBCORE} PROPERTIES OUTPUT_NAME_DEBUG "${FASTWEBCORE
 
 
 
+
+
 link_directories(/usr/lib/x86_64-linux-gnu)
 link_directories(/usr/local/lib)
 
@@ -127,6 +129,7 @@ endif()
 
 add_executable(${PROJECT_NAME} tests/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
+set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 ########################  安装  ########################
 install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)

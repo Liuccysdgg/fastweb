@@ -24,26 +24,36 @@ bool fastweb::start()
 	m_center = new network::http::center();
 	network::http::start_config config;
 	network::http::website_config ws_config;
-	network::http::host_config host_config;
-	host_config.domain = "0.0.0.0";
-	host_config.port =(ushort)sConfig->server.port;
-
-	host_config.ssl = false;
+	
+	for_iter(iter, sConfig->domain)
+	{
+		network::http::host_config host_config;
+		host_config.domain = iter->first;
+		host_config.port = iter->second.port;
+		host_config.ssl = iter->second.https;
+		ws_config.host.push_back(host_config);
+	}
 
 	ws_config.name = "master";
-	ws_config.host.push_back(host_config);
+	
 	ws_config.router.threadpool.size = 40;
 	ws_config.router.threadpool.queuemax = 10000;
 	ws_config.session.dirpath = sConfig->website.session_dir;
 	ws_config.session.timeout_sec = sConfig->website.session_timeout_sec;
 	config.website.push_back(ws_config);
+	for_iter(iter, sConfig->domain)
+	{
+		if(iter->second.https) 
+			config.cert.emplace(iter->first, iter->second.ssl);
+	}
+
 	if (!m_center->create(config))
 	{
 		m_lastErrorDesc = "start failed," + m_center->last_error();
 		stop();
 		return false;
 	}
-	auto website = m_center->website(sConfig->server.address);
+	auto website = m_center->website_byname(ws_config.name);
 	auto router = website->router();
 	
 	// 初始化脚本
