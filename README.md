@@ -44,7 +44,7 @@ end
 ```
 
 ## 部署
-目前仅支持Windows部署，Linux将在下个版本支持
+### Windows
 ```bash
 # 克隆仓库
 git clone https://github.com/Liuccysdgg/fastweb.git
@@ -52,6 +52,14 @@ git clone https://github.com/Liuccysdgg/fastweb.git
 cd fastweb
 # 编译项目 (确保你的机器上安装了VS2022集成开发环境)
 # 运行 fastweb.sln 编译
+```
+
+### Linux
+```bash
+# 下载构建脚本
+https://github.com/Liuccysdgg/fastweb/blob/master/build.sh
+# 运行脚本
+./build.sh
 ```
 
 三方库均仅提供x64二进制发布版本,如需更新或修改请自行根据下方链接下载编译
