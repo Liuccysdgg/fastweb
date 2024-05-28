@@ -22,6 +22,7 @@ extern "C" {
 			LOG_ERROR("fastweb start failed," + fastweb::getInstance()->last_error());
 			return -1;
 		}
+		LOG_SUCC("success");
 		return 0;
 	}
 }

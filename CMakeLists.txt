@@ -128,22 +128,23 @@ endif()
 add_executable(${PROJECT_NAME} tests/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
 ########################  安装  ########################
-install(TARGETS ${FASTWEBCORE} DESTINATION bin)
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
+install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 if(MSVC)
-	install(FILES 
-		$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.dll>
-		$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/libcrypto-3-x64.dll>
-		$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/libssl-3-x64.dll>
-		$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/mysqlcppconn-9-vs14.dll>
-		$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.dll>
-		$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/libcrypto-3-x64.dll>
-		$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/libssl-3-x64.dll>
-		$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/mysqlcppconn-9-vs14.dll>
-	DESTINATION bin)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.dll DESTINATION bin/debug)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/libcrypto-3-x64.dll DESTINATION bin/debug)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/libssl-3-x64.dll DESTINATION bin/debug)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/mysqlcppconn-9-vs14.dll DESTINATION bin/debug)
+
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.dll DESTINATION bin/release)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/libcrypto-3-x64.dll DESTINATION bin/release)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/libssl-3-x64.dll DESTINATION bin/release)
+	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/mysqlcppconn-9-vs14.dll DESTINATION bin/release)
 endif()
-install(FILES config.ini DESTINATION bin)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin)
+install(FILES config.ini DESTINATION bin/debug)
+install(FILES config.ini DESTINATION bin/release)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin/debug)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin/release)
 install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
 
 
