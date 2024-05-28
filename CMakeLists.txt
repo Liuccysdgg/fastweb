@@ -111,6 +111,7 @@ else()
 			crypto
 			lua5.3
 			mysqlcppconn
+			pthread
 	)
 
 endif()
