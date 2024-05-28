@@ -6,7 +6,7 @@ project("fastweb")
 
 # 设置自定义配置类型
 if(MSVC)
-	set(CMAKE_CONFIGURATION_TYPES "Debug;Release;DebugDll;ReleaseDll" CACHE STRING "Build config types" FORCE)
+	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build config types" FORCE)
 endif()
 # C++等级
 set(CMAKE_CXX_STANDARD 20)
@@ -64,8 +64,7 @@ link_directories(/usr/lib/x86_64-linux-gnu)
 link_directories(/usr/local/lib)
 
 if(MSVC)
-	function(target_link_common_libraries target_name)
-		target_link_libraries(${target_name} 
+	target_link_libraries(${FASTWEBCORE} PRIVATE
 			odbc32.lib
 			User32.lib
 			Advapi32.lib
@@ -105,9 +104,7 @@ if(MSVC)
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_core_4_1.lib>
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_empty_4_1.lib>
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_odbc_4_1.lib>
-		)
-	endfunction()
-	target_link_common_libraries(${FASTWEBCORE})
+	)
 
 	target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
 else()

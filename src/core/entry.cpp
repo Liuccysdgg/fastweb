@@ -3,7 +3,11 @@
 #include "util/system.h"
 #include "core/define.h"
 #include "core/config.h"
-extern "C" {
+#include "entry.h"
+extern "C" { 
+#ifdef _WIN32
+	DLL_EXPORT
+#endif
 	int fastweb(const char* config_filepath)
 	{
 		std::cout << "=========== [fastweb engine] ============" << std::endl;

@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include <iostream>
 #include "core/entry.h"
-#include "util/system.h"
+#include <filesystem>
 int main()
 {
-	std::string config_filepath = system::current_dir() + "/config.ini";
+	std::string config_filepath = std::filesystem::current_path().string()+"/config.ini";
 	if (fastweb(config_filepath.c_str()) != 0)
 		return -1;
 
