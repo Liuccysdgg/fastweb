@@ -147,7 +147,9 @@ endif()
 install(FILES config.ini DESTINATION bin/debug)
 install(FILES config.ini DESTINATION bin/release)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin/debug)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/debug)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin/release)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release)
 install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
 
 
