@@ -1,4 +1,6 @@
 #!/bin/bash
+sudo apt update -y
+apt install -y git
 # 创建3rdparty目录
 mkdir -p 3rdparty
 
