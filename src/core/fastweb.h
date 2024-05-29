@@ -42,8 +42,12 @@ private:
 private:
 	network::http::center *m_center = nullptr;
 public:
+#if ENABLE_BYTECODE == 1
 	// 服务字节码
 	bytecode_manager service_bytecode;
 	// 拦截器字节码
 	bytecode_manager interceptor_bytecode;
+#else
+	std::map<std::string, std::string> interceptor;
+#endif
 };

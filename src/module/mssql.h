@@ -18,6 +18,7 @@ namespace module
 		/// 取数据
 		/// </summary>
 		std::string get_str(const std::string& name);
+		std::string get_datetime(const std::string& name);
 		int32 get_i32(const std::string& name);
 		int64 get_i64(const std::string& name);
 		double get_dob(const std::string& name);

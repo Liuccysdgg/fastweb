@@ -76,6 +76,7 @@ namespace module
 		module::select& where_dob(const std::string& name, const std::string& expression, double value);
 		module::select& where_str(const std::string& name, const std::string& expression, const std::string& value);
 		module::select& where_expression(const std::string& expression);
+		module::select& where_like(const std::string& name,const std::string& value);
 		module::select& table(const std::string& table_name);
 		module::select& field(sol::table table);
 		module::select& page(uint32 page, uint32 count);
@@ -107,7 +108,7 @@ namespace module
 		module::update& limit(uint32 start, uint32 count);
 		module::update& orderby(const std::string& field, int sort);
 		uint64 exec();
-
+		void clear();
 		static void regist(sol::state& lua);
 	private:
 		std::shared_ptr<ylib::update> m_update;
@@ -123,7 +124,7 @@ namespace module
 		module::insert& set_str(const std::string& name, const std::string& value);
 		module::insert& set_not_ppst(const std::string& name, const std::string& value);
 		uint64 exec();
-
+		void clear();
 		static void regist(sol::state& lua);
 	private:
 		std::shared_ptr<ylib::insert> m_insert;
@@ -142,7 +143,7 @@ namespace module
 		module::delete_& limit(uint32 start, uint32 count);
 		module::delete_& orderby(const std::string& field, int sort);
 		uint64 exec();
-
+		void clear();
 		static void regist(sol::state& lua);
 	private:
 		std::shared_ptr <ylib::delete_> m_delete;

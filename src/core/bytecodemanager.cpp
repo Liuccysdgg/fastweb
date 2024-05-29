@@ -1,4 +1,6 @@
-﻿#include "bytecodemanager.h"
+﻿
+#include "bytecodemanager.h"
+#if ENABLE_BYTECODE == 1
 #include "fastweb.h"
 #include "utils/luautils.h"
 #include "util/file.h"
@@ -75,3 +77,4 @@ bool bytecode_manager::run()
 
 	return true;
 }
+#endif

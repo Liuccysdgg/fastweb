@@ -37,6 +37,10 @@ sol::table module::request::url_param(sol::this_state s)
         result_table[iter->first] = iter->second;
     return result_table;
 }
+std::string module::request::body()
+{
+    return m_request->parser()->text();
+}
 void* module::request::website()
 {
     return m_request->website();
@@ -55,7 +59,8 @@ void module::request::regist(sol::state& state)
         "session", &module::request::session,
         "token", &module::request::token,
         "body_param", &module::request::body_param,
-        "url_param", &module::request::url_param
+        "url_param", &module::request::url_param,
+        "body", &module::request::body
     );
     state["GET"] = (int)network::http::GET;
     state["POST"] = (int)network::http::POST;

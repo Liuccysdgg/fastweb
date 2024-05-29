@@ -39,6 +39,12 @@ module::select& module::select::where_expression(const std::string& expression)
     return *this;
 }
 
+module::select& module::select::where_like(const std::string& name, const std::string& value)
+{
+    m_select->where_like(name, value);
+    return *this;
+}
+
 module::select& module::select::table(const std::string& table_name)
 {
     m_select->table(table_name);
@@ -79,7 +85,7 @@ module::select& module::select::orderby(const std::string& field, int sort)
 
 void module::select::clear()
 {
-    m_select = nullptr;
+    m_select->clear();
 }
 
 std::shared_ptr<module::mysql_result> module::select::query()
@@ -108,6 +114,8 @@ void module::select::regist(sol::state& lua)
         "where_i64", &module::select::where_i64,
         "where_str", &module::select::where_str,
         "query", &module::select::query,
+        "clear", &module::select::clear,
+        "where_like", &module::select::where_like,
         "clear", &module::select::clear
     );
 }
@@ -210,6 +218,11 @@ uint64 module::update::exec()
     return m_update->exec();
 }
 
+void module::update::clear()
+{
+    m_update->clear();
+}
+
 void module::update::regist(sol::state& lua)
 {
     lua.new_usertype<module::update>("mysql_builder_update",
@@ -228,7 +241,8 @@ void module::update::regist(sol::state& lua)
         "set_dob", &module::update::set_dob,
         "set_i32", &module::update::set_i32,
         "set_i64", &module::update::set_i64,
-        "set_str", &module::update::set_str
+        "set_str", &module::update::set_str,
+        "clear", &module::update::clear
     );
 }
 
@@ -282,6 +296,11 @@ uint64 module::insert::exec()
     return m_insert->exec();
 }
 
+void module::insert::clear()
+{
+    m_insert->clear();
+}
+
 void module::insert::regist(sol::state& lua)
 {
     lua.new_usertype<module::insert>("mysql_builder_insert",
@@ -292,7 +311,8 @@ void module::insert::regist(sol::state& lua)
         "set_dob", &module::insert::set_dob,
         "set_i32", &module::insert::set_i32,
         "set_i64", &module::insert::set_i64,
-        "set_str", &module::insert::set_str
+        "set_str", &module::insert::set_str,
+        "clear", &module::insert::clear
     );
 }
 
@@ -365,6 +385,11 @@ uint64 module::delete_::exec()
     return m_delete->exec();
 }
 
+void module::delete_::clear()
+{
+    m_delete->clear();
+}
+
 void module::delete_::regist(sol::state& lua)
 {
     lua.new_usertype<module::delete_>("mysql_builder_delete",
@@ -378,7 +403,8 @@ void module::delete_::regist(sol::state& lua)
         "where_expression", &module::delete_::where_expression,
         "where_i32", &module::delete_::where_i32,
         "where_i64", &module::delete_::where_i64,
-        "where_str", &module::delete_::where_str
+        "where_str", &module::delete_::where_str,
+        "clear", &module::delete_::clear
     );
 }
 
@@ -529,7 +555,7 @@ VarType module::mysql_result::get(sol::object obj, sol::this_state s)
         GET_VALUE(get_int32);
     }
       
-    else if (type == "varchar" || type == "char" || type == "text")
+    else if (type == "varchar" || type == "char" || type == "text" || type == "datetime")
     {
         GET_VALUE(get_string);
     }

@@ -27,6 +27,7 @@ namespace module
         sol::table body_param(sol::this_state s);
         sol::table url_param(sol::this_state s);
 
+        std::string body();
         void* website();
 
         static void regist(sol::state& state);

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-
+#include "core/define.h"
+#if ENABLE_BYTECODE == 1
 #include "sol/sol.hpp"
 
 #include "base/error.h"
@@ -41,3 +42,4 @@ private:
 	// 通过 ithread 继承
 	bool run() override;
 };
+#endif

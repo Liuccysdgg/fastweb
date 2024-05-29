@@ -59,6 +59,7 @@ bool fastweb::start()
 	// 初始化脚本
 	if (initialization_script() == false)
 		return false;
+#if ENABLE_BYTECODE == 1
 	// 加载服务脚本
 	{
 		auto luas = ylib::file::traverse(sConfig->scripts.app_dir, "(.*\\.lua)");
@@ -73,6 +74,7 @@ bool fastweb::start()
 			}
 		}
 	}
+
 	// 加载拦截器脚本
 	for_iter(iter, sConfig->website.interceptor_scripts) {
 		if (interceptor_bytecode.create(iter->regex_express, iter->filepath, true) == false)
@@ -81,6 +83,7 @@ bool fastweb::start()
 			return false;
 		}
 	}
+
 	// 加入LUA服务映射
 	{
 		auto map = service_bytecode.map();
@@ -146,10 +149,85 @@ bool fastweb::start()
 		}
 			
 	}
-	
+#else
+	// 加入LUA服务映射
+	{
+		auto luas = ylib::file::traverse(sConfig->scripts.app_dir, "(.*\\.lua)");
+		for_iter(iter, luas)
+		{
+			if (iter->second == IS_DIRECTORY)
+				continue;
+			std::string path = strutils::replace(iter->first, '\\', '/');
+			auto state = sStateMgr->get_state();
+			std::string route_pattern;
+			network::http::method method = network::http::ALL;
+			try
+			{
+				auto result = state->script_file(sConfig->scripts.app_dir+"/"+ path);
+				if (result.valid()) {
+					auto router = (*state)["route"];
+					auto type = router.get_type();
+					if (router.is<sol::table>())
+					{
+						sol::optional<std::string> route_pattern_param = router[1];
+						sol::optional<int> method_param = router[2];
+						if (route_pattern_param && route_pattern_param->empty() == false)
+							route_pattern = *route_pattern_param;
+						if (method_param)
+							method = (network::http::method)*method_param;
+					}
+				}
+			}
+			catch (const std::exception& e)
+			{
+				LOG_ERROR(e.what());
+			}
+			if (route_pattern.empty())
+				route_pattern = sConfig->scripts.app_mapping_dir + path;
+
+			// OutPutLog
+			{
+				std::string log;
+				log = "[subscribe] lua: " +path + "\t pattern: " + route_pattern + "\t method: ";
+				switch (method)
+				{
+				case ylib::network::http::GET:
+					log.append("GET");
+					break;
+				case ylib::network::http::POST:
+					log.append("POST");
+					break;
+				case ylib::network::http::PUT:
+					log.append("PUT");
+					break;
+				case ylib::network::http::DEL:
+					log.append("DEL");
+					break;
+				case ylib::network::http::HEAD:
+					log.append("HEAD");
+					break;
+				case ylib::network::http::ALL:
+					log.append("ALL");
+					break;
+				default:
+					break;
+				}
+				LOG_INFO(log);
+			}
+			router->subscribe(route_pattern, method, &fastweb::subscribe_service, new std::string(sConfig->scripts.app_dir+"/" +path));
+		}
+
+	}
+#endif
 	// 加入拦截器
-	for(size_t i=0;i<sConfig->website.interceptor_scripts.size();i++)
-		router->interceptor()->add(sConfig->website.interceptor_scripts[i].regex_express,&fastweb::subscribe_interceptor);
+	for (size_t i = 0; i < sConfig->website.interceptor_scripts.size(); i++)
+	{
+#if ENABLE_BYTECODE == 0
+		interceptor.emplace(sConfig->website.interceptor_scripts[i].regex_express,sConfig->website.interceptor_scripts[i].filepath);
+#endif
+		router->interceptor()->add(sConfig->website.interceptor_scripts[i].regex_express, &fastweb::subscribe_interceptor);
+	}
+		
 
 
 	router->other([&](network::http::request* request, network::http::response* response) {
@@ -232,10 +310,14 @@ void fastweb::subscribe_service(network::http::request* request, network::http::
 	std::string exception_string;
 	try
 	{
+#if ENABLE_BYTECODE == 1
 		auto bytecode = sFastWeb->service_bytecode.get(lua_name);
 		if (bytecode.empty())
 			throw ylib::exception("Serious error: Bytecode not found, possibly due to pre compilation modification error. Please recheck the script file, "+lua_name);
 		auto lbResult = lua->load_buffer(bytecode.data(), bytecode.length(), "bytecode");
+#else
+		auto lbResult = lua->load_file(lua_name);
+#endif
 		if (lbResult.valid() == false)
 		{
 			sol::error err = lbResult;
@@ -276,11 +358,15 @@ bool fastweb::subscribe_interceptor(network::http::reqpack* reqpack, const std::
 	std::string exception_string;
 	try
 	{
+#if ENABLE_BYTECODE == 1
 		const std::string& bytecode = sFastWeb->interceptor_bytecode.get(express_string);
 		if (bytecode.empty())
 			throw ylib::exception("[interceptor] Serious error: Bytecode not found, possibly due to pre compilation modification error. Please recheck the script file, " + express_string);
 
 		auto lbResult = lua->load_buffer(bytecode.data(), bytecode.length(), "bytecode");
+#else
+		auto lbResult = lua->load_file(sFastWeb->interceptor[express_string]);
+#endif
 		if (lbResult.valid() == false)
 		{
 			sol::error err = lbResult;
