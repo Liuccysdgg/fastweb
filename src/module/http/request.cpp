@@ -101,9 +101,9 @@ VarType module::request::param(const std::string& name, bool throw_,sol::this_st
     return sol::make_object(s,value);
 }
 
-std::string module::request::remote_ipaddress(bool find_header, const std::string& inside_ipaddress)
+std::string module::request::remote_ipaddress()
 {
-    return m_request->remote_ipaddress(find_header, inside_ipaddress);
+    return m_request->remote_ipaddress(false);
 }
 ushort module::request::remote_port()
 {

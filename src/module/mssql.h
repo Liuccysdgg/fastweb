@@ -23,14 +23,6 @@ namespace module
 		int64 get_i64(const std::string& name);
 		double get_dob(const std::string& name);
 		void query(const std::string& sql);
-		/*/// <summary>
-		/// 绑定
-		/// </summary>
-		/// <param name="value"></param>
-		void bind_str(const std::string& value);
-		void bind_i32(int32 value);
-		void bind_i64(int64 value);
-		void bind_dob(double value);*/
 		/// <summary>
 		/// 下一行
 		/// </summary>

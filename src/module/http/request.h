@@ -18,7 +18,7 @@ namespace module
         std::string filepath();
         std::string host();
         VarType param(const std::string& name,bool throw_,sol::this_state s);
-        std::string remote_ipaddress(bool find_header = false, const std::string& inside_ipaddress = "");
+        std::string remote_ipaddress();
         ushort remote_port();
 
         std::string token();
