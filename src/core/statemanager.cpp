@@ -22,6 +22,7 @@
 #include "module/codec.h"
 #include "module/time.h"
 #include "module/file.h"
+#include "module/sys.h"
 #define LOOP_STATE_USE 1
 bool state_manager::start()
 {
@@ -82,6 +83,7 @@ sol::state* state_manager::create_state()
 	module::codec::regist(lua);
 	module::time::regist(lua);
 	module::file::regist(lua);
+	module::sys::regist(lua);
 
 	global::getInstance()->regist_lua(lua);
 	return lua;

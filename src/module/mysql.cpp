@@ -567,7 +567,11 @@ VarType module::mysql_result::get(sol::object obj, sol::this_state s)
     {
         GET_VALUE(get_int64);
     }
-    return sol::make_object(s, sol::nil);
+    else if (type == "decimal")
+    {
+        GET_VALUE(get_double);
+    }
+    return sol::make_object(s, sol::nil); 
     
 }
 
