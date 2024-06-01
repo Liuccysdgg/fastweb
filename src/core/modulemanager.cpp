@@ -130,7 +130,7 @@ void module_manager::load_core(sol::state* lua)
 void module_manager::load_3rdparty(sol::state* lua)
 {
 	for_iter(iter, m_modules)
-	{
+	{ 
 		if (iter->second.func(lua, lua->lua_state()) != 0)
 		{
 			LOG_ERROR("egist module failed, filename: "+iter->first);
