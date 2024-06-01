@@ -38,9 +38,9 @@ bool module::session::check()
 	return m_session->check();
 }
 
-void module::session::regist(sol::state& state)
+void module::session::regist(sol::state* lua)
 {
-	state.new_usertype<module::session>("module_session",
+	lua->new_usertype<module::session>("module_session",
 		"check", &module::session::check,
 		"get", &module::session::get,
 		"id", &module::session::id,

@@ -14,6 +14,7 @@ public:
 	struct scripts {
 		std::string app_dir;
 		std::string lib_dir;
+		std::string module_dir;
 		uint32 lua_cache_size = 0;
 		std::string app_mapping_dir;
 		uint32 auto_update_sec = 0;

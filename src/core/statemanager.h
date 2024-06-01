@@ -11,7 +11,7 @@
 
 #include "core/structs.h"
 #include "core/lualibdetecter.h"
-
+#include "core/modulemanager.h"
 /// <summary>
 /// LUA状态管理器
 /// </summary>
@@ -41,6 +41,8 @@ private:
 	size_t m_flag = 0;
 	// LIB变化检测
 	lualib_detecter m_lib_detecter;
+	// 模块管理器
+	module_manager m_module_manager;
 private:
 	// 通过 ithread 继承
 	bool run() override;

@@ -91,9 +91,9 @@ bool module::mssql::next()
 }
 
 
-void module::mssql::regist(sol::state& lua)
+void module::mssql::regist(sol::state* lua)
 {
-    lua.new_usertype<module::mssql>("mssql",
+    lua->new_usertype<module::mssql>("mssql",
         "new", sol::constructors<module::mssql(const std::string&)>(),
         "get_dob", &module::mssql::get_dob,
         "get_i32", &module::mssql::get_i32,

@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project("fastweb")
 
-
+# 设置全局属性
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 # 设置自定义配置类型
@@ -14,7 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(FASTWEBCORE ${PROJECT_NAME}core)
 # 安装复制
 set(CMAKE_INSTALL_ALWAYS_COPY TRUE)
-
+# 设置根目录
+set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # Recursively get all source files
 file(GLOB_RECURSE SOURCE_FILES
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
@@ -126,10 +128,19 @@ else()
 
 endif()
 
-
+# 编译测试调用示例
 add_executable(${PROJECT_NAME} tests/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+
+# 查找并添加所有模块
+file(GLOB MODULES RELATIVE ${CMAKE_SOURCE_DIR}/module ${CMAKE_SOURCE_DIR}/module/*)
+foreach(MODULE ${MODULES})
+    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/module/${MODULE})
+        add_subdirectory(${CMAKE_SOURCE_DIR}/module/${MODULE})
+    endif()
+endforeach()
+
 ########################  安装  ########################
 install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)

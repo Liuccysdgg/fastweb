@@ -98,9 +98,9 @@ uint64 module::select::count()
     return m_select->count();
 }
 
-void module::select::regist(sol::state& lua)
+void module::select::regist(sol::state* lua)
 {
-    lua.new_usertype<module::select>("mysql_builder_select",
+    lua->new_usertype<module::select>("mysql_builder_select",
         "new", sol::constructors<module::select(ylib::mysql::conn*)>(),
         "count", &module::select::count,
         "field", &module::select::field,
@@ -223,9 +223,9 @@ void module::update::clear()
     m_update->clear();
 }
 
-void module::update::regist(sol::state& lua)
+void module::update::regist(sol::state* lua)
 {
-    lua.new_usertype<module::update>("mysql_builder_update",
+    lua->new_usertype<module::update>("mysql_builder_update",
         "new", sol::constructors<module::update(ylib::mysql::conn*)>(),
         "exec", &module::update::exec,
         "limit", &module::update::limit,
@@ -301,9 +301,9 @@ void module::insert::clear()
     m_insert->clear();
 }
 
-void module::insert::regist(sol::state& lua)
+void module::insert::regist(sol::state* lua)
 {
-    lua.new_usertype<module::insert>("mysql_builder_insert",
+    lua->new_usertype<module::insert>("mysql_builder_insert",
         "new", sol::constructors<module::insert(ylib::mysql::conn*)>(),
         "exec", &module::insert::exec,
         "table", &module::insert::table,
@@ -390,9 +390,9 @@ void module::delete_::clear()
     m_delete->clear();
 }
 
-void module::delete_::regist(sol::state& lua)
+void module::delete_::regist(sol::state* lua)
 {
-    lua.new_usertype<module::delete_>("mysql_builder_delete",
+    lua->new_usertype<module::delete_>("mysql_builder_delete",
         "new", sol::constructors<module::delete_(ylib::mysql::conn*)>(),
         "exec", &module::delete_::exec,
         "limit", &module::delete_::limit,
@@ -408,12 +408,12 @@ void module::delete_::regist(sol::state& lua)
     );
 }
 
-void module::mysql_regist(sol::state& lua)
+void module::mysql_regist(sol::state* lua)
 {
-    lua["DESC"] = ylib::sort::DESC;
-    lua["ASC"] = ylib::sort::ASC;
+    (*lua)["DESC"] = ylib::sort::DESC;
+    (*lua)["ASC"] = ylib::sort::ASC;
     
-    lua.new_usertype<ylib::mysql::conn>("mysql_conn",
+    lua->new_usertype<ylib::mysql::conn>("mysql_conn",
         "clear", &ylib::mysql::conn::clear,
         "close", &ylib::mysql::conn::close,
         "commit", &ylib::mysql::conn::commit,
@@ -423,7 +423,7 @@ void module::mysql_regist(sol::state& lua)
         "rollback", &ylib::mysql::conn::rollback,
         "setsql", &ylib::mysql::conn::setsql
     );
-    lua.new_usertype<module::mysql>("mysql_pool",
+    lua->new_usertype<module::mysql>("mysql_pool",
         "new", sol::constructors<module::mysql()>(),
         "start", &module::mysql::start,
         "close", &module::mysql::close,
@@ -589,9 +589,9 @@ sol::table module::mysql_result::table(sol::this_state s)
     return result_table;
 }
 
-void module::mysql_result::regist(sol::state& lua)
+void module::mysql_result::regist(sol::state* lua)
 {
-    lua.new_usertype<module::mysql_result>("mysql_result",
+    lua->new_usertype<module::mysql_result>("mysql_result",
         "field_name", &module::mysql_result::field_name,
         "get", &module::mysql_result::get,
         "next", &module::mysql_result::next,

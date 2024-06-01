@@ -91,6 +91,7 @@ void config::cache()
 
 	scripts.app_dir = m_ini.read("scripts","app_dir");
 	scripts.lib_dir = m_ini.read("scripts", "lib_dir");
+	scripts.module_dir = m_ini.read("scripts", "module_dir");
 	scripts.lua_cache_size = ylib::stoi(m_ini.read("scripts", "lua_cache_size"));
 	scripts.app_mapping_dir = m_ini.read("scripts", "app_mapping_dir");
 	scripts.auto_update_sec = ylib::stoi(m_ini.read("scripts", "auto_update_sec"));

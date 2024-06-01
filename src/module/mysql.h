@@ -9,7 +9,7 @@ namespace module
 	/// 注册
 	/// </summary>
 	/// <param name="lua"></param>
-	void mysql_regist(sol::state& lua);
+	void mysql_regist(sol::state* lua);
 	/// <summary>
 	/// 结果集
 	/// </summary>
@@ -61,7 +61,7 @@ namespace module
 		/// 注册
 		/// </summary>
 		/// <param name="lua"></param>
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		ylib::mysql::result* m_result = nullptr;
 	};
@@ -85,7 +85,7 @@ namespace module
 		void clear();
 		std::shared_ptr<module::mysql_result> query();
 		uint64 count();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<ylib::select> m_select;
 	};
@@ -109,7 +109,7 @@ namespace module
 		module::update& orderby(const std::string& field, int sort);
 		uint64 exec();
 		void clear();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<ylib::update> m_update;
 	};
@@ -125,7 +125,7 @@ namespace module
 		module::insert& set_not_ppst(const std::string& name, const std::string& value);
 		uint64 exec();
 		void clear();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<ylib::insert> m_insert;
 	};
@@ -144,7 +144,7 @@ namespace module
 		module::delete_& orderby(const std::string& field, int sort);
 		uint64 exec();
 		void clear();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr <ylib::delete_> m_delete;
 	};

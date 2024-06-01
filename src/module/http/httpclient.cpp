@@ -43,9 +43,9 @@ ushort module::httpclient::status()
 	return m_client.status();
 }
 
-void module::httpclient::regist(sol::state& state)
+void module::httpclient::regist(sol::state* lua)
 {
-	state.new_usertype<module::httpclient>("httpclient",
+	lua->new_usertype<module::httpclient>("httpclient",
 		"new", sol::constructors<module::httpclient()>(),
 		"get", &module::httpclient::get,
 		"post", &module::httpclient::post,

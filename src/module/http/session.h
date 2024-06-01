@@ -16,7 +16,7 @@ namespace module
         void set(const std::string& name, const std::string& value);
         std::string get(const std::string& name);
         bool check();
-        static void regist(sol::state& state);
+        static void regist(sol::state* lua);
     private:
         network::http::session* m_session = nullptr;
     };

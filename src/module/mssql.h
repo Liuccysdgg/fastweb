@@ -34,7 +34,7 @@ namespace module
 		/// 注册
 		/// </summary>
 		/// <param name="lua"></param>
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<soci::session> m_session;
 		//std::shared_ptr<soci::statement> m_st;

@@ -17,7 +17,7 @@ namespace module
         std::string response();
         ushort status();
 
-        static void regist(sol::state& state);
+        static void regist(sol::state* lua);
     private:
         network::http::client_plus m_client;
     };

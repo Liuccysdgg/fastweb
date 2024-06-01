@@ -10,10 +10,10 @@ module::response::~response()
 {
 }
 
-void module::response::regist(sol::state& state)
+void module::response::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
-    state.new_usertype<module::response>("module_response",
+    lua->new_usertype<module::response>("module_response",
         "send_data", &module::response::send_data,
         "send", &module::response::send,
         "send_file", &module::response::send_file,
