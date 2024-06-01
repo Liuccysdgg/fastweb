@@ -34,6 +34,15 @@ bool fastweb::start()
 		host_config.port = iter->second.port;
 		host_config.ssl = iter->second.https;
 		ws_config.host.push_back(host_config);
+
+		std::string url;
+		if (host_config.ssl)
+			url = "https://";
+		else
+			url = "http://";
+		url += host_config.domain;
+		url += ":" + std::to_string(host_config.port);
+		LOG_WARN("URL: "+url);
 	}
 
 	ws_config.name = "master";
