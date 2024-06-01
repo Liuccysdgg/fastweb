@@ -14,7 +14,16 @@ bool config::open(const std::string& ini_filepath)
 		return false;
 	}
 	std::string src_content = ylib::file::read(temp_filepath);
+	// EXE运行目录
 	src_content = strutils::replace(src_content, "${current_dir}", strutils::replace(system::current_dir(),'\\','/'));
+	// 配置文件目录
+	{
+		std::string ini_dir = ylib::file::parent_dir(ini_filepath);
+		src_content = strutils::replace(src_content, "${config_dir}", ini_dir);
+	}
+	
+
+
 	ylib::file::write(temp_filepath,src_content);
 	if (m_ini.open(temp_filepath))
 	{
