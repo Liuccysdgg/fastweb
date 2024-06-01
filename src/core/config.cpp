@@ -35,14 +35,33 @@ bool config::open(const std::string& ini_filepath)
 	cache();
 	return true;
 }
-bool config::have_https()
+std::vector<std::string> config::lua_app_files()
 {
-	for_iter(iter, domain)
+	std::vector<std::string> results;
+	auto luas = ylib::file::traverse(sConfig->scripts.app_dir, "(.*\\.lua)");
+	for_iter(iter, luas)
 	{
-		if (iter->second.https)
-			return true;
+		if (iter->second == IS_DIRECTORY)
+			continue;
+		std::string path = strutils::replace(iter->first, '\\', '/');
+
+		results.push_back(path);
 	}
-	return false;
+	return results;
+}
+std::vector<std::string> config::lua_lib_files()
+{
+	std::vector<std::string> results;
+	auto luas = ylib::file::traverse(sConfig->scripts.lib_dir, "(.*\\.lua)");
+	for_iter(iter, luas)
+	{
+		if (iter->second == IS_DIRECTORY)
+			continue;
+		std::string path = strutils::replace(iter->first, '\\', '/');
+
+		results.push_back(path);
+	}
+	return results;
 }
 std::vector<std::string> config::extractVariableNames(const std::string& text)
 {

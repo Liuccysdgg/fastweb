@@ -448,12 +448,13 @@ module::mysql::mysql()
 
 module::mysql::~mysql()
 {
+    close();
 }
 
 bool module::mysql::start(const std::string& ipaddress, const std::string& username, const std::string& password, const std::string& database, const std::string& charset, ushort port, int32 size)
 {
     close();
-    m_pool = new ylib::mysql::pool();
+    m_pool = std::make_shared<ylib::mysql::pool>();
     ylib::mysql::mysql_conn_info info;
     info.ipaddress = ipaddress;
     info.username = username;
@@ -466,9 +467,7 @@ bool module::mysql::start(const std::string& ipaddress, const std::string& usern
 
 void module::mysql::close()
 {
-    if (m_pool != nullptr)
-        delete m_pool;
-    m_pool = nullptr;
+
 }
 
 std::shared_ptr<module::select> module::mysql::select()
@@ -496,7 +495,6 @@ void module::mysql::regist_global(const std::string& name, sol::state* lua)
     lua->registry()[name] = this;
     (*lua)[name] = this;
 }
-
 module::mysql_result::mysql_result(ylib::mysql::result* result):m_result(result)
 {
 

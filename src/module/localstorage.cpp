@@ -4,6 +4,11 @@ module::local_storage::local_storage()
 {
 }
 
+module::local_storage::~local_storage()
+{
+    ::ylib::local_storage::close();
+}
+
 sol::optional<std::string> module::local_storage::readex(const std::string& name)
 {
     std::string value;
@@ -23,7 +28,8 @@ void module::local_storage::regist(sol::state* lua)
         "open", &module::local_storage::open,
         "read", &module::local_storage::readex,
         "write", &module::local_storage::write,
-        "self", &module::local_storage::self
+        "self", &module::local_storage::self,
+        "last_error", &module::local_storage::last_error
     );
 }
 

@@ -16,6 +16,7 @@ public:
 	VarType get(const std::string& name, sol::this_state s);
 	void set(const std::string& name,VarType value);
 
+	void clear();
 private:
 	ylib::map<std::string, void*> m_value_ptr;
 

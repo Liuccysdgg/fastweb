@@ -4,6 +4,7 @@
 #define DLL_EXPORT __attribute__((visibility("default")))
 #endif
 extern "C" {
-	DLL_EXPORT int fastweb(const char* config_filepath);
+	DLL_EXPORT int fastweb_start(const char* config_filepath);
+	DLL_EXPORT void fastweb_close();
 }
  

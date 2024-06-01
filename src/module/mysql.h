@@ -154,7 +154,7 @@ namespace module
 	class mysql :public imodule {
 	public:
 		mysql();
-		~mysql();
+		~mysql()  override;
 		/// <summary>
 		/// 启动
 		/// </summary>
@@ -177,10 +177,11 @@ namespace module
 		std::shared_ptr<module::update> update();
 		std::shared_ptr<module::delete_> delete_();
 	private:
-		ylib::mysql::pool* m_pool = nullptr;
+		std::shared_ptr<ylib::mysql::pool> m_pool;
 
 		// 通过 imodule 继承
 		virtual void regist_global(const std::string& name, sol::state* lua);
+		virtual void delete_global() { delete this; }
 	};
 
 }

@@ -37,11 +37,8 @@ public:
 	config() = default;
 	bool open(const std::string& ini_filepath);
 
-	/// <summary>
-	/// 是否含有https
-	/// </summary>
-	/// <returns></returns>
-	bool have_https();
+	std::vector<std::string> lua_app_files();
+	std::vector<std::string> lua_lib_files();
 private:
 	// INI配置文件
 	ylib::ini m_ini;
