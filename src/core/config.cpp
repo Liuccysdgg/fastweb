@@ -14,7 +14,16 @@ bool config::open(const std::string& ini_filepath)
 		return false;
 	}
 	std::string src_content = ylib::file::read(temp_filepath);
+	// EXE运行目录
 	src_content = strutils::replace(src_content, "${current_dir}", strutils::replace(system::current_dir(),'\\','/'));
+	// 配置文件目录
+	{
+		std::string ini_dir = ylib::file::parent_dir(ini_filepath);
+		src_content = strutils::replace(src_content, "${config_dir}", ini_dir);
+	}
+	
+
+
 	ylib::file::write(temp_filepath,src_content);
 	if (m_ini.open(temp_filepath))
 	{
@@ -35,14 +44,33 @@ bool config::open(const std::string& ini_filepath)
 	cache();
 	return true;
 }
-bool config::have_https()
+std::vector<std::string> config::lua_app_files()
 {
-	for_iter(iter, domain)
+	std::vector<std::string> results;
+	auto luas = ylib::file::traverse(sConfig->scripts.app_dir, "(.*\\.lua)");
+	for_iter(iter, luas)
 	{
-		if (iter->second.https)
-			return true;
+		if (iter->second == IS_DIRECTORY)
+			continue;
+		std::string path = strutils::replace(iter->first, '\\', '/');
+
+		results.push_back(path);
 	}
-	return false;
+	return results;
+}
+std::vector<std::string> config::lua_lib_files()
+{
+	std::vector<std::string> results;
+	auto luas = ylib::file::traverse(sConfig->scripts.lib_dir, "(.*\\.lua)");
+	for_iter(iter, luas)
+	{
+		if (iter->second == IS_DIRECTORY)
+			continue;
+		std::string path = strutils::replace(iter->first, '\\', '/');
+
+		results.push_back(path);
+	}
+	return results;
 }
 std::vector<std::string> config::extractVariableNames(const std::string& text)
 {
@@ -63,6 +91,7 @@ void config::cache()
 
 	scripts.app_dir = m_ini.read("scripts","app_dir");
 	scripts.lib_dir = m_ini.read("scripts", "lib_dir");
+	scripts.module_dir = m_ini.read("scripts", "module_dir");
 	scripts.lua_cache_size = ylib::stoi(m_ini.read("scripts", "lua_cache_size"));
 	scripts.app_mapping_dir = m_ini.read("scripts", "app_mapping_dir");
 	scripts.auto_update_sec = ylib::stoi(m_ini.read("scripts", "auto_update_sec"));

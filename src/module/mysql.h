@@ -9,7 +9,7 @@ namespace module
 	/// 注册
 	/// </summary>
 	/// <param name="lua"></param>
-	void mysql_regist(sol::state& lua);
+	void mysql_regist(sol::state* lua);
 	/// <summary>
 	/// 结果集
 	/// </summary>
@@ -61,7 +61,7 @@ namespace module
 		/// 注册
 		/// </summary>
 		/// <param name="lua"></param>
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		ylib::mysql::result* m_result = nullptr;
 	};
@@ -85,7 +85,7 @@ namespace module
 		void clear();
 		std::shared_ptr<module::mysql_result> query();
 		uint64 count();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<ylib::select> m_select;
 	};
@@ -109,7 +109,7 @@ namespace module
 		module::update& orderby(const std::string& field, int sort);
 		uint64 exec();
 		void clear();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<ylib::update> m_update;
 	};
@@ -125,7 +125,7 @@ namespace module
 		module::insert& set_not_ppst(const std::string& name, const std::string& value);
 		uint64 exec();
 		void clear();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr<ylib::insert> m_insert;
 	};
@@ -144,7 +144,7 @@ namespace module
 		module::delete_& orderby(const std::string& field, int sort);
 		uint64 exec();
 		void clear();
-		static void regist(sol::state& lua);
+		static void regist(sol::state* lua);
 	private:
 		std::shared_ptr <ylib::delete_> m_delete;
 	};
@@ -154,7 +154,7 @@ namespace module
 	class mysql :public imodule {
 	public:
 		mysql();
-		~mysql();
+		~mysql()  override;
 		/// <summary>
 		/// 启动
 		/// </summary>
@@ -177,10 +177,11 @@ namespace module
 		std::shared_ptr<module::update> update();
 		std::shared_ptr<module::delete_> delete_();
 	private:
-		ylib::mysql::pool* m_pool = nullptr;
+		std::shared_ptr<ylib::mysql::pool> m_pool;
 
 		// 通过 imodule 继承
 		virtual void regist_global(const std::string& name, sol::state* lua);
+		virtual void delete_global() { delete this; }
 	};
 
 }

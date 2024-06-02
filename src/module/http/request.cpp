@@ -45,10 +45,10 @@ void* module::request::website()
 {
     return m_request->website();
 }
-void module::request::regist(sol::state& state)
+void module::request::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
-    state.new_usertype<module::request>("module_request",
+    lua->new_usertype<module::request>("module_request",
         "header", &module::request::header,
         "method", &module::request::method,
         "filepath", &module::request::filepath,
@@ -62,11 +62,11 @@ void module::request::regist(sol::state& state)
         "url_param", &module::request::url_param,
         "body", &module::request::body
     );
-    state["GET"] = (int)network::http::GET;
-    state["POST"] = (int)network::http::POST;
-    state["DEL"] = (int)network::http::DEL;
-    state["HEAD"] = (int)network::http::HEAD;
-    state["PUT"] = (int)network::http::PUT;
+    (*lua)["GET"] = (int)network::http::GET;
+    (*lua)["POST"] = (int)network::http::POST;
+    (*lua)["DEL"] = (int)network::http::DEL;
+    (*lua)["HEAD"] = (int)network::http::HEAD;
+    (*lua)["PUT"] = (int)network::http::PUT;
 }
 
 

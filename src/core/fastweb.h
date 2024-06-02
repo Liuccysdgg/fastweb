@@ -3,51 +3,26 @@
 #include "base/error.h"
 #include "base/singleton.hpp"
 #include "net/http_center.h"
-#include "net/http_response.h"
-#include "net/http_request.h"
-#include "core/bytecodemanager.h"
+#include "core/subscribemanager.h"
+#include "core/interceptormanager.h"
 class fastweb:public ylib::error_base,public ylib::singleton<fastweb> {
 public:
 	fastweb() = default;
 	bool start();
 	void stop();
-
-	/// <summary>
-	/// 发送文件
-	/// </summary>
-	/// <param name="response"></param>
-	/// <param name="filepath"></param>
-	void send_file(network::http::response* response, std::string filepath);
-	/// <summary>
-	/// 发送404
-	/// </summary>
-	/// <param name="response"></param>
-	void send_404(network::http::response* response);
 private:
 	/// <summary>
 	/// 初始化执行脚本
 	/// </summary>
 	/// <returns></returns>
 	bool initialization_script();
-	/// <summary>
-	/// 服务回调
-	/// </summary>
-	/// <param name="request"></param>
-	/// <param name="response"></param>
-	static void subscribe_service(network::http::request* request, network::http::response* response, void* extra);
-	/// <summary>
-	/// 拦截器回调
-	/// </summary>
-	static bool subscribe_interceptor(network::http::reqpack* reqpack,const std::string& express_string);
 private:
+	// 初始化脚本虚拟机
+	luastate* m_state_init = nullptr;
+	// 网站服务核心
 	network::http::center *m_center = nullptr;
-public:
-#if ENABLE_BYTECODE == 1
-	// 服务字节码
-	bytecode_manager service_bytecode;
-	// 拦截器字节码
-	bytecode_manager interceptor_bytecode;
-#else
-	std::map<std::string, std::string> interceptor;
-#endif
+	// 订阅管理器
+	subscribe_manager m_subscribe;
+	// 拦截器管理器
+	interceptor_manager m_interceptor;
 };

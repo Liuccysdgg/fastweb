@@ -8,7 +8,7 @@ extern "C" {
 #ifdef _WIN32
 	DLL_EXPORT
 #endif
-	int fastweb(const char* config_filepath)
+	int fastweb_start(const char* config_filepath)
 	{
 		std::cout << "=========== [fastweb engine] ============" << std::endl;
 		if (sConfig->open(config_filepath) == false)
@@ -25,4 +25,12 @@ extern "C" {
 		LOG_SUCC("success");
 		return 0;
 	}
+#ifdef _WIN32
+	DLL_EXPORT
+#endif
+		void fastweb_close()
+	{
+		fastweb::getInstance()->stop();
+	}
 }
+

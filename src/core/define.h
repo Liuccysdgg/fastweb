@@ -30,4 +30,3 @@
 #define VarType sol::object
 
 
-#define ENABLE_BYTECODE 0

@@ -43,3 +43,18 @@ void global::set(const std::string& name, VarType value)
 {
 	m_values.set(name, value, true);
 }
+
+void global::clear()
+{ 
+	m_values.clear();
+	m_value_ptr.clear();
+
+	//m_value_ptr.lock();
+	//for_iter(iter, (*m_value_ptr.parent()))
+	//{
+	//	auto im = static_cast<module::imodule*>(iter->second);
+	//	im->delete_global();
+	//}
+	//m_value_ptr.unlock();
+	//m_value_ptr.clear();
+}

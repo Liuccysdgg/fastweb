@@ -18,7 +18,7 @@ namespace module
         bool redirect(const std::string& filepath, bool MovedPermanently = false);
         bool forward(const std::string& filepath);
         void header(const std::string& name, const std::string& value);
-        static void regist(sol::state& state);
+        static void regist(sol::state* lua);
     private:
         network::http::response* m_response = nullptr;
     };

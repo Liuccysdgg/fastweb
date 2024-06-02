@@ -30,7 +30,7 @@ namespace module
         std::string body();
         void* website();
 
-        static void regist(sol::state& state);
+        static void regist(sol::state* lua);
     private:
         bool request_param(const std::string& name, std::string& value);
     private:

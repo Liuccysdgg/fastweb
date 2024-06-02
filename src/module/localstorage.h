@@ -9,6 +9,7 @@ namespace module
 	class local_storage : public ylib::local_storage,public module::imodule {
 	public:
 		local_storage();
+		~local_storage() override;
 		/// <summary>
 		/// 取数据
 		/// </summary>
@@ -20,6 +21,7 @@ namespace module
 	private:
 		// 通过 imodule 继承
 		virtual void regist_global(const std::string& name, sol::state* lua);
+		virtual void delete_global() { delete this; }
 	};
 }
 

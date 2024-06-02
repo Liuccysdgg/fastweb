@@ -5,7 +5,7 @@
 /// </summary>
 namespace module
 {
-	void regist_globalfuns(sol::state& lua);
+	void regist_globalfuns(sol::state* lua);
 	/// <summary>
 	/// 生成软件唯一GUID
 	/// </summary>
