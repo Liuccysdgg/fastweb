@@ -22,6 +22,12 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	void load(sol::state* lua);
+	/// <summary>
+	/// 搜索LUA
+	/// </summary>
+	/// <param name="filepath"></param>
+	/// <returns></returns>
+	std::string search(const std::string& filepath);
 private:
 	/// <summary>
 	/// 加载核心库

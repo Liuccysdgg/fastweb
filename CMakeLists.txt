@@ -171,9 +171,5 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release)
 install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
 
 
-if(MSVC)
-	install(FILES 3rdparty/luarocks.exe DESTINATION bin/debug/3rdparty)
-	install(FILES 3rdparty/luarocks.exe DESTINATION bin/release/3rdparty)
-endif()
 
 

@@ -64,15 +64,23 @@ std::vector<std::string> config::lua_app_files()
 std::vector<std::string> config::lua_lib_files()
 {
 	std::vector<std::string> results;
-	auto luas = ylib::file::traverse(sConfig->scripts.lib_dir, "(.*\\.lua)");
-	for_iter(iter, luas)
+	for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
 	{
-		if (iter->second == IS_DIRECTORY)
-			continue;
-		std::string path = strutils::replace(iter->first, '\\', '/');
-
-		results.push_back(path);
+		auto luas = ylib::file::traverse(sConfig->scripts.lib_dir[i], "(.*\\.lua)");
+		for_iter(iter, luas)
+		{
+			if (iter->second == IS_DIRECTORY)
+				continue;
+			std::string path = sConfig->scripts.lib_dir[i]+"/"+ strutils::replace(iter->first, '\\', '/');
+			results.push_back(path);
+		}
 	}
+	// 去重
+	std::sort(results.begin(), results.end());
+	auto newEnd = std::unique(results.begin(), results.end());
+	results.erase(newEnd, results.end());
+
+	
 	return results;
 }
 std::vector<std::string> config::extractVariableNames(const std::string& text)
@@ -93,7 +101,7 @@ void config::cache()
 {
 
 	scripts.app_dir = m_ini.read("scripts","app_dir");
-	scripts.lib_dir = m_ini.read("scripts", "lib_dir");
+	scripts.lib_dir = ylib::json::from(m_ini.read("scripts", "lib_dir")).to<std::vector<std::string>>();
 	scripts.module_dir = m_ini.read("scripts", "module_dir");
 	scripts.lua_cache_size = ylib::stoi(m_ini.read("scripts", "lua_cache_size"));
 	scripts.app_mapping_dir = m_ini.read("scripts", "app_mapping_dir");
@@ -101,7 +109,7 @@ void config::cache()
 
 	website.static_dir = m_ini.read("website","static_dir");
 	website.default_404 = m_ini.read("website", "default_404");
-	website.default_index = strutils::split(m_ini.read("website", "default_index"), ',');
+	website.default_index = ylib::json::from(m_ini.read("website", "default_index")).to<std::vector<std::string>>();
 	website.session_dir = m_ini.read("website", "session_dir");
 	website.session_timeout_sec = ylib::stoi(m_ini.read("website", "session_timeout_sec"));
 	website.Initialization_script = m_ini.read("website", "Initialization_script");

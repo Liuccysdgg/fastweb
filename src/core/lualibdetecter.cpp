@@ -23,7 +23,7 @@ bool lualib_detecter::changed()
 				changed = true;
 				break;
 			}
-			if (ylib::file::last_write_time(sConfig->scripts.lib_dir+"/"+ lib_files[i]) != iter->second)
+			if (ylib::file::last_write_time(lib_files[i]) != iter->second)
 			{
 				changed = true;
 				break;
@@ -39,7 +39,7 @@ bool lualib_detecter::changed()
 
 	m_files.clear();
 	for (size_t i = 0; i < lib_files.size(); i++)
-		m_files.emplace(lib_files[i], ylib::file::last_write_time(sConfig->scripts.lib_dir + "/" + lib_files[i]));
+		m_files.emplace(lib_files[i], ylib::file::last_write_time(lib_files[i]));
 
 	return true;
 }

@@ -14,10 +14,19 @@ std::string module::timer::add(const std::string& name, const std::string& filep
     std::string filepath2;
     if (ylib::file::exist(sConfig->scripts.app_dir + "/" + filepath))
         filepath2 = sConfig->scripts.app_dir + "/" + filepath;
-    else if (ylib::file::exist(sConfig->scripts.lib_dir + "/" + filepath))
-        filepath2 = sConfig->scripts.lib_dir + "/" + filepath;
     else
-        return "not found script lua, App: " + std::string(sConfig->scripts.app_dir + "/" + filepath) + "\r\n" + std::string(sConfig->scripts.lib_dir + "/" + filepath);
+    {
+        std::string filepath2 = module_manager::getInstance()->search(filepath);
+        if (filepath2.empty())
+        {
+            std::string result;
+            result = "not found script lua, App: " + std::string(sConfig->scripts.app_dir + "/" + filepath) + "\r\n Lib: ";
+            for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
+                result.append(std::string(sConfig->scripts.lib_dir[i] + "/" + filepath)+"\r\n");
+            return result;
+        }
+        
+    }
 
     std::unique_lock<std::mutex> uni(module::timer::getInstance()->m_mutex);
 
