@@ -25,15 +25,10 @@
 #include "module/time.h"
 #include "module/file.h"
 #include "module/sys.h"
+#include "module/timer.h"
 module_manager::module_manager()
 {
-	
 }
-
-module_manager::~module_manager()
-{
-}
-
 void module_manager::start()
 {
 	close();
@@ -122,6 +117,7 @@ void module_manager::load_core(sol::state* lua)
 	module::time::regist(lua);
 	module::file::regist(lua);
 	module::sys::regist(lua);
+	module::timer::regist(lua);
 
 	global::getInstance()->regist_lua(lua);
 

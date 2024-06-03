@@ -12,6 +12,9 @@
 #include "core/statemanager.h"
 #include "core/subscribemanager.h"
 #include "core/interceptormanager.h"
+fastweb::fastweb()
+{
+}
 bool fastweb::start()
 {
 

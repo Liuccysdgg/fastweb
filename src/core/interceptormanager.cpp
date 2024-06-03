@@ -42,7 +42,7 @@ bool interceptor_manager::callback(network::http::reqpack* reqpack, const std::s
 		if (lbResult.valid() == false)
 		{
 			sol::error err = lbResult;
-			throw ylib::exception("[interceptor] Failed to load bytecode, " + std::string(err.what()));
+			throw ylib::exception("[interceptor] Failed to load script, " + std::string(err.what()));
 		}
 		module::request m_request(reqpack->request());
 		module::response m_response(reqpack->response());

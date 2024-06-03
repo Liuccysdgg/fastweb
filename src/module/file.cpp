@@ -17,6 +17,14 @@ sol::table module::file::list(const std::string& dirpath, const std::string& reg
     }
     return result_table;
 }
+void module::file::copy_dir(const std::string& src_dir, const std::string& dst_dir)
+{
+    ylib::file::copy_dir(src_dir, dst_dir);
+}
+bool module::file::create_dir(const std::string& dirpath)
+{
+    return ylib::file::create_dir(dirpath,true);
+}
 void module::file::regist(sol::state* lua)
 {
     (*lua)["IS_FILE"] = (int)ylib::FileType::IS_FILE;
@@ -24,6 +32,8 @@ void module::file::regist(sol::state* lua)
 
 
     lua->new_usertype<module::file>("file",
-        "list", &module::file::list
+        "list", &module::file::list,
+        "copy_dir", &module::file::copy_dir,
+        "create_dir", &module::file::create_dir
     );
 }

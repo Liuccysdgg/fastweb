@@ -2,6 +2,7 @@
 #include <map>
 #include "sol/sol.hpp"
 #include "core/structs.h"
+#include "base/singleton.hpp"
 typedef int (*fastweb_module_regist)(void*, void*);
 struct module_info {
 	void* dll = nullptr;
@@ -11,15 +12,13 @@ struct module_info {
 /// <summary>
 /// 模块管理器
 /// </summary>
-class module_manager{
+class module_manager :public ylib::error_base, public ylib::singleton<module_manager> {
 public:
 	module_manager();
-	~module_manager();
-
 	void start();
 	void close();
 	/// <summary>
-	/// 创建虚拟机
+	/// 加载虚拟机库
 	/// </summary>
 	/// <returns></returns>
 	void load(sol::state* lua);

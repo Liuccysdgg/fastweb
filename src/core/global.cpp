@@ -1,6 +1,10 @@
 ﻿
 #include "global.h"
 #include "module/imodule.h"
+global::global()
+{
+
+}
 void global::regist_lua(sol::state* lua)
 {
 	m_value_ptr.lock();

@@ -115,7 +115,7 @@ void subscribe_manager::callback(network::http::request* request, network::http:
 		if (lbResult.valid() == false)
 		{
 			sol::error err = lbResult;
-			throw ylib::exception("Failed to load bytecode, " + std::string(err.what()));
+			throw ylib::exception("Failed to load script, " + std::string(err.what()));
 		}
 		module::request m_request(request);
 		module::response m_response(response);

@@ -7,7 +7,7 @@
 #include "core/interceptormanager.h"
 class fastweb:public ylib::error_base,public ylib::singleton<fastweb> {
 public:
-	fastweb() = default;
+	fastweb();
 	bool start();
 	void stop();
 private:

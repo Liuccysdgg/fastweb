@@ -35,7 +35,7 @@ public:
 		std::vector<std::string> domain;
 	};
 public:
-	config() = default;
+	config();
 	bool open(const std::string& ini_filepath);
 
 	std::vector<std::string> lua_app_files();

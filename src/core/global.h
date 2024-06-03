@@ -5,7 +5,7 @@
 #include "util/map.hpp"
 class global :public ylib::error_base,public ylib::singleton<global>{
 public:
-	global() = default;
+	global();
 
 	void regist_lua(sol::state* lua);
 

@@ -1,5 +1,8 @@
 ﻿#include "config.h"
 #include <regex>
+config::config()
+{
+}
 bool config::open(const std::string& ini_filepath)
 {
 	if (ylib::file::exist(ini_filepath) == false)
