@@ -66,7 +66,7 @@ bool state_manager::run()
 {
 	if (m_lib_detecter.changed())
 		m_flag++;
-	system::sleep_msec(sConfig->scripts.auto_update_sec);
+	system::sleep_msec(sConfig->scripts.auto_update_sec*1000);
 	return true;
 }
 
