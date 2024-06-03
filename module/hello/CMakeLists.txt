@@ -40,12 +40,12 @@ if(MSVC)
 			IPHLPAPI.lib
 			WS2_32.lib
 			Shell32.lib
+			lualib
 			${YLIB}/lib/libcrypto_static_win64.lib
 			$<$<CONFIG:Debug>:${ROOT_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.lib>
 			$<$<CONFIG:Debug>:${ROOT_DIR}/3rdparty/mysql/lib/Debug/mysqlcppconn.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/leveldb_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/libzip_d.lib>
-			$<$<CONFIG:Debug>:${YLIB}/lib/lua_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/sqlite3_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/ylib_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/zlib_d.lib>
@@ -59,7 +59,6 @@ if(MSVC)
 			$<$<CONFIG:Release>:${ROOT_DIR}/3rdparty/mysql/lib/Release/mysqlcppconn.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/leveldb.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/libzip.lib>
-			$<$<CONFIG:Release>:${YLIB}/lib/lua.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/sqlite3.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/zlib.lib>

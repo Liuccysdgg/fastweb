@@ -17,6 +17,13 @@ set(FASTWEBCORE ${PROJECT_NAME}core)
 set(CMAKE_INSTALL_ALWAYS_COPY TRUE)
 # 设置根目录
 set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 添加三方模块
+if(MSVC)
+	add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/lua)
+ endif()
+
+
 # Recursively get all source files
 file(GLOB_RECURSE SOURCE_FILES
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
@@ -40,12 +47,13 @@ endforeach()
 set(YLIB ${CMAKE_INSTALL_PREFIX}/../ylib)
 include_directories(${PROJECT_SOURCE_DIR}/src)
 if(MSVC)
+	
 	include_directories(${PROJECT_SOURCE_DIR}/src)
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
-	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Windows/Include)
-	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/lua)
+	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/lua/include)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/soci/include)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/mysql/include/jdbc)
+	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Windows/Include)
 	include_directories(${YLIB}/include)
 	add_compile_options(/W3 /wd4819)
 else()
@@ -74,14 +82,12 @@ if(MSVC)
 			IPHLPAPI.lib
 			WS2_32.lib
 			Shell32.lib
+			lualib
 			${YLIB}/lib/libcrypto_static_win64.lib
-		
 			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.lib>
 			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/mysqlcppconn.lib>
-
 			$<$<CONFIG:Debug>:${YLIB}/lib/leveldb_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/libzip_d.lib>
-			$<$<CONFIG:Debug>:${YLIB}/lib/lua_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/sqlite3_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/ylib_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/zlib_d.lib>
@@ -141,6 +147,7 @@ foreach(MODULE ${MODULES})
     endif()
 endforeach()
 
+
 ########################  安装  ########################
 install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
@@ -160,8 +167,13 @@ install(FILES config.ini DESTINATION bin/release)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin/debug)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/debug)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION bin/release)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release) 
 install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
 
+
+if(MSVC)
+	install(FILES 3rdparty/luarocks.exe DESTINATION bin/debug/3rdparty)
+	install(FILES 3rdparty/luarocks.exe DESTINATION bin/release/3rdparty)
+endif()
 
 
