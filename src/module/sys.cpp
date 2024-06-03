@@ -47,6 +47,6 @@ void module::sys::regist(sol::state* lua)
         "temp_path", &module::sys::temp_path,
         "desktop_path", &module::sys::desktop_path,
         "currentuser_path", &module::sys::currentuser_path,
-        "mac", &module::sys::mac,
+        "mac", &module::sys::mac
     );
 }

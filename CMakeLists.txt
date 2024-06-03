@@ -102,7 +102,6 @@ if(MSVC)
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/mysqlcppconn.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/leveldb.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/libzip.lib>
-			$<$<CONFIG:Release>:${YLIB}/lib/lua.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/sqlite3.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/zlib.lib>
