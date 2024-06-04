@@ -22,7 +22,7 @@ bool config::open(const std::string& ini_filepath)
 	// 配置文件目录
 	{
 		std::string ini_dir = ylib::file::parent_dir(ini_filepath);
-		src_content = strutils::replace(src_content, "${config_dir}", ini_dir);
+		src_content = strutils::replace(strutils::replace(src_content, "${config_dir}", ini_dir), '\\', '/');
 	}
 	
 

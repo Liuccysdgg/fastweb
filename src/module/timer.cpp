@@ -16,7 +16,7 @@ std::string module::timer::add(const std::string& name, const std::string& filep
         filepath2 = sConfig->scripts.app_dir + "/" + filepath;
     else
     {
-        std::string filepath2 = module_manager::getInstance()->search(filepath);
+        filepath2 = module_manager::getInstance()->search(filepath);
         if (filepath2.empty())
         {
             std::string result;
@@ -41,6 +41,7 @@ std::string module::timer::add(const std::string& name, const std::string& filep
     ti.loop = loop;
     ti.msec = msec;
     ti.exec_msec = time::now_msec() + msec;
+
     module::timer::getInstance()->m_list.emplace(name, ti);
     module::timer::getInstance()->m_insert = true;
     return "";
@@ -82,22 +83,29 @@ bool module::timer::run()
             return 1000;
         return wait_msec;
     };
-    auto exec_func = [&](const std::string& filepath,const std::string& funname)->bool {
-        auto lua = sStateMgr->get();
+    auto exec_func = [&](timer_info& ti)->bool {
         std::string exception_string;
         try
         {
-            auto lbResult = lua->state->load_file(filepath);
-            if (lbResult.valid() == false)
+            // 加载LUA文件
+            if (ti.lua == nullptr)
             {
-                sol::error err = lbResult;
-                throw ylib::exception("Failed to load script, " + std::string(err.what()));
+                ti.lua = sStateMgr->get();
+                auto lbResult = ti.lua->state->load_file(ti.filepath);
+                if (lbResult.valid() == false)
+                {
+                    sol::error err = lbResult;
+                    throw ylib::exception("Failed to load script, " + std::string(err.what()));
+                }
+                lbResult();
             }
-            lbResult();
-
-            if (funname.empty() == false)
+            // 加载函数
+            if (ti.funname != "" && ti.function.valid() == false)
+                ti.function = (*ti.lua->state)[ti.funname];
+            // 执行函数
+            if (ti.function.valid())
             {
-                auto result = (*lua->state)[funname]();
+                auto result = ti.function();
                 if (!result.valid()) {
                     sol::error err = result;
                     throw ylib::exception(err.what());
@@ -110,7 +118,7 @@ bool module::timer::run()
         {
             exception_string = e.what();
             if (sConfig->website.debug)
-                LOG_ERROR("[timer][" + filepath + "]: " + e.what());
+                LOG_ERROR("[timer][" + ti.filepath + "]: " + e.what());
             return false;
         }
         return false;
@@ -132,8 +140,7 @@ bool module::timer::run()
         if (iter->second.exec_msec <= now_msec)
         {
             bool ready_remove = false;
-            auto ti = iter->second;
-            if (exec_func(ti.filepath,ti.funname) == false)
+            if (exec_func(iter->second) == false)
                 ready_remove = true;
             if (ready_remove == false)
             {
@@ -154,7 +161,16 @@ bool module::timer::run()
     }
     std::string name;
     while (m_removed.pop(name))
-        m_list.erase(name);
+    {
+        auto iter = m_list.find(name);
+        if (iter != m_list.end())
+        {
+            iter->second.lua->state->collect_garbage();
+            sStateMgr->push(iter->second.lua);
+            m_list.erase(iter);
+        }
+    }
+        
 
     return true;
 }

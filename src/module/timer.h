@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
 #include "imodule.h"
+#include "core/structs.h"
 #include "base/singleton.hpp"
 #include "util/thread.h"
 #include "util/queue.hpp"
@@ -15,6 +16,8 @@ namespace module
 		bool loop = false;
 		timestamp exec_msec = 0;
 		timestamp msec = 0;
+		luastate* lua = nullptr;
+		sol::function function;
 	};
 	/// <summary>
 	/// 定时器
