@@ -26,6 +26,8 @@
 #include "module/file.h"
 #include "module/sys.h"
 #include "module/timer.h"
+#include "module/process.h"
+#include "module/ini.h"
 module_manager::module_manager()
 {
 }
@@ -129,6 +131,8 @@ void module_manager::load_core(sol::state* lua)
 	module::file::regist(lua);
 	module::sys::regist(lua);
 	module::timer::regist(lua);
+	module::ini::regist(lua);
+	module::process::regist(lua);
 
 	global::getInstance()->regist_lua(lua);
 

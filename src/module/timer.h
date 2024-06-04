@@ -26,8 +26,20 @@ namespace module
 	public:
 		timer();
 		~timer();
-
+		/// <summary>
+		/// 增加
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="filepath"></param>
+		/// <param name="funname"></param>
+		/// <param name="msec"></param>
+		/// <param name="loop"></param>
+		/// <returns></returns>
 		static std::string add(const std::string& name,const std::string& filepath,const std::string& funname,int msec,bool loop);
+		/// <summary>
+		/// 移除
+		/// </summary>
+		/// <param name="name"></param>
 		static void remove(const std::string& name);
 
 
