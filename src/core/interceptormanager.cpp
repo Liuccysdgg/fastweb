@@ -47,16 +47,10 @@ bool interceptor_manager::callback(network::http::reqpack* reqpack, const std::s
 		module::request m_request(reqpack->request());
 		module::response m_response(reqpack->response());
 
-		lbResult();
-
 		(*lua->state)["response"] = m_response;
 		(*lua->state)["request"] = m_request;
 
-		auto result = (*lua->state)["access"]();
-		if (!result.valid()) {
-			sol::error err = result;
-			throw ylib::exception(err.what());
-		}
+		auto result = lbResult();
 		ok_continue = result.get<bool>();
 	}
 	catch (const std::exception& e)
