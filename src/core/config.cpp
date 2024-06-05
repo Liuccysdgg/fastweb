@@ -47,20 +47,6 @@ bool config::open(const std::string& ini_filepath)
 	cache();
 	return true;
 }
-std::vector<std::string> config::lua_app_files()
-{
-	std::vector<std::string> results;
-	auto luas = ylib::file::traverse(sConfig->scripts.app_dir, "(.*\\.lua)");
-	for_iter(iter, luas)
-	{
-		if (iter->second == IS_DIRECTORY)
-			continue;
-		std::string path = strutils::replace(iter->first, '\\', '/');
-
-		results.push_back(path);
-	}
-	return results;
-}
 std::vector<std::string> config::lua_lib_files()
 {
 	std::vector<std::string> results;
@@ -100,14 +86,12 @@ std::vector<std::string> config::extractVariableNames(const std::string& text)
 void config::cache()
 {
 
-	scripts.app_dir = m_ini.read("scripts","app_dir");
 	scripts.lib_dir = ylib::json::from(m_ini.read("scripts", "lib_dir")).to<std::vector<std::string>>();
 	scripts.module_dir = m_ini.read("scripts", "module_dir");
 	scripts.lua_cache_size = ylib::stoi(m_ini.read("scripts", "lua_cache_size"));
-	scripts.app_mapping_dir = m_ini.read("scripts", "app_mapping_dir");
 	scripts.auto_update_sec = ylib::stoi(m_ini.read("scripts", "auto_update_sec"));
 
-	website.static_dir = m_ini.read("website","static_dir");
+	website.dir = m_ini.read("website","dir");
 	website.default_404 = m_ini.read("website", "default_404");
 	website.default_index = ylib::json::from(m_ini.read("website", "default_index")).to<std::vector<std::string>>();
 	website.session_dir = m_ini.read("website", "session_dir");

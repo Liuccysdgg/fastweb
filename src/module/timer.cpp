@@ -12,15 +12,15 @@ module::timer::~timer()
 std::string module::timer::add(const std::string& name, const std::string& filepath, const std::string& funname, int msec, bool loop)
 {
     std::string filepath2;
-    if (ylib::file::exist(sConfig->scripts.app_dir + "/" + filepath))
-        filepath2 = sConfig->scripts.app_dir + "/" + filepath;
+    if (ylib::file::exist(sConfig->website.dir + "/" + filepath))
+        filepath2 = sConfig->website.dir + "/" + filepath;
     else
     {
         filepath2 = module_manager::getInstance()->search(filepath);
         if (filepath2.empty())
         {
             std::string result;
-            result = "not found script lua, App: " + std::string(sConfig->scripts.app_dir + "/" + filepath) + "\r\n Lib: ";
+            result = "not found script lua, Root: " + std::string(sConfig->website.dir + "/" + filepath) + "\r\n Lib: ";
             for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
                 result.append(std::string(sConfig->scripts.lib_dir[i] + "/" + filepath)+"\r\n");
             return result;

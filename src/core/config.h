@@ -12,11 +12,9 @@ public:
 		network::http::ssl_config ssl;
 	};
 	struct scripts {
-		std::string app_dir;
 		std::vector<std::string> lib_dir;
 		std::string module_dir;
 		uint32 lua_cache_size = 0;
-		std::string app_mapping_dir;
 		uint32 auto_update_sec = 0;
 	};
 	struct website {
@@ -24,7 +22,7 @@ public:
 			std::string filepath;
 			std::string regex_express;
 		};
-		std::string static_dir;
+		std::string dir;
 		std::string default_404;
 		std::vector<std::string> default_index;
 		std::string session_dir;
@@ -38,7 +36,6 @@ public:
 	config();
 	bool open(const std::string& ini_filepath);
 
-	std::vector<std::string> lua_app_files();
 	std::vector<std::string> lua_lib_files();
 private:
 	// INI配置文件

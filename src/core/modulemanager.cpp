@@ -155,6 +155,7 @@ void module_manager::load_lualib(sol::state* lua)
 	std::string current_path = (*lua)["package"]["path"];  // 获取当前的路径
 	for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
 		current_path += ";" + sConfig->scripts.lib_dir[i] + "/?.lua";  // 添加新的路径
+	current_path += ";" + sConfig->website.dir + "/?.lua";  // 添加新的路径
 	(*lua)["package"]["path"] = current_path;  // 设置修改后的路径
 }
 

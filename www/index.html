@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Web</title>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <style>
+        .button-container {
+            margin-bottom: 10px;
+        }
+        .button-container button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fast Web</h1>
+    <div class="button-container">
+        <button id="admin-btn">需要权限地址</button>
+        <button id="public-btn">公共接口</button>
+    </div>
+    <form id="interceptor-form">
+        <label for="path">访问路径:</label>
+        <input type="text" id="path" name="path" required>
+        <br><br>
+        <label for="key">Key:</label>
+        <input type="text" id="key" name="key" required>
+        <br><br>
+        <button type="submit">提交</button>
+    </form>
+
+    <script>
+        $(document).ready(function(){
+            $('#admin-btn').click(function(){
+                $('#path').val('/api/admin/admin.lua');
+            });
+
+            $('#public-btn').click(function(){
+                $('#path').val('/api/public/info.lua');
+            });
+
+            $('#interceptor-form').on('submit', function(event){
+                event.preventDefault();
+                var path = $('#path').val();
+                var key = $('#key').val();
+                var data = JSON.stringify({ key: key });
+
+                $.ajax({
+                    url: path,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: data,
+                    success: function(response) {
+                        alert('请求成功: ' + response);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert('请求失败: ' + textStatus + ' - ' + errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
