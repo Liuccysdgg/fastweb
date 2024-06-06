@@ -109,21 +109,6 @@ void fastweb::config::cache()
 	log.warn = m_ini.read("log", "warn") == "1";
 	log.error = m_ini.read("log", "error") == "1";
 
-	{
-		ylib::json interceptors = ylib::json::from(m_ini.read("website", "interceptor_scripts"));
-		for (size_t i = 0; i < interceptors.size(); i++)
-		{
-			if (interceptors[i].size() != 2)
-			{
-				LOG_WARN("Interceptor configuration, if the "+std::to_string(i) + "th array has non 2 members, this interceptor will be invalidated.");
-				continue;
-			}
-			website::__interceptor inr;
-			inr.filepath = interceptors[i][0].to<std::string>();
-			inr.regex_express = interceptors[i][1].to<std::string>();
-			website.interceptor_scripts.push_back(inr);
-		}
-	}
 
 	// website 域名参数
 	for(size_t i=0;i< website.domain.size();i++)

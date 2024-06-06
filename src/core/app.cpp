@@ -82,7 +82,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 		return false;
 	}
 	auto website = m_center->website_byname(ws_config.name);
-	auto router = website->router();
+	router = website->router();
 	
 	// 初始化脚本
 	if (initialization_script() == false)
@@ -92,10 +92,6 @@ bool fastweb::app::start(const std::string& config_filepath)
 
 	// 加载订阅
 	subscribe->load(router);
-	// 加载拦截器
-	interceptor->load(router);
-	
-		
 
 	return m_center->start();
 }
@@ -103,8 +99,10 @@ bool fastweb::app::start(const std::string& config_filepath)
 void fastweb::app::stop()
 {
 	this->m_lastErrorDesc.clear();
+	
 	subscribe->clear();
 	interceptor->clear();
+	router = nullptr;
 	if (m_center != nullptr)
 	{
 		m_center->close();

@@ -23,11 +23,13 @@ extern "C" {
 #ifdef _WIN32
 	DLL_EXPORT
 #endif
-		void fastweb_close(void* app)
-		{
-			auto a = static_cast<fastweb::app*>(app);
-			a->stop();
-			delete a;
-		}
+	void fastweb_close(void* app)
+	{
+		if (app == nullptr)
+			return;
+		auto a = static_cast<fastweb::app*>(app);
+		a->stop();
+		delete a;
+	}
 }
 

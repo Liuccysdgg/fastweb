@@ -31,6 +31,8 @@ namespace fastweb
 		// 网站服务核心
 		network::http::center* m_center = nullptr;
 	public:
+		// 网站路由
+		network::http::router* router = nullptr;
 		// 日志
 		std::shared_ptr<fastweb::log> log;
 		// 订阅管理器

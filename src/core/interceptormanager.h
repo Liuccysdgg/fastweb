@@ -7,6 +7,7 @@
 #include "net/http_request.h"
 #include "net/http_response.h"
 #include "net/http_router.h"
+#include "util/map.hpp"
 namespace fastweb
 {
 	/// <summary>
@@ -17,9 +18,10 @@ namespace fastweb
 		interceptor_manager(fastweb::app* app);
 		~interceptor_manager();
 
-		void load(network::http::router* router);
+		bool add(const std::string& regex_express,const std::string& filepath);
+		bool remove(const std::string& regex_express);
+		bool exist(const std::string& regex_express);
 		void clear();
-
 	private:
 		/// <summary>
 		/// 服务回调
@@ -28,7 +30,6 @@ namespace fastweb
 		/// <param name="express_string"></param>
 		bool callback(network::http::reqpack* reqpack, const std::string& express_string);
 	private:
-		network::http::router* m_router = nullptr;
-		std::map<std::string, std::string> interceptor;
+		ylib::map<std::string, std::string> interceptor;
 	};
 }

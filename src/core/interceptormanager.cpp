@@ -12,25 +12,33 @@ fastweb::interceptor_manager::~interceptor_manager()
 {
 	clear();
 }
-void fastweb::interceptor_manager::load(network::http::router* router)
+bool fastweb::interceptor_manager::add(const std::string& regex_express, const std::string& filepath)
 {
-	clear();
-	m_router = router;
-	for (size_t i = 0; i < app()->config->website.interceptor_scripts.size(); i++)
+	if (interceptor_manager::interceptor.exist(regex_express))
 	{
-		interceptor_manager::interceptor.emplace(app()->config->website.interceptor_scripts[i].regex_express, app()->config->website.interceptor_scripts[i].filepath);
-		router->interceptor()->add(app()->config->website.interceptor_scripts[i].regex_express, [&](network::http::reqpack* reqpack, const std::string& express_string)->bool {
-			return this->callback(reqpack, express_string);
-		});
+		LOG_WARN("`" + regex_express + "` interceptor is invalid, duplicate rule, filepath: " + filepath);
+		return false;
 	}
+	interceptor_manager::interceptor.add(regex_express, filepath);
+	app()->router->interceptor()->add(regex_express, [this](network::http::reqpack* reqpack, const std::string& express_string)->bool {
+		return this->callback(reqpack, express_string);
+	});
+	return true;
 }
-
+bool fastweb::interceptor_manager::remove(const std::string& regex_express)
+{
+	interceptor_manager::interceptor.del(regex_express);
+	return app()->router->interceptor()->remove(regex_express);
+}
+bool fastweb::interceptor_manager::exist(const std::string& regex_express)
+{
+	return interceptor_manager::interceptor.exist(regex_express);
+}
 void fastweb::interceptor_manager::clear()
 {
-	if(m_router != nullptr)
-		m_router->interceptor()->clear();
 	interceptor_manager::interceptor.clear();
-	m_router = nullptr;
+	if(app()->router != nullptr)
+		app()->router->interceptor()->clear();
 }
 
 bool fastweb::interceptor_manager::callback(network::http::reqpack* reqpack, const std::string& express_string)
@@ -61,7 +69,7 @@ bool fastweb::interceptor_manager::callback(network::http::reqpack* reqpack, con
 	{
 		exception_string = e.what();
 		if (app()->config->website.debug)
-			LOG_ERROR("[subscribe_interceptor][" + reqpack->request()->filepath() + "]: " + e.what());
+			LOG_ERROR("[interceptor][" + reqpack->request()->filepath() + "]: " + e.what());
 	}
 	lua->state->collect_garbage();
 	app()->state->push(lua);

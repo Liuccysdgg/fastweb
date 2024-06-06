@@ -14,6 +14,7 @@
 #include "module/http/response.h"
 #include "module/http/session.h"
 #include "module/http/httpclient.h"
+#include "module/http/interceptor.h"
 #include "module/mysql.h"
 #ifdef _WIN32
 #include "module/mssql.h"
@@ -119,6 +120,7 @@ void fastweb::module_manager::load_core(sol::state* lua)
 
 	module::request::regist(lua);
 	module::response::regist(lua);
+	module::interceptor::regist(lua);
 	module::session::regist(lua);
 	module::httpclient::regist(lua);
 	module::mysql_regist(lua);
