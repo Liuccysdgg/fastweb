@@ -32,6 +32,16 @@ public:
 		bool debug = false;
 		std::vector<std::string> domain;
 	};
+
+	struct log {
+		bool enable = false;
+		std::string dir;
+		std::string name;
+		bool succ = false;
+		bool info = false;
+		bool warn = false;
+		bool error = false;
+	};
 public:
 	config();
 	bool open(const std::string& ini_filepath);
@@ -54,5 +64,6 @@ private:
 public:
 	scripts scripts;
 	website website;
+	log log;
 	std::map<std::string, domain> domain;
 };

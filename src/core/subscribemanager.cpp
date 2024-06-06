@@ -59,7 +59,7 @@ void subscribe_manager::other(network::http::request* request, network::http::re
 	};
 
 	std::string filepath;
-	if (request->filepath() == "/")
+	if (strutils::right(request->filepath(),1) == "/")
 	{
 		for (size_t i = 0; i < sConfig->website.default_index.size(); i++)
 		{

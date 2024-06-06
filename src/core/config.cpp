@@ -100,6 +100,14 @@ void config::cache()
 	website.debug = m_ini.read("website", "debug") == "1";
 	website.domain = ylib::json::from(m_ini.read("website", "domain")).to<std::vector<std::string>>();
 
+	log.enable = m_ini.read("log", "enable") == "1";
+	log.dir = m_ini.read("log", "dir");
+	log.name = m_ini.read("log", "name");
+	log.succ = m_ini.read("log", "succ") == "1";
+	log.info = m_ini.read("log", "info") == "1";
+	log.warn = m_ini.read("log", "warn") == "1";
+	log.error = m_ini.read("log", "error") == "1";
+
 	{
 		ylib::json interceptors = ylib::json::from(m_ini.read("website", "interceptor_scripts"));
 		for (size_t i = 0; i < interceptors.size(); i++)

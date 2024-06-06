@@ -14,11 +14,11 @@
 #include "utils/logutils.h"
 #include <variant>
 
-#define LOG_ERROR(MSG) LogUtils::error(MSG,__FILE__ ,__func__,__LINE__ )
-#define LOG_WARN(MSG) LogUtils::warn(MSG,__FILE__ ,__func__,__LINE__ )
-#define LOG_INFO(MSG) LogUtils::info(MSG,__FILE__ ,__func__,__LINE__ )
-#define LOG_SUCC(MSG) LogUtils::success(MSG,__FILE__ ,__func__,__LINE__ )
-#define LOG_DEBUG(MSG) LogUtils::debug(MSG,__FILE__ ,__func__,__LINE__ )
+#define LOG_ERROR(MSG) LogUtils::getInstance()->error(MSG,__FILE__ ,__func__,__LINE__ )
+#define LOG_WARN(MSG) LogUtils::getInstance()->warn(MSG,__FILE__ ,__func__,__LINE__ )
+#define LOG_INFO(MSG) LogUtils::getInstance()->info(MSG,__FILE__ ,__func__,__LINE__ )
+#define LOG_SUCC(MSG) LogUtils::getInstance()->success(MSG,__FILE__ ,__func__,__LINE__ )
+#define LOG_DEBUG(MSG) LogUtils::getInstance()->debug(MSG,__FILE__ ,__func__,__LINE__ )
 
 
 #define sConfig 	::config::getInstance()

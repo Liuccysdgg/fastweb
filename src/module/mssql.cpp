@@ -64,14 +64,14 @@ double module::mssql::get_dob(const std::string& name)
 }
 void module::mssql::query(const std::string& sql)
 {
-    std::cout << "[mssql][query]: " << sql << std::endl;
+    //std::cout << "[mssql][query]: " << sql << std::endl;
     m_read = false;
     m_rows = (m_session->prepare << sql);
     //m_iter = m_rows.begin();
 }
 int64 module::mssql::update(const std::string& sql)
 {
-    std::cout << "[mssql][update]: " << sql << std::endl;
+    //std::cout << "[mssql][update]: " << sql << std::endl;
     soci::statement st = m_session->prepare << sql;
     st.execute();
     return st.get_affected_rows();
