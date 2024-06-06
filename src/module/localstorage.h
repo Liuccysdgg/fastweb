@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "util/localstorage.h"
-#include "imodule.h"
+#include "basemodule.h"
 namespace module
 {
 	/// <summary>
 	/// 本地缓存(leveldb)
 	/// </summary>
-	class local_storage : public ylib::local_storage,public module::imodule {
+	class local_storage : public ylib::local_storage,public module::base {
 	public:
 		local_storage();
 		~local_storage() override;

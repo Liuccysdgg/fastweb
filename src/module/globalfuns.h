@@ -5,24 +5,49 @@
 /// </summary>
 namespace module
 {
-	void regist_globalfuns(sol::state* lua);
-	/// <summary>
-	/// 生成软件唯一GUID
-	/// </summary>
-	/// <returns></returns>
-	std::string make_software_guid();
-	/// <summary>
-	/// 注册全局指针(仅允许初始化lua使用)
-	/// </summary>
-	/// <returns></returns>
-	bool global_regist(const std::string& name, void* ptr, sol::this_state ts);
+	class globalfuncs {
+	public:
+		/// <summary>
+		/// 生成软件唯一GUID
+		/// </summary>
+		/// <returns></returns>
+		static std::string make_software_guid();
+		/// <summary>
+		/// 接管打印
+		/// </summary>
+		/// <param name="args"></param>
+		static void print(sol::variadic_args args, sol::this_state ts);
+		/// <summary>
+		/// 置全局指针
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="ptr"></param>
+		/// <param name="ts"></param>
+		/// <returns></returns>
+		static bool set_ptr(const std::string& name, void* ptr, sol::this_state ts);
 
-	void global_set(const std::string& name, VarType value);
-	VarType global_get(const std::string& name, sol::this_state s);
-	/// <summary>
-	/// 抛出异常
-	/// </summary>
-	/// <param name="msg"></param>
-	void throw_string(const std::string& msg);
+		/// <summary>
+		/// 置全局对象
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		static void set_obj(const std::string& name, sol::object value, sol::this_state ts);
+		/// <summary>
+		/// 取全局对象
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		static sol::object get_obj(const std::string& name, sol::this_state s);
+		/// <summary>
+		/// 抛出异常
+		/// </summary>
+		/// <param name="msg"></param>
+		static void throw_string(const std::string& msg);
+
+
+		static void regist(sol::state* lua);
+	};
+	
 }
 

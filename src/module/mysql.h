@@ -2,7 +2,7 @@
 #include "db/mysql.h"
 #include "db/sqler.h"
 #include "sol/sol.hpp"
-#include "imodule.h"
+#include "module/basemodule.h"
 namespace module
 {
 	/// <summary>
@@ -50,7 +50,7 @@ namespace module
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		VarType get(sol::object obj, sol::this_state s);
+		sol::object get(sol::object obj, sol::this_state s);
 		/// <summary>
 		/// 取结果集到table
 		/// </summary>
@@ -151,7 +151,7 @@ namespace module
 	/// <summary>
 	/// MYSQL连接池
 	/// </summary>
-	class mysql :public imodule {
+	class mysql :public module::base {
 	public:
 		mysql();
 		~mysql()  override;

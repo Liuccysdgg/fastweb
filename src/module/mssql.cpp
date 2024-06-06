@@ -1,6 +1,7 @@
 #ifdef _WIN32
 #include "mssql.h"
 #include "soci/odbc/soci-odbc.h"
+#include "core/define.h"
 module::mssql::mssql(const std::string& connstring)
 {
     m_session = std::make_shared<soci::session>(soci::odbc, connstring);

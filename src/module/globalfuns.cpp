@@ -3,41 +3,65 @@
 #include "util/codec.h"
 #include "util/time.h"
 #include "core/global.h"
+#include "core/app.h"
 static ylib::counter<uint64> s_counter_guid;
-void module::regist_globalfuns(sol::state* lua)
+void module::globalfuncs::regist(sol::state* lua)
 {
-	lua->set_function("global_get", module::global_get);
-	lua->set_function("global_set", module::global_set);
-	lua->set_function("make_software_guid", module::make_software_guid);
-	lua->set_function("throw_string", module::throw_string);
+	lua->set_function("set_ptr", module::globalfuncs::set_ptr);
+	lua->set_function("get_obj", module::globalfuncs::get_obj);
+	lua->set_function("set_obj", module::globalfuncs::set_obj);
+	lua->set_function("make_software_guid", module::globalfuncs::make_software_guid);
+	lua->set_function("throw_string", module::globalfuncs::throw_string);
+	lua->set_function("print", module::globalfuncs::print);
+
 }
-std::string module::make_software_guid()
+std::string module::globalfuncs::make_software_guid()
 {
 	return codec::md5(std::to_string(time::now_msec()) + std::to_string(s_counter_guid.make()));
 }
-
-bool module::global_regist(const std::string& name, void* ptr, sol::this_state ts)
+void module::globalfuncs::print(sol::variadic_args args, sol::this_state ts)
 {
-	return global::getInstance()->regist_ptr(name,ptr, ts);
+	GET_APP;
+
+	std::ostringstream oss;
+	for (auto arg : args) {
+		if (arg.get_type() == sol::type::string) {
+			oss << arg.as<std::string>();
+		}
+		else if (arg.get_type() == sol::type::number) {
+			oss << arg.as<double>(); // 可以处理整数和浮点数
+		}
+		else if (arg.get_type() == sol::type::boolean) {
+			oss << (arg.as<bool>() ? "true" : "false");
+		}
+		else if (arg.get_type() == sol::type::nil) {
+			oss << "nil";
+		}
+		else {
+			oss << "unsupported type";
+		}
+		oss << " "; // 添加一个空格分隔符
+	}
+	app->log->lua(oss.str());
+}
+bool module::globalfuncs::set_ptr(const std::string& name, void* ptr, sol::this_state ts)
+{
+	GET_APP;
+	return app->global->set_ptr(name,ptr, ts);
 }
 
-void module::global_set(const std::string& name, VarType value)
+void module::globalfuncs::set_obj(const std::string& name, sol::object value, sol::this_state ts)
 {
-	global::getInstance()->set(name,value);
+	GET_APP;
+	return app->global->set_obj(name,value);
 }
 
-VarType module::global_get(const std::string& name, sol::this_state s)
+sol::object module::globalfuncs::get_obj(const std::string& name, sol::this_state ts)
 {
-	return global::getInstance()->get(name,s);
+	GET_APP;
+	return app->global->get_obj(name, ts);
 }
-
-#if 0
-void* module::global_get(const std::string& name)
-{
-	return global::getInstance()->get_ptr(name);
-}
-#endif
-void module::throw_string(const std::string& msg)
+void module::globalfuncs::throw_string(const std::string& msg)
 {
 	throw ylib::exception(msg);
 }

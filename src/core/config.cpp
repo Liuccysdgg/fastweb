@@ -1,9 +1,10 @@
 ﻿#include "config.h"
 #include <regex>
-config::config()
+#include "core/app.h"
+fastweb::config::config(fastweb::app* ptr):Interface(ptr)
 {
 }
-bool config::open(const std::string& ini_filepath)
+bool fastweb::config::open(const std::string& ini_filepath)
 {
 	if (ylib::file::exist(ini_filepath) == false)
 	{
@@ -47,17 +48,17 @@ bool config::open(const std::string& ini_filepath)
 	cache();
 	return true;
 }
-std::vector<std::string> config::lua_lib_files()
+std::vector<std::string> fastweb::config::lua_lib_files()
 {
 	std::vector<std::string> results;
-	for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
+	for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
 	{
-		auto luas = ylib::file::traverse(sConfig->scripts.lib_dir[i], "(.*\\.lua)");
+		auto luas = ylib::file::traverse(app()->config->scripts.lib_dir[i], "(.*\\.lua)");
 		for_iter(iter, luas)
 		{
 			if (iter->second == IS_DIRECTORY)
 				continue;
-			std::string path = sConfig->scripts.lib_dir[i]+"/"+ strutils::replace(iter->first, '\\', '/');
+			std::string path = app()->config->scripts.lib_dir[i]+"/"+ strutils::replace(iter->first, '\\', '/');
 			results.push_back(path);
 		}
 	}
@@ -69,7 +70,7 @@ std::vector<std::string> config::lua_lib_files()
 	
 	return results;
 }
-std::vector<std::string> config::extractVariableNames(const std::string& text)
+std::vector<std::string> fastweb::config::extractVariableNames(const std::string& text)
 {
 	std::regex pattern("\\$\\{([^}]+)\\}"); // 使用捕获组提取中间的内容
 	std::vector<std::string> results;
@@ -83,7 +84,7 @@ std::vector<std::string> config::extractVariableNames(const std::string& text)
 	return results;
 }
 
-void config::cache()
+void fastweb::config::cache()
 {
 
 	scripts.lib_dir = ylib::json::from(m_ini.read("scripts", "lib_dir")).to<std::vector<std::string>>();

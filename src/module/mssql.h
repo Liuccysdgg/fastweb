@@ -1,8 +1,8 @@
 ﻿#pragma once
 #ifdef _WIN32
 #include "sol/sol.hpp"
-#include "imodule.h"
 #include "soci/soci.h"
+#include "core/define.h"
 namespace module
 {
 	/// <summary>

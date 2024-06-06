@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include "core/fastweb.h"
+#include "core/app.h"
 #include "util/system.h"
 #include "core/define.h"
 #include "core/config.h"
@@ -8,29 +8,26 @@ extern "C" {
 #ifdef _WIN32
 	DLL_EXPORT
 #endif
-	int fastweb_start(const char* config_filepath)
+	void* fastweb_start(const char* config_filepath)
 	{
-		std::cout << "=========== [fastweb engine] ============" << std::endl;
-		if (sConfig->open(config_filepath) == false)
+		fastweb::app* app = new fastweb::app();
+		if (app->start(config_filepath) == false)
 		{
-			LOG_ERROR("open config failed," + sConfig->last_error());
-			return -1;
+			app->log->error("fastweb start failed," + app->last_error(), __FILE__, __func__, __LINE__);
+			delete app;
+			return nullptr;
 		}
-
-		if (fastweb::getInstance()->start() == false)
-		{
-			LOG_ERROR("fastweb start failed," + fastweb::getInstance()->last_error());
-			return -1;
-		}
-		LOG_SUCC("success");
-		return 0;
+		app->log->success("success", __FILE__, __func__, __LINE__);
+		return app;
 	}
 #ifdef _WIN32
 	DLL_EXPORT
 #endif
-		void fastweb_close()
-	{
-		fastweb::getInstance()->stop();
-	}
+		void fastweb_close(void* app)
+		{
+			auto a = static_cast<fastweb::app*>(app);
+			a->stop();
+			delete a;
+		}
 }
 

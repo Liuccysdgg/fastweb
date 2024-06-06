@@ -3,35 +3,41 @@
 #include "util/system.h"
 #include "util/file.h"
 #include "core/config.h"
+#include "core/app.h"
 #include "core/statemanager.h"
 module::timer::~timer()
 {
     ::ithread::stop();
     ::ithread::wait();
 }
-std::string module::timer::add(const std::string& name, const std::string& filepath, const std::string& funname, int msec, bool loop)
+std::string module::timer::add(const std::string& name, const std::string& filepath, const std::string& funname, int msec, bool loop, sol::this_state ts)
 {
+    GET_APP;
     std::string filepath2;
-    if (ylib::file::exist(sConfig->website.dir + "/" + filepath))
-        filepath2 = sConfig->website.dir + "/" + filepath;
+    if (ylib::file::exist(app->config->website.dir + "/" + filepath))
+        filepath2 = app->config->website.dir + "/" + filepath;
     else
     {
-        filepath2 = module_manager::getInstance()->search(filepath);
+        
+        filepath2 = app->state->module_manager->search(filepath);
+
         if (filepath2.empty())
         {
             std::string result;
-            result = "not found script lua, Root: " + std::string(sConfig->website.dir + "/" + filepath) + "\r\n Lib: ";
-            for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
-                result.append(std::string(sConfig->scripts.lib_dir[i] + "/" + filepath)+"\r\n");
+            result = "not found script lua, Root: " + std::string(app->config->website.dir + "/" + filepath) + "\r\n Lib: ";
+            for (size_t i = 0; i < app->config->scripts.lib_dir.size(); i++)
+                result.append(std::string(app->config->scripts.lib_dir[i] + "/" + filepath)+"\r\n");
             return result;
         }
         
     }
 
-    std::unique_lock<std::mutex> uni(module::timer::getInstance()->m_mutex);
+    std::unique_lock<std::mutex> uni(m_mutex);
+    
+    m_app = app;
 
-    auto iter = module::timer::getInstance()->m_list.find(name);
-    if (iter != module::timer::getInstance()->m_list.end())
+    auto iter = m_list.find(name);
+    if (iter != m_list.end())
         return "exist name `" + name + "`";
 
     timer_info ti;
@@ -42,24 +48,29 @@ std::string module::timer::add(const std::string& name, const std::string& filep
     ti.msec = msec;
     ti.exec_msec = time::now_msec() + msec;
 
-    module::timer::getInstance()->m_list.emplace(name, ti);
-    module::timer::getInstance()->m_insert = true;
+    m_list.emplace(name, ti);
+    m_insert = true;
     return "";
 }
-void module::timer::remove(const std::string& name)
+void module::timer::remove(const std::string& name, sol::this_state ts)
 {
-    module::timer::getInstance()->m_removed.push(name);
-    //std::unique_lock<std::mutex> uni(module::timer::getInstance()->m_mutex);
-    //module::timer::getInstance()->m_list.erase(name);
+    m_removed.push(name);
 }
 void module::timer::regist(sol::state* lua)
 {
     lua->new_usertype<module::timer>("timer",
+        "new", sol::constructors<module::timer()>(),
         "add", &module::timer::add,
-        "remove", &module::timer::remove
+        "remove", &module::timer::remove,
+        "self", &module::timer::self
     );
 }
 
+void module::timer::regist_global(const std::string& name, sol::state* lua)
+{
+    lua->registry()[name] = this;
+    (*lua)[name] = this;
+}
 module::timer::timer()
 {
     ::ithread::start();
@@ -67,7 +78,11 @@ module::timer::timer()
 
 bool module::timer::run()
 {
-
+    if (m_app == nullptr)
+    {
+        system::sleep_msec(100);
+        return true;
+    }
     auto comp_wait_msec = [&]()->timestamp {
         timestamp wait_msec = 0;
         auto now_msec = time::now_msec();
@@ -90,7 +105,7 @@ bool module::timer::run()
             // 加载LUA文件
             if (ti.lua == nullptr)
             {
-                ti.lua = sStateMgr->get();
+                ti.lua = m_app->state->get();
                 auto lbResult = ti.lua->state->load_file(ti.filepath);
                 if (lbResult.valid() == false)
                 {
@@ -117,8 +132,8 @@ bool module::timer::run()
         catch (const std::exception& e)
         {
             exception_string = e.what();
-            if (sConfig->website.debug)
-                LOG_ERROR("[timer][" + ti.filepath + "]: " + e.what());
+            if (m_app->config->website.debug)
+                m_app->log->error("[timer][" + ti.filepath + "]: " + e.what(), __FILE__, __func__, __LINE__);
             return false;
         }
         return false;
@@ -127,11 +142,11 @@ bool module::timer::run()
     auto wait_msec = comp_wait_msec();
     for (size_t i = 0; i < wait_msec/10; i++)
     {
-        if (module::timer::getInstance()->m_insert)
+        if (m_insert || m_state == 1)
             break;
         system::sleep_msec(10);
     }
-    module::timer::getInstance()->m_insert = false;
+   m_insert = false;
 
     std::unique_lock<std::mutex> uni(m_mutex);
     auto now_msec = time::now_msec();
@@ -166,7 +181,7 @@ bool module::timer::run()
         if (iter != m_list.end())
         {
             iter->second.lua->state->collect_garbage();
-            sStateMgr->push(iter->second.lua);
+            m_app->state->push(iter->second.lua);
             m_list.erase(iter);
         }
     }

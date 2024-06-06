@@ -1,23 +1,26 @@
 ﻿#include "subscribemanager.h"
 #include "core/config.h"
+#include "core/app.h"
 #include "core/statemanager.h"
 #include "module/http/request.h"
 #include "module/http/response.h"
-subscribe_manager::subscribe_manager()
+fastweb::subscribe_manager::subscribe_manager(fastweb::app* ptr):Interface(ptr)
 {
 }
-subscribe_manager::~subscribe_manager()
+fastweb::subscribe_manager::~subscribe_manager()
 {
 	clear();
 }
-void subscribe_manager::load(network::http::router* router)
+void fastweb::subscribe_manager::load(network::http::router* router)
 {
 	clear();
 	m_router = router;
-	router->other(&subscribe_manager::other);
+	router->other([&](network::http::request* request, network::http::response* response) {
+		this->other(request,response);
+	});
 }
 
-void subscribe_manager::clear()
+void fastweb::subscribe_manager::clear()
 {
 	if (m_router != nullptr)
 	{
@@ -28,11 +31,11 @@ void subscribe_manager::clear()
 	m_subextra.clear();
 	m_router = nullptr;
 }
-void subscribe_manager::other(network::http::request* request, network::http::response* response)
+void fastweb::subscribe_manager::other(network::http::request* request, network::http::response* response)
 {
-	auto send_404 = [](network::http::response* response) {
-		std::string default_404 = sConfig->website.dir + "\\" + sConfig->website.default_404;
-		if (sConfig->website.default_404 == "" || ylib::file::exist(default_404) == false)
+	auto send_404 = [&](network::http::response* response) {
+		std::string default_404 = app()->config->website.dir + "\\" + app()->config->website.default_404;
+		if (app()->config->website.default_404 == "" || ylib::file::exist(default_404) == false)
 		{
 			response->send((std::string)"404 Not Found", 404, "Not Found");
 		}
@@ -61,22 +64,22 @@ void subscribe_manager::other(network::http::request* request, network::http::re
 	std::string filepath;
 	if (strutils::right(request->filepath(),1) == "/")
 	{
-		for (size_t i = 0; i < sConfig->website.default_index.size(); i++)
+		for (size_t i = 0; i < app()->config->website.default_index.size(); i++)
 		{
-			filepath = sConfig->website.dir + request->filepath() + sConfig->website.default_index[i];
+			filepath = app()->config->website.dir + request->filepath() + app()->config->website.default_index[i];
 			if (ylib::file::exist(filepath))
 				break;
 		}
 	}
 	else
-		filepath = sConfig->website.dir + request->filepath();
+		filepath = app()->config->website.dir + request->filepath();
 	send_file(response, filepath);
 }
 
-void subscribe_manager::exec(const std::string& filepath, network::http::request* request, network::http::response* response)
+void fastweb::subscribe_manager::exec(const std::string& filepath, network::http::request* request, network::http::response* response)
 {
 
-	auto lua = sStateMgr->get();
+	auto lua = app()->state->get();
 	std::string exception_string;
 	try
 	{
@@ -96,12 +99,12 @@ void subscribe_manager::exec(const std::string& filepath, network::http::request
 	catch (const std::exception& e)
 	{
 		exception_string = e.what();
-		if (sConfig->website.debug)
+		if (app()->config->website.debug)
 			LOG_ERROR("[subscribe_service][" + request->filepath() + "]: " + e.what());
 	}
 	// 清理
 	lua->state->collect_garbage();
-	sStateMgr->push(lua);
+	app()->state->push(lua);
 
 	if (exception_string.empty() == false)
 		throw ylib::exception(exception_string);

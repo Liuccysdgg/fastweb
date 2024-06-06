@@ -1,13 +1,12 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
-#include "imodule.h"
-
+#include "core/define.h"
 namespace module
 {
 	/// <summary>
 	/// 系统
 	/// </summary>
-	class sys:public module::imodule {
+	class sys {
 	public:
 		static std::string current_dir();
 		static void sleep_msec(uint32 msec);

@@ -1,17 +1,18 @@
 ﻿#include "lualibdetecter.h"
 #include "core/config.h"
+#include "core/app.h"
 #include "util/file.h"
-lualib_detecter::lualib_detecter()
+fastweb::lualib_detecter::lualib_detecter(fastweb::app* app):Interface(app)
 {
 }
 
-lualib_detecter::~lualib_detecter()
+fastweb::lualib_detecter::~lualib_detecter()
 {
 }
 
-bool lualib_detecter::changed()
+bool fastweb::lualib_detecter::changed()
 {
-	auto lib_files = sConfig->lua_lib_files();
+	auto lib_files = app()->config->lua_lib_files();
 	bool changed = false;
 	if (lib_files.size() == m_files.size())
 	{

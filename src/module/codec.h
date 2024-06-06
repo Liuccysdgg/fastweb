@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
-#include "imodule.h"
+#include "basemodule.h"
 
 namespace module
 {
 	/// <summary>
 	/// 编解码
 	/// </summary>
-	class codec:public module::imodule {
+	class codec{
 	public:
 		/// <summary>
 		/// URL解码

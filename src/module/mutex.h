@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
-#include "imodule.h"
+#include "module/basemodule.h"
 
 namespace module
 {
 	/// <summary>
 	/// 互斥锁
 	/// </summary>
-	class mutex:public module::imodule {
+	class mutex:public module::base {
 	public:
 		mutex();
 		~mutex() override;

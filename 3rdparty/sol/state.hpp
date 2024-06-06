@@ -26,7 +26,10 @@
 
 #include <sol/state_view.hpp>
 #include <sol/thread.hpp>
-
+namespace fastweb
+{
+	class app;
+}
 namespace sol {
 
 	class state : private std::unique_ptr<lua_State, detail::state_deleter>, public state_view {

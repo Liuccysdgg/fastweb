@@ -17,7 +17,7 @@ namespace module
         network::http::method method();
         std::string filepath();
         std::string host();
-        VarType param(const std::string& name,bool throw_,sol::this_state s);
+        sol::object param(const std::string& name,bool throw_,sol::this_state s);
         std::string remote_ipaddress();
         ushort remote_port();
 

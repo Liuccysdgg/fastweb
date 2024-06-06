@@ -1,28 +1,32 @@
 ﻿
 #include "global.h"
-#include "module/imodule.h"
-global::global()
+#include "module/basemodule.h"
+fastweb::global::global(fastweb::app* app):Interface(app)
 {
-
 }
-void global::regist_lua(sol::state* lua)
+fastweb::global::~global()
 {
-	m_value_ptr.lock();
-	for_iter(iter, (*m_value_ptr.parent()))
+	clear();
+}
+
+void fastweb::global::regist(sol::state* lua)
+{
+	m_ptrs.lock();
+	for_iter(iter, (*m_ptrs.parent()))
 	{
-		auto im = static_cast<module::imodule*>(iter->second);
+		auto im = static_cast<module::base*>(iter->second);
 		im->regist_global(iter->first, lua);
 	}
-	m_value_ptr.unlock();
+	m_ptrs.unlock();
 }
-void* global::get_ptr(const std::string& name)
+void* fastweb::global::get_ptr(const std::string& name)
 {
 	void* result = nullptr;
-	m_value_ptr.get(name,result);
+	m_ptrs.get(name,result);
 	return result;
 }
 
-bool global::regist_ptr(const std::string& name, void* value, sol::this_state ts)
+bool fastweb::global::set_ptr(const std::string& name, void* value, sol::this_state ts)
 {
 	sol::state_view lua(ts);
 	// INIT中先注册一次，防止被销毁
@@ -30,12 +34,12 @@ bool global::regist_ptr(const std::string& name, void* value, sol::this_state ts
 		lua.registry()[name] = this;
 		lua[name] = this;
 	}
-	return m_value_ptr.add(name, value);
+	return m_ptrs.add(name, value);
 }
 
-VarType global::get(const std::string& name, sol::this_state s)
+sol::object fastweb::global::get_obj(const std::string& name, sol::this_state s)
 {
-	VarType value;
+	sol::object value;
 	if (m_values.get(name, value))
 	{
 		return value;
@@ -43,22 +47,18 @@ VarType global::get(const std::string& name, sol::this_state s)
 	return sol::make_object(s, sol::nil);
 }
 
-void global::set(const std::string& name, VarType value)
+void fastweb::global::set_obj(const std::string& name, sol::object value)
 {
 	m_values.set(name, value, true);
 }
 
-void global::clear()
-{ 
-	m_values.clear();
-	m_value_ptr.clear();
-
-	//m_value_ptr.lock();
-	//for_iter(iter, (*m_value_ptr.parent()))
+void fastweb::global::clear()
+{
+	//for_iter(iter, (*m_ptrs.parent()))
 	//{
-	//	auto im = static_cast<module::imodule*>(iter->second);
-	//	im->delete_global();
+	//	//auto base = ((module::base*)iter->second);
+	//	//base->delete_global();
 	//}
-	//m_value_ptr.unlock();
-	//m_value_ptr.clear();
+	m_ptrs.clear();
+	m_values.clear();
 }

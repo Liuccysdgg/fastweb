@@ -1,13 +1,12 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
-#include "imodule.h"
-
+#include "core/define.h"
 namespace module
 {
 	/// <summary>
 	/// 文件
 	/// </summary>
-	class file:public module::imodule {
+	class filesystem {
 	public:
 		static sol::table list(const std::string& dirpath,const std::string& regex,sol::this_state s);
 		static void copy_dir(const std::string& src_dir,const std::string& dst_dir);

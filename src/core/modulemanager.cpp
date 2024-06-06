@@ -1,7 +1,7 @@
 ﻿#include "modulemanager.h"
 
 #include "util/file.h"
-
+#include "core/app.h"
 #include "core/config.h"
 #include "core/global.h"
 #ifdef _WIN32
@@ -23,22 +23,25 @@
 #include "module/mutex.h"
 #include "module/codec.h"
 #include "module/time.h"
-#include "module/file.h"
+#include "module/filesystem.h"
 #include "module/sys.h"
 #include "module/timer.h"
 #include "module/process.h"
 #include "module/ini.h"
-module_manager::module_manager()
+fastweb::module_manager::module_manager(fastweb::app* app):Interface(app)
 {
 }
-void module_manager::start()
+fastweb::module_manager::~module_manager()
+{
+}
+void fastweb::module_manager::start()
 {
 	close();
 	auto ms = modules();
 	for (size_t i = 0; i < ms.size(); i++)
 	{
 		module_info mi;
-		std::string mod_filepath = sConfig->scripts.module_dir + "/" + ms[i];
+		std::string mod_filepath = app()->config->scripts.module_dir + "/" + ms[i];
 #ifdef _WIN32
 		mi.dll = LoadLibrary(mod_filepath.c_str());
 		if (mi.dll == nullptr)
@@ -65,7 +68,7 @@ void module_manager::start()
 	}
 }
 
-void module_manager::close()
+void fastweb::module_manager::close()
 {
 	for_iter(iter, m_modules)
 	{
@@ -77,25 +80,25 @@ void module_manager::close()
 	m_modules.clear();
 }
 
-void module_manager::load(sol::state* lua)
+void fastweb::module_manager::load(sol::state* lua)
 {
 	load_core(lua);
 	load_lualib(lua);
 	load_3rdparty(lua);
 }
 
-std::string module_manager::search(const std::string& filepath)
+std::string fastweb::module_manager::search(const std::string& filepath)
 {
-	for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
+	for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
 	{
-		std::string path = sConfig->scripts.lib_dir[i] + "/" + filepath;
+		std::string path = app()->config->scripts.lib_dir[i] + "/" + filepath;
 		if (ylib::file::exist(path))
 			return path;
 	}
 	return "";
 }
 
-void module_manager::load_core(sol::state* lua)
+void fastweb::module_manager::load_core(sol::state* lua)
 {
 	lua->open_libraries(
 		sol::lib::base,
@@ -122,23 +125,23 @@ void module_manager::load_core(sol::state* lua)
 #ifdef _WIN32
 	module::mssql::regist(lua);
 #endif
-	module::regist_globalfuns(lua);
+	module::globalfuncs::regist(lua);
 	module::local_storage::regist(lua);
 	module::mutex::regist(lua);
 	module::auto_lock::regist(lua);
 	module::codec::regist(lua);
 	module::time::regist(lua);
-	module::file::regist(lua);
+	module::filesystem::regist(lua);
 	module::sys::regist(lua);
 	module::timer::regist(lua);
 	module::ini::regist(lua);
 	module::process::regist(lua);
 
-	global::getInstance()->regist_lua(lua);
+	app()->global->regist(lua);
 
 }
 
-void module_manager::load_3rdparty(sol::state* lua)
+void fastweb::module_manager::load_3rdparty(sol::state* lua)
 {
 	for_iter(iter, m_modules)
 	{ 
@@ -149,20 +152,20 @@ void module_manager::load_3rdparty(sol::state* lua)
 	}
 }
 
-void module_manager::load_lualib(sol::state* lua)
+void fastweb::module_manager::load_lualib(sol::state* lua)
 {
 	// 获取当前的package.path，添加新的搜索路径
 	std::string current_path = (*lua)["package"]["path"];  // 获取当前的路径
-	for (size_t i = 0; i < sConfig->scripts.lib_dir.size(); i++)
-		current_path += ";" + sConfig->scripts.lib_dir[i] + "/?.lua";  // 添加新的路径
-	current_path += ";" + sConfig->website.dir + "/?.lua";  // 添加新的路径
+	for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
+		current_path += ";" + app()->config->scripts.lib_dir[i] + "/?.lua";  // 添加新的路径
+	current_path += ";" + app()->config->website.dir + "/?.lua";  // 添加新的路径
 	(*lua)["package"]["path"] = current_path;  // 设置修改后的路径
 }
 
-std::vector<std::string> module_manager::modules()
+std::vector<std::string> fastweb::module_manager::modules()
 {
 	std::vector<std::string> results;
-	auto luas = ylib::file::traverse(sConfig->scripts.module_dir, "(.*\\.dll)");
+	auto luas = ylib::file::traverse(app()->config->scripts.module_dir, "(.*\\.dll)");
 	for_iter(iter, luas)
 	{
 		if (iter->second == IS_DIRECTORY)

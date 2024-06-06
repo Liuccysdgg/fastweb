@@ -3,13 +3,16 @@
 #include "core/entry.h"
 #include <filesystem>
 std::string config_filepath;
-bool start()
+void* fastweb_app_ptr = nullptr;
+void start()
 {
-	return fastweb_start(config_filepath.c_str()) == 0;
+	fastweb_app_ptr = fastweb_start(config_filepath.c_str());
 }
 void close()
 {
-	fastweb_close();
+	if(fastweb_app_ptr == nullptr)
+		fastweb_close(fastweb_app_ptr);
+	fastweb_app_ptr = nullptr;
 }
 int main()
 {
@@ -23,7 +26,8 @@ int main()
 			std::cout << "closing..." << std::endl;
 			close();
 			std::cout << "starting..." << std::endl;
-			if (start() == false)
+			start();
+			if (fastweb_app_ptr == nullptr)
 			{
 				std::cin.get();
 				return -1;

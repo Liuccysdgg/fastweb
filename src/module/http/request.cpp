@@ -88,7 +88,7 @@ std::string module::request::host()
 {
     return m_request->host();
 }
-VarType module::request::param(const std::string& name, bool throw_,sol::this_state s)
+sol::object module::request::param(const std::string& name, bool throw_,sol::this_state s)
 {
     std::string value;
     bool result = request_param(name, value);

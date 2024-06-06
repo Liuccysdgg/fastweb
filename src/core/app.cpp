@@ -1,4 +1,4 @@
-﻿#include "fastweb.h"
+﻿#include "app.h"
 #include <regex>
 #include "net/http_website.h"
 #include "net/http_router.h"
@@ -9,20 +9,34 @@
 #include "module/globalfuns.h"
 #include "core/config.h"
 #include "core/global.h"
-#include "core/statemanager.h"
-#include "core/subscribemanager.h"
-#include "core/interceptormanager.h"
-fastweb::fastweb()
+fastweb::app::app()
 {
+	log = std::make_shared<fastweb::log>(this);
+	subscribe = std::make_shared<fastweb::subscribe_manager>(this);
+	interceptor = std::make_shared<fastweb::interceptor_manager>(this);
+	state = std::make_shared<fastweb::state_manager>(this);
+	config = std::make_shared<fastweb::config>(this);
+	global = std::make_shared<fastweb::global>(this);
+	gloabl_module = std::make_shared<fastweb::global_module>(this);
 }
-bool fastweb::start()
+fastweb::app::~app()
+{
+	stop();
+}
+bool fastweb::app::start(const std::string& config_filepath)
 {
 
 	stop();
-	// 虚拟机管理器
-	if(sStateMgr->start() == false)
+	// 初始化配置
+	if (config->open(config_filepath) == false)
 	{
-		m_lastErrorDesc = sStateMgr->last_error();
+		m_lastErrorDesc = "open config failed, " + config->last_error();
+		return false;
+	}
+	// 虚拟机管理器
+	if(state->start() == false)
+	{
+		m_lastErrorDesc = state->last_error();
 		return false;
 	}
 
@@ -30,7 +44,7 @@ bool fastweb::start()
 	network::http::start_config config;
 	network::http::website_config ws_config;
 	
-	for_iter(iter, sConfig->domain)
+	for_iter(iter, this->config->domain)
 	{
 		network::http::host_config host_config;
 		host_config.domain = iter->first;
@@ -45,17 +59,17 @@ bool fastweb::start()
 			url = "http://";
 		url += host_config.domain;
 		url += ":" + std::to_string(host_config.port);
-		LOG_WARN("URL: "+url);
+		log->warn("URL: " + url, __FILE__, __func__, __LINE__);
 	}
 
 	ws_config.name = "master";
 	
 	ws_config.router.threadpool.size = 40;
 	ws_config.router.threadpool.queuemax = 10000;
-	ws_config.session.dirpath = sConfig->website.session_dir;
-	ws_config.session.timeout_sec = sConfig->website.session_timeout_sec;
+	ws_config.session.dirpath = this->config->website.session_dir;
+	ws_config.session.timeout_sec = this->config->website.session_timeout_sec;
 	config.website.push_back(ws_config);
-	for_iter(iter, sConfig->domain)
+	for_iter(iter, this->config->domain)
 	{
 		if(iter->second.https) 
 			config.cert.emplace(iter->first, iter->second.ssl);
@@ -73,22 +87,24 @@ bool fastweb::start()
 	// 初始化脚本
 	if (initialization_script() == false)
 		return false;
+		
 
 
 	// 加载订阅
-	m_subscribe.load(router);
+	subscribe->load(router);
 	// 加载拦截器
-	m_interceptor.load(router);
+	interceptor->load(router);
 	
 		
 
 	return m_center->start();
 }
 
-void fastweb::stop()
+void fastweb::app::stop()
 {
-	m_subscribe.clear();
-	m_interceptor.clear();
+	this->m_lastErrorDesc.clear();
+	subscribe->clear();
+	interceptor->clear();
 	if (m_center != nullptr)
 	{
 		m_center->close();
@@ -96,16 +112,16 @@ void fastweb::stop()
 	}
 	m_center = nullptr;
 
-	global::getInstance()->clear();
+	global->clear();
 	if (m_state_init != nullptr)
 		delete m_state_init;
 	m_state_init = nullptr;
-	sStateMgr->close();
+	state->close();
 }
 
-bool fastweb::initialization_script()
+bool fastweb::app::initialization_script()
 {
-	auto script_filepath = sConfig->website.Initialization_script;
+	auto script_filepath = this->config->website.Initialization_script;
 	if (script_filepath == "")
 		return true;
 	if (ylib::file::exist(script_filepath) == false)
@@ -113,18 +129,23 @@ bool fastweb::initialization_script()
 		m_lastErrorDesc = "Initialization script not found, filepath: " + script_filepath;
 		return false;
 	}
-	auto state = sStateMgr->get();
+	auto state = this->state->get();
 	try
 	{
-		state->state->set_function("global_regist", module::global_regist);
-		auto result = state->state->script_file(script_filepath);
+		sol::load_result script = state->state->load_file(script_filepath);
+		if (!script.valid()) {
+			sol::error err = script;
+			throw ylib::exception(err.what());
+		}
+
+		sol::protected_function_result result = script();
 		if (!result.valid()) {
 			sol::error err = result;
 			throw ylib::exception(err.what());
 		}
 		if (result.get<bool>() == false)
 		{
-			throw ylib::exception("user interrupt");
+			throw ylib::exception("user interrupt: `return false`");
 		}
 	}
 	catch (const std::exception& e)

@@ -1,10 +1,9 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
-#include "imodule.h"
 #include "core/structs.h"
-#include "base/singleton.hpp"
 #include "util/thread.h"
 #include "util/queue.hpp"
+#include "module/basemodule.h"
 #include <map>
 #include <mutex>
 namespace module
@@ -22,7 +21,7 @@ namespace module
 	/// <summary>
 	/// 定时器
 	/// </summary>
-	class timer:public ylib::singleton<timer>,private ylib::ithread {
+	class timer:private ylib::ithread,public module::base {
 	public:
 		timer();
 		~timer();
@@ -35,19 +34,20 @@ namespace module
 		/// <param name="msec"></param>
 		/// <param name="loop"></param>
 		/// <returns></returns>
-		static std::string add(const std::string& name,const std::string& filepath,const std::string& funname,int msec,bool loop);
+		std::string add(const std::string& name,const std::string& filepath,const std::string& funname,int msec,bool loop, sol::this_state ts);
 		/// <summary>
 		/// 移除
 		/// </summary>
 		/// <param name="name"></param>
-		static void remove(const std::string& name);
-
-
+		void remove(const std::string& name, sol::this_state ts);
 		static void regist(sol::state* lua);
+		virtual void regist_global(const std::string& name, sol::state* lua) override;
+		virtual void delete_global() { delete this; }
 	private:
-	
+		
 		virtual bool run();
 	public:
+		fastweb::app* m_app = nullptr;
 		std::map<std::string,timer_info> m_list;
 		ylib::queue<std::string> m_removed;
 		std::mutex m_mutex;

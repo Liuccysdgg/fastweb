@@ -534,7 +534,7 @@ bool module::mysql_result::next()
     return m_result->next();
 }
 
-VarType module::mysql_result::get(sol::object obj, sol::this_state s)
+sol::object module::mysql_result::get(sol::object obj, sol::this_state s)
 {
     std::string type;
     if (obj.get_type() == sol::type::string)
