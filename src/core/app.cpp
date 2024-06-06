@@ -78,7 +78,6 @@ bool fastweb::app::start(const std::string& config_filepath)
 	if (!m_center->create(config))
 	{
 		m_lastErrorDesc = "start failed," + m_center->last_error();
-		stop();
 		return false;
 	}
 	auto website = m_center->website_byname(ws_config.name);
