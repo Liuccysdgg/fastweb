@@ -41,7 +41,7 @@ namespace module
 		/// <param name="name"></param>
 		void remove(const std::string& name, sol::this_state ts);
 		static void regist(sol::state* lua);
-		virtual void regist_global(const std::string& name, sol::state* lua) override;
+		virtual void regist_global(const char* name, sol::state* lua) override;
 		virtual void delete_global() { delete this; }
 	private:
 		

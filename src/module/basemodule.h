@@ -14,7 +14,7 @@ namespace module
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="lua"></param>
-		virtual void regist_global(const std::string& name,sol::state* lua) = 0;
+		virtual void regist_global(const char* name, sol::state* lua) = 0;
 		/// <summary>
 		/// 释放全局变量(global类管理)
 		/// </summary>

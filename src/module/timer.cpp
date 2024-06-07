@@ -66,7 +66,7 @@ void module::timer::regist(sol::state* lua)
     );
 }
 
-void module::timer::regist_global(const std::string& name, sol::state* lua)
+void module::timer::regist_global(const char* name, sol::state* lua)
 {
     lua->registry()[name] = this;
     (*lua)[name] = this;

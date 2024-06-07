@@ -15,7 +15,7 @@ void fastweb::global::regist(sol::state* lua)
 	for_iter(iter, (*m_ptrs.parent()))
 	{
 		auto im = static_cast<module::base*>(iter->second);
-		im->regist_global(iter->first, lua);
+		im->regist_global(iter->first.c_str(), lua);
 	}
 	m_ptrs.unlock();
 }

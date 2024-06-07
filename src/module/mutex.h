@@ -27,7 +27,7 @@ namespace module
 		static void regist(sol::state* lua);
 	private:
 		// 通过 imodule 继承
-		virtual void regist_global(const std::string& name, sol::state* lua);
+		virtual void regist_global(const char* name, sol::state* lua);
 		virtual void delete_global() { delete this; }
 		std::mutex m_mutex;
 	};

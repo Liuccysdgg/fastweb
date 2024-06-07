@@ -83,18 +83,34 @@ void fastweb::subscribe_manager::exec(const std::string& filepath, network::http
 	std::string exception_string;
 	try
 	{
-		auto lbResult = lua->state->load_file(filepath);
-		if (lbResult.valid() == false)
-		{
-			sol::error err = lbResult;
-			throw ylib::exception("Failed to load script, " + std::string(err.what()));
+		//auto lbResult = lua->state->load_file(filepath);
+		//if (lbResult.valid() == false)
+		//{
+		//	sol::error err = lbResult;
+		//	throw ylib::exception("Failed to load script, " + std::string(err.what()));
+		//}
+		//module::request m_request(request);
+		//module::response m_response(response);
+
+		//(*lua->state)["response"] = &m_response;
+		//(*lua->state)["request"] = &m_request;
+		//lbResult();
+
+		sol::load_result script = lua->state->load_file(filepath);
+		if (!script.valid()) {
+			sol::error err = script;
+			throw ylib::exception(err.what());
 		}
 		module::request m_request(request);
 		module::response m_response(response);
-
 		(*lua->state)["response"] = &m_response;
 		(*lua->state)["request"] = &m_request;
-		lbResult();
+
+		sol::protected_function_result result = script();
+		if (!result.valid()) {
+			sol::error err = result;
+			throw ylib::exception(err.what());
+		}
 	}
 	catch (const std::exception& e)
 	{
