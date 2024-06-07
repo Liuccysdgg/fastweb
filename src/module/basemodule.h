@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "sol/sol.hpp"
-#include "core/define.h"
 
 namespace module
 {

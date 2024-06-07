@@ -15,11 +15,6 @@
 #include "module/http/session.h"
 #include "module/http/httpclient.h"
 #include "module/http/interceptor.h"
-#include "module/mysql.h"
-#ifdef _WIN32
-#include "module/mssql.h"
-#endif
-#include "module/localstorage.h"
 #include "module/globalfuns.h"
 #include "module/mutex.h"
 #include "module/codec.h"
@@ -44,6 +39,7 @@ void fastweb::module_manager::start()
 		module_info mi;
 		std::string mod_filepath = app()->config->scripts.module_dir + "/" + ms[i];
 #ifdef _WIN32
+		SetDllDirectoryA(ylib::file::parent_dir(mod_filepath).c_str());
 		mi.dll = LoadLibrary(mod_filepath.c_str());
 		if (mi.dll == nullptr)
 		{
@@ -123,12 +119,7 @@ void fastweb::module_manager::load_core(sol::state* lua)
 	module::interceptor::regist(lua);
 	module::session::regist(lua);
 	module::httpclient::regist(lua);
-	module::mysql_regist(lua);
-#ifdef _WIN32
-	module::mssql::regist(lua);
-#endif
 	module::globalfuncs::regist(lua);
-	module::local_storage::regist(lua);
 	module::mutex::regist(lua);
 	module::auto_lock::regist(lua);
 	module::codec::regist(lua);
@@ -173,6 +164,13 @@ std::vector<std::string> fastweb::module_manager::modules()
 		if (iter->second == IS_DIRECTORY)
 			continue;
 		std::string path = strutils::replace(iter->first, '\\', '/');
+		if (path.find("/") != -1)
+		{
+			if (strutils::split(path, '/').size() != 2)
+				continue;	//多级不支持
+			if (ylib::file::parent_dir(path) != ylib::file::filename(path, false))
+				continue;
+		}
 		results.push_back(path);
 	}
 	return results;

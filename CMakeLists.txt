@@ -8,9 +8,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # 设置自定义配置类型
 if(MSVC)
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build config types" FORCE)
-endif() 
+endif()  
 # C++等级
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 20) 
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(FASTWEBCORE ${PROJECT_NAME}core)
 # 安装复制
@@ -52,7 +52,6 @@ if(MSVC)
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/lua/include)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/soci/include)
-	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/mysql/include/jdbc)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Windows/Include)
 	include_directories(${YLIB}/include)
 	add_compile_options(/W3 /wd4819)
@@ -71,8 +70,7 @@ set_target_properties(${FASTWEBCORE} PROPERTIES OUTPUT_NAME_DEBUG "${FASTWEBCORE
 
 
 
-link_directories(/usr/lib/x86_64-linux-gnu)
-link_directories(/usr/local/lib)
+
 
 if(MSVC)
 	target_link_libraries(${FASTWEBCORE} PRIVATE
@@ -85,49 +83,23 @@ if(MSVC)
 			lualib
 			${YLIB}/lib/libcrypto_static_win64.lib
 			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/mysqlcppconn.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/leveldb_d.lib>
-			$<$<CONFIG:Debug>:${YLIB}/lib/libzip_d.lib>
-			$<$<CONFIG:Debug>:${YLIB}/lib/sqlite3_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/ylib_d.lib>
-			$<$<CONFIG:Debug>:${YLIB}/lib/zlib_d.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Debug/libsoci_core_4_1.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Debug/libsoci_empty_4_1.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Debug/libsoci_odbc_4_1.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Debug/soci_core_4_1.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Debug/soci_empty_4_1.lib>
-			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Debug/soci_odbc_4_1.lib>
-		
+			
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.lib>
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/mysqlcppconn.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/leveldb.lib>
-			$<$<CONFIG:Release>:${YLIB}/lib/libzip.lib>
-			$<$<CONFIG:Release>:${YLIB}/lib/sqlite3.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
-			$<$<CONFIG:Release>:${YLIB}/lib/zlib.lib>
-		
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/libsoci_core_4_1.lib>
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/libsoci_empty_4_1.lib>
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/libsoci_odbc_4_1.lib>
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_core_4_1.lib>
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_empty_4_1.lib>
-			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/soci/lib/Release/soci_odbc_4_1.lib>
 	)
 
 else()
+	link_directories(/usr/lib/x86_64-linux-gnu)
+	link_directories(/usr/local/lib)
 	target_link_libraries(${FASTWEBCORE} 
 			hpsocket
 			ylib
 			leveldb
-			soci_core
-			soci_firebird
-			soci_mysql
-			soci_odbc
-			soci_postgresql
-			soci_sqlite3
 			crypto
 			lua5.3
-			mysqlcppconn
 			pthread
 	)
 
@@ -137,14 +109,7 @@ endif()
 add_executable(${PROJECT_NAME} tests/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-
-# 查找并添加所有模块
-file(GLOB MODULES RELATIVE ${CMAKE_SOURCE_DIR}/module ${CMAKE_SOURCE_DIR}/module/*)
-foreach(MODULE ${MODULES})
-    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/module/${MODULE})
-        add_subdirectory(${CMAKE_SOURCE_DIR}/module/${MODULE})
-    endif()
-endforeach()
+ 
 
 
 ########################  安装  ########################
@@ -152,14 +117,7 @@ install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/re
 install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 if(MSVC)
 	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.dll DESTINATION bin/debug)
-	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/libcrypto-3-x64.dll DESTINATION bin/debug)
-	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/libssl-3-x64.dll DESTINATION bin/debug)
-	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Debug/mysqlcppconn-9-vs14.dll DESTINATION bin/debug)
-
 	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.dll DESTINATION bin/release)
-	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/libcrypto-3-x64.dll DESTINATION bin/release)
-	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/libssl-3-x64.dll DESTINATION bin/release)
-	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/mysql/lib/Release/mysqlcppconn-9-vs14.dll DESTINATION bin/release)
 endif()
 install(FILES config.ini DESTINATION bin/debug)
 install(FILES config.ini DESTINATION bin/release)
@@ -168,6 +126,12 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/debug)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION bin/release)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release) 
 install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
+install(FILES ${PROJECT_SOURCE_DIR}/module/dll_interface.h DESTINATION include)
+install(FILES ${PROJECT_SOURCE_DIR}/src/module/basemodule.h DESTINATION include)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/sol DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/lua/include/ DESTINATION include/lua)
+
 
 
 
