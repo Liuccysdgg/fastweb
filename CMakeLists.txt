@@ -10,7 +10,7 @@ if(MSVC)
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build config types" FORCE)
 endif()  
 # C++等级
-set(CMAKE_CXX_STANDARD 20) 
+set(CMAKE_CXX_STANDARD 20)  
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(FASTWEBCORE ${PROJECT_NAME}core)
 # 安装复制

@@ -16,13 +16,13 @@ Fast Web 是一个网站服务程序，以快速开发、部署简单为理念�
 ## ⚡立即开始
 无论您是编程新手还是经验丰富的开发人员，学习和使用 Fast Web 都很容易。
 
-<a href="https://fw.newobj.org/doc/">从我们的新手指南开始</a>
+<a href="https://fwlua.com/doc/">从我们的新手指南开始</a>
 
 ## 下载⬇️
 
 所有版本的 Fast Web 源代码和安装程序均可供下载！
-最新版：<a href="https://fw.newobj.org/download/">点击下载</a>
+最新版：<a href="https://fwlua.com/download/">点击下载</a>
 
 ## 文档📄
 Fast Web 标准库的文档以及教程和指南都可以在线获取。
-<a href="https://fw.newobj.org/doc/">文档中心</a>
+<a href="https://fwlua.com/doc/">文档中心</a>
