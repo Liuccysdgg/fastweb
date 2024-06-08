@@ -100,6 +100,7 @@ void fastweb::config::cache()
 	website.Initialization_script = m_ini.read("website", "Initialization_script");
 	website.debug = m_ini.read("website", "debug") == "1";
 	website.domain = ylib::json::from(m_ini.read("website", "domain")).to<std::vector<std::string>>();
+	website.direct_url_mapping = m_ini.read("website", "direct_url_mapping") == "1";
 
 	log.enable = m_ini.read("log", "enable") == "1";
 	log.dir = m_ini.read("log", "dir");

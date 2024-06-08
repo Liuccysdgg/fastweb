@@ -9,22 +9,22 @@ module::interceptor::~interceptor()
 {
 }
 
-bool module::interceptor::add(const std::string& express_string, const std::string& filepath, sol::this_state ts)
+bool module::interceptor::add(const std::string& pattern, const std::string& filepath, sol::this_state ts)
 {
 	GET_APP;
-	return app->interceptor->add(express_string,app->config->website.dir+ filepath);
+	return app->interceptor->add(pattern,filepath);
 }
 
-bool module::interceptor::remove(const std::string& express_string, sol::this_state ts)
+bool module::interceptor::remove(const std::string& pattern, sol::this_state ts)
 {
 	GET_APP;
-	return app->interceptor->remove(express_string);
+	return app->interceptor->remove(pattern);
 }
 
-bool module::interceptor::exist(const std::string& express_string, sol::this_state ts)
+bool module::interceptor::exist(const std::string& pattern, sol::this_state ts)
 {
 	GET_APP;
-	return app->interceptor->exist(express_string);
+	return app->interceptor->exist(pattern);
 }
 
 void module::interceptor::clear(sol::this_state ts)

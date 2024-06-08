@@ -23,14 +23,14 @@ void module::filesystem::copy_dir(const std::string& src_dir, const std::string&
 }
 bool module::filesystem::create_dir(const std::string& dirpath)
 {
-    return ylib::file::create_dir(dirpath,true);
+    return ylib::file::create_dir(dirpath, true);
 }
 sol::object module::filesystem::read(const std::string& filepath, sol::this_state s)
 {
     sol::object result;
     ylib::buffer data;
     if (ylib::file::read(filepath, data) == false)
-        result = sol::make_object(s,data.to_string());
+        result = sol::make_object(s, data.to_string());
     else
         result = sol::make_object(s, sol::nil);
     return result;
@@ -45,7 +45,11 @@ bool module::filesystem::remove(const std::string& filepath)
 }
 bool module::filesystem::remove_dir(const std::string& dirpath, bool recycle)
 {
-    return ylib::file::remove_dir(dirpath,recycle);
+#ifdef _WIN32
+    return ylib::file::remove_dir(dirpath, recycle);
+#else
+    return ylib::file::remove_dir(dirpath);
+#endif
 }
 bool module::filesystem::exist(const std::string& filepath)
 {
@@ -61,7 +65,7 @@ int64 module::filesystem::size(const std::string& filepath)
 }
 bool module::filesystem::copy(const std::string& src, const std::string& dst)
 {
-    return ylib::file::copy(src,dst);
+    return ylib::file::copy(src, dst);
 }
 timestamp module::filesystem::last_write_time(const std::string& filepath)
 {
@@ -77,14 +81,14 @@ void module::filesystem::regist(sol::state* lua)
         "list", &module::filesystem::list,
         "copy_dir", &module::filesystem::copy_dir,
         "create_dir", &module::filesystem::create_dir,
-        "read",module::filesystem::read,
-        "write",module::filesystem::write,
-        "remove",module::filesystem::remove,
-        "remove_dir",module::filesystem::remove_dir,
-        "exist",module::filesystem::exist,
-        "exist_dir",module::filesystem::exist_dir,
-        "size",module::filesystem::size,
-        "copy",module::filesystem::copy,
-        "last_write_time",module::filesystem::last_write_time
+        "read", module::filesystem::read,
+        "write", module::filesystem::write,
+        "remove", module::filesystem::remove,
+        "remove_dir", module::filesystem::remove_dir,
+        "exist", module::filesystem::exist,
+        "exist_dir", module::filesystem::exist_dir,
+        "size", module::filesystem::size,
+        "copy", module::filesystem::copy,
+        "last_write_time", module::filesystem::last_write_time
     );
 }

@@ -18,18 +18,17 @@ namespace fastweb
 		interceptor_manager(fastweb::app* app);
 		~interceptor_manager();
 
-		bool add(const std::string& regex_express,const std::string& filepath);
-		bool remove(const std::string& regex_express);
-		bool exist(const std::string& regex_express);
+		bool add(const std::string& pattern,const std::string& filepath);
+		bool remove(const std::string& pattern);
+		bool exist(const std::string& pattern);
 		void clear();
 	private:
 		/// <summary>
 		/// 服务回调
 		/// </summary>
 		/// <param name="reqpack"></param>
-		/// <param name="express_string"></param>
-		bool callback(network::http::reqpack* reqpack, const std::string& express_string);
-	private:
-		ylib::map<std::string, std::string> interceptor;
+		/// <param name="pattern"></param>
+		/// <param name="filepath"></param>
+		bool callback(network::http::reqpack* reqpack, const std::string& pattern,const std::string& filepath);
 	};
 }

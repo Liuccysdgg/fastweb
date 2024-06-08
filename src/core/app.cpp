@@ -87,10 +87,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 	if (initialization_script() == false)
 		return false;
 		
-
-
-	// 加载订阅
-	subscribe->load(router);
+	this->subscribe->start();
 
 	return m_center->start();
 }

@@ -5,11 +5,11 @@
 
 namespace module
 {
-    class interceptor
+    class subscribe
     {
     public:
-        interceptor();
-        ~interceptor();
+        subscribe();
+        ~subscribe();
         /// <summary>
         /// 添加
         /// </summary>
