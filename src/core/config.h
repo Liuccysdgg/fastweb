@@ -31,6 +31,7 @@ namespace fastweb
 			std::string Initialization_script;
 			bool debug = false;
 			std::vector<std::string> domain;
+			bool direct_url_mapping = false;
 		};
 
 		struct log {

@@ -12,43 +12,40 @@ fastweb::interceptor_manager::~interceptor_manager()
 {
 	clear();
 }
-bool fastweb::interceptor_manager::add(const std::string& regex_express, const std::string& filepath)
+bool fastweb::interceptor_manager::add(const std::string& pattern, const std::string& filepath)
 {
-	if (interceptor_manager::interceptor.exist(regex_express))
-	{
-		LOG_WARN("`" + regex_express + "` interceptor is invalid, duplicate rule, filepath: " + filepath);
-		return false;
-	}
-	interceptor_manager::interceptor.add(regex_express, filepath);
-	app()->router->interceptor()->add(regex_express, [this](network::http::reqpack* reqpack, const std::string& express_string)->bool {
-		return this->callback(reqpack, express_string);
+	app()->router->interceptor()->add(pattern,filepath, [&](network::http::reqpack* reqpack, const std::string& pattern,const std::string& filepath)->bool {
+		return this->callback(reqpack, pattern, filepath);
 	});
 	return true;
 }
-bool fastweb::interceptor_manager::remove(const std::string& regex_express)
+bool fastweb::interceptor_manager::remove(const std::string& pattern)
 {
-	interceptor_manager::interceptor.del(regex_express);
-	return app()->router->interceptor()->remove(regex_express);
+	return app()->router->interceptor()->remove(pattern);
 }
-bool fastweb::interceptor_manager::exist(const std::string& regex_express)
+bool fastweb::interceptor_manager::exist(const std::string& pattern)
 {
-	return interceptor_manager::interceptor.exist(regex_express);
+	return app()->router->interceptor()->exist(pattern);
 }
 void fastweb::interceptor_manager::clear()
 {
-	interceptor_manager::interceptor.clear();
 	if(app()->router != nullptr)
 		app()->router->interceptor()->clear();
 }
 
-bool fastweb::interceptor_manager::callback(network::http::reqpack* reqpack, const std::string& express_string)
+bool fastweb::interceptor_manager::callback(network::http::reqpack* reqpack, const std::string& pattern, const std::string& filepath)
 {
+	if (ylib::file::ext(filepath) != "lua")
+	{
+		reqpack->response()->send_file(filepath);
+		return false;
+	}
 	bool ok_continue = false;
 	auto lua = app()->state->get();
 	std::string exception_string;
 	try
 	{
-		sol::load_result script = lua->state->load_file(interceptor_manager::interceptor[express_string]);
+		sol::load_result script = lua->state->load_file(app()->config->website.dir+ filepath);
 		if (!script.valid()) {
 			sol::error err = script;
 			throw ylib::exception(err.what());

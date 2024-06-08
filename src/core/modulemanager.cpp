@@ -15,6 +15,7 @@
 #include "module/http/session.h"
 #include "module/http/httpclient.h"
 #include "module/http/interceptor.h"
+#include "module/http/subscribe.h"
 #include "module/globalfuns.h"
 #include "module/mutex.h"
 #include "module/codec.h"
@@ -117,6 +118,7 @@ void fastweb::module_manager::load_core(sol::state* lua)
 	module::request::regist(lua);
 	module::response::regist(lua);
 	module::interceptor::regist(lua);
+	module::subscribe::regist(lua);
 	module::session::regist(lua);
 	module::httpclient::regist(lua);
 	module::globalfuncs::regist(lua);
