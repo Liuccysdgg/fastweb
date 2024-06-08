@@ -92,6 +92,7 @@ if(MSVC)
 	)
 
 else()
+	set(CMAKE_INSTALL_RPATH "/usr/local/lib")
 	link_directories(/usr/lib/x86_64-linux-gnu)
 	link_directories(/usr/local/lib)
 	target_link_libraries(${FASTWEBCORE} 
@@ -107,30 +108,67 @@ endif()
 
 # 编译测试调用示例
 add_executable(${PROJECT_NAME} tests/main.cpp)
-target_link_libraries(${PROJECT_NAME} ${FASTWEBCORE})
+if(MSVC)
+	target_link_libraries(${PROJECT_NAME} PRIVATE
+				${FASTWEBCORE}
+				odbc32.lib
+				User32.lib
+				Advapi32.lib
+				IPHLPAPI.lib
+				WS2_32.lib
+				Shell32.lib
+				${YLIB}/lib/libcrypto_static_win64.lib
+				$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.lib>
+				$<$<CONFIG:Debug>:${YLIB}/lib/ylib_d.lib>
+				$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.lib>
+				$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
+		)
+else()
+	target_link_libraries(${PROJECT_NAME} 
+			${FASTWEBCORE}
+			hpsocket
+			ylib
+			pthread
+	)
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
  
 
 
 ########################  安装  ########################
-install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
-install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 if(MSVC)
+	install(TARGETS ${FASTWEBCORE} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
+	install(TARGETS ${PROJECT_NAME} DESTINATION $<IF:$<CONFIG:Debug>,bin/debug,bin/release>)
 	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.dll DESTINATION bin/debug)
 	install(FILES ${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.dll DESTINATION bin/release)
-endif()
-install(FILES config.ini DESTINATION bin/debug)
-install(FILES config.ini DESTINATION bin/release)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION bin/debug)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/debug)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION bin/release)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release) 
-install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
-install(FILES ${PROJECT_SOURCE_DIR}/module/dll_interface.h DESTINATION include)
-install(FILES ${PROJECT_SOURCE_DIR}/src/module/basemodule.h DESTINATION include)
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/sol DESTINATION include)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/lua/include/ DESTINATION include/lua)
+	install(FILES config.ini DESTINATION bin/debug)
+	install(FILES config.ini DESTINATION bin/release)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION bin/debug)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/debug)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION bin/release)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release) 
+	install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
+	install(FILES ${PROJECT_SOURCE_DIR}/module/dll_interface.h DESTINATION include)
+	install(FILES ${PROJECT_SOURCE_DIR}/src/module/basemodule.h DESTINATION include)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/sol DESTINATION include)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/lua/include/ DESTINATION include/lua)
+else()
+	
+	install(TARGETS ${FASTWEBCORE} DESTINATION lib)
+	install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+
+	install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include/${PROJECT_NAME})
+	install(FILES ${PROJECT_SOURCE_DIR}/module/dll_interface.h DESTINATION include/${PROJECT_NAME})
+	install(FILES ${PROJECT_SOURCE_DIR}/src/module/basemodule.h DESTINATION include/${PROJECT_NAME})
+
+
+	install(FILES config.ini DESTINATION share/${PROJECT_NAME})
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION share/${PROJECT_NAME})
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION share/${PROJECT_NAME})
+
+endif()
 
 
 

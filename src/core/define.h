@@ -19,6 +19,4 @@
 
 
 
-#define GET_APP										\
-	sol::state_view lua(ts);							\
-	fastweb::app* app = lua["____app"]
+#define GET_APP		sol::state_view lua(ts);fastweb::app* app = lua["____app"]
