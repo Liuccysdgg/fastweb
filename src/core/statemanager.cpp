@@ -77,7 +77,14 @@ bool fastweb::state_manager::run()
 {
 	if (lib_detecter->changed())
 		m_flag++;
-	system::sleep_msec(3000);
+
+	for (size_t i = 0; i < 30; i++)
+	{
+		if (::ithread::m_state == 1)
+			break;
+		system::sleep_msec(100);
+	}
+	
 	return true;
 }
 

@@ -20,3 +20,12 @@
 
 
 #define GET_APP		sol::state_view lua(ts);fastweb::app* app = lua["____app"]
+
+
+#define ITHREAD_WAIT_MSEC(MSEC)     \
+    for(int i=0;i<(MSEC/10);i++)                \
+    {                                                            \
+        if (::ithread::m_state == 1)                \
+            break;                                            \
+        system::sleep_msec(100);                  \
+    }   

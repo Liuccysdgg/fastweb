@@ -35,14 +35,15 @@ void fastweb::log::print(const std::string& type,const std::string& msg,const st
 }
 bool fastweb::log::run()
 {
+
     if (app()->config == nullptr)
     {
-        system::sleep_msec(1000);
+        ITHREAD_WAIT_MSEC(1000);
         return true;
     }
     if (app()->config->log.enable == false)
     {
-        system::sleep_msec(1000);
+        ITHREAD_WAIT_MSEC(1000);
         return true;
     }
     std::string logcontent;
@@ -68,7 +69,7 @@ bool fastweb::log::run()
     {
         m_file.appead(logcontent);
     }
-    system::sleep_msec(1000);
+    ITHREAD_WAIT_MSEC(1000);
     return true;
 }
 fastweb::log::log(fastweb::app* ptr):Interface(ptr)
