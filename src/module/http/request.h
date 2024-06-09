@@ -52,11 +52,6 @@ namespace module
         /// <returns></returns>
         ushort remote_port();
         /// <summary>
-        /// 取token
-        /// </summary>
-        /// <returns></returns>
-        std::string token();
-        /// <summary>
         /// 取session
         /// </summary>
         /// <param name="token"></param>
@@ -84,6 +79,19 @@ namespace module
         /// </summary>
         /// <returns></returns>
         void* website();
+
+        /// <summary>
+        /// 取文件列表
+        /// </summary>
+        /// <returns></returns>
+        sol::table files(sol::this_state s);
+        /// <summary>
+        /// 保存文件
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        bool write_file(const std::string& name,const std::string& filepath);
 
         static void regist(sol::state* lua);
     private:

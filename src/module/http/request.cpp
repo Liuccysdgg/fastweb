@@ -9,10 +9,6 @@ module::request::~request()
     if (m_session != nullptr)
         delete m_session;
 }
-std::string module::request::token()
-{
-    return m_request->token();
-}
 module::session* module::request::session(const std::string& token)
 {
     if (m_session == nullptr)
@@ -45,6 +41,32 @@ void* module::request::website()
 {
     return m_request->website();
 }
+sol::table module::request::files(sol::this_state s)
+{
+    auto names = m_request->parser()->form()->names();
+    sol::state_view lua(s);
+    sol::table result_table = lua.create_table();
+
+    int count = 1;
+    for (size_t i = 0; i < names.size(); i++)
+    {
+        sol::table file = lua.create_table();
+        network::http::form_info fi;
+        if (m_request->parser()->form()->get(names[i], fi))
+        {
+            file["type"] = fi.content_type;
+            file["size"] = fi.data.size();
+            file["filename"] = fi.filename;
+            result_table[count] = file;
+            count++;
+        }
+    }
+    return result_table;
+}
+bool module::request::write_file(const std::string& name, const std::string& filepath)
+{
+    return m_request->parser()->form()->write_file(name,filepath);
+}
 void module::request::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
@@ -57,10 +79,11 @@ void module::request::regist(sol::state* lua)
         "remote_port", &module::request::remote_port,
         "param", &module::request::param,
         "session", &module::request::session,
-        "token", &module::request::token,
         "body_param", &module::request::body_param,
         "url_param", &module::request::url_param,
-        "body", &module::request::body
+        "body", &module::request::body,
+        "files", &module::request::files,
+        "write_file", &module::request::write_file
     );
     (*lua)["GET"] = (int)network::http::GET;
     (*lua)["POST"] = (int)network::http::POST;
