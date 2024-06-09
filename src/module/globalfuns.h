@@ -27,18 +27,18 @@ namespace module
 		static bool set_ptr(const std::string& name, void* ptr, sol::this_state ts);
 
 		/// <summary>
-		/// 置全局对象
+		/// 置全局文本
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="value"></param>
-		static void set_obj(const std::string& name, sol::object value, sol::this_state ts);
+		static void set_str(const std::string& name,std::string value, sol::this_state ts);
 		/// <summary>
-		/// 取全局对象
+		/// 取全局文本
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		static sol::object get_obj(const std::string& name, sol::this_state s);
+		static sol::object get_str(const std::string& name, sol::this_state s);
 		/// <summary>
 		/// 抛出异常
 		/// </summary>

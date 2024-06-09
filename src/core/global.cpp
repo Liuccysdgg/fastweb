@@ -37,17 +37,15 @@ bool fastweb::global::set_ptr(const std::string& name, void* value, sol::this_st
 	return m_ptrs.add(name, value);
 }
 
-sol::object fastweb::global::get_obj(const std::string& name, sol::this_state s)
+sol::object fastweb::global::get_str(const std::string& name, sol::this_state s)
 {
-	sol::object value;
+	std::string value;
 	if (m_values.get(name, value))
-	{
-		return value;
-	}
+		return  sol::make_object(s, value);
 	return sol::make_object(s, sol::nil);
 }
 
-void fastweb::global::set_obj(const std::string& name, sol::object value)
+void fastweb::global::set_str(const std::string& name, std::string value)
 {
 	m_values.set(name, value, true);
 }

@@ -35,22 +35,21 @@ namespace fastweb
 		/// 取对象
 		/// </summary>
 		/// <param name="name"></param>
-		/// <param name="s"></param>
 		/// <returns></returns>
-		sol::object get_obj(const std::string& name, sol::this_state s);
+		sol::object get_str(const std::string& name, sol::this_state s);
 		/// <summary>
 		/// 置对象
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="value"></param>
-		void set_obj(const std::string& name, sol::object value);
+		void set_str(const std::string& name, std::string value);
 		/// <summary>
 		/// 清理
 		/// </summary>
 		void clear();
 	private:
 		ylib::map<std::string, void*> m_ptrs;
-		ylib::map<std::string, sol::object> m_values;
+		ylib::map<std::string,std::string> m_values;
 	};
 }
 

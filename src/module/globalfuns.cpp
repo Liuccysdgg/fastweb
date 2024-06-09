@@ -8,8 +8,8 @@ static ylib::counter<uint64> s_counter_guid;
 void module::globalfuncs::regist(sol::state* lua)
 {
 	lua->set_function("set_ptr", module::globalfuncs::set_ptr);
-	lua->set_function("get_obj", module::globalfuncs::get_obj);
-	lua->set_function("set_obj", module::globalfuncs::set_obj);
+	lua->set_function("get_str", module::globalfuncs::get_str);
+	lua->set_function("set_str", module::globalfuncs::set_str);
 	lua->set_function("make_software_guid", module::globalfuncs::make_software_guid);
 	lua->set_function("throw_string", module::globalfuncs::throw_string);
 	lua->set_function("print", module::globalfuncs::print);
@@ -50,16 +50,16 @@ bool module::globalfuncs::set_ptr(const std::string& name, void* ptr, sol::this_
 	return app->global->set_ptr(name,ptr, ts);
 }
 
-void module::globalfuncs::set_obj(const std::string& name, sol::object value, sol::this_state ts)
+void module::globalfuncs::set_str(const std::string& name, std::string value, sol::this_state ts)
 {
 	GET_APP;
-	return app->global->set_obj(name,value);
+	return app->global->set_str(name,value);
 }
 
-sol::object module::globalfuncs::get_obj(const std::string& name, sol::this_state ts)
+sol::object module::globalfuncs::get_str(const std::string& name, sol::this_state ts)
 {
 	GET_APP;
-	return app->global->get_obj(name, ts);
+	return app->global->get_str(name, ts);
 }
 void module::globalfuncs::throw_string(const std::string& msg)
 {
