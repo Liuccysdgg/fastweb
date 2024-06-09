@@ -77,7 +77,7 @@ bool fastweb::state_manager::run()
 {
 	if (lib_detecter->changed())
 		m_flag++;
-	system::sleep_msec(app()->config->scripts.auto_update_sec * 1000);
+	system::sleep_msec(3000);
 	return true;
 }
 

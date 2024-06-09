@@ -51,16 +51,13 @@ bool fastweb::config::open(const std::string& ini_filepath)
 std::vector<std::string> fastweb::config::lua_lib_files()
 {
 	std::vector<std::string> results;
-	for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
+	auto luas = ylib::file::traverse(app()->config->website.dir, "(.*\\.lua)");
+	for_iter(iter, luas)
 	{
-		auto luas = ylib::file::traverse(app()->config->scripts.lib_dir[i], "(.*\\.lua)");
-		for_iter(iter, luas)
-		{
-			if (iter->second == IS_DIRECTORY)
-				continue;
-			std::string path = app()->config->scripts.lib_dir[i]+"/"+ strutils::replace(iter->first, '\\', '/');
-			results.push_back(path);
-		}
+		if (iter->second == IS_DIRECTORY)
+			continue;
+		std::string path = app()->config->website.dir +"/"+ strutils::replace(iter->first, '\\', '/');
+		results.push_back(path);
 	}
 	// 去重
 	std::sort(results.begin(), results.end());
@@ -87,7 +84,6 @@ std::vector<std::string> fastweb::config::extractVariableNames(const std::string
 void fastweb::config::cache()
 {
 
-	scripts.lib_dir = ylib::json::from(m_ini.read("scripts", "lib_dir")).to<std::vector<std::string>>();
 	scripts.module_dir = m_ini.read("scripts", "module_dir");
 	scripts.lua_cache_size = ylib::stoi(m_ini.read("scripts", "lua_cache_size"));
 	scripts.auto_update_sec = ylib::stoi(m_ini.read("scripts", "auto_update_sec"));

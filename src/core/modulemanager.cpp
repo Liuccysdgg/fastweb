@@ -84,18 +84,6 @@ void fastweb::module_manager::load(sol::state* lua)
 	load_lualib(lua);
 	load_3rdparty(lua);
 }
-
-std::string fastweb::module_manager::search(const std::string& filepath)
-{
-	for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
-	{
-		std::string path = app()->config->scripts.lib_dir[i] + "/" + filepath;
-		if (ylib::file::exist(path))
-			return path;
-	}
-	return "";
-}
-
 void fastweb::module_manager::load_core(sol::state* lua)
 {
 	lua->open_libraries(
@@ -151,8 +139,8 @@ void fastweb::module_manager::load_lualib(sol::state* lua)
 {
 	// 获取当前的package.path，添加新的搜索路径
 	std::string current_path = (*lua)["package"]["path"];  // 获取当前的路径
-	for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
-		current_path += ";" + app()->config->scripts.lib_dir[i] + "/?.lua";  // 添加新的路径
+	//for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
+	//	current_path += ";" + app()->config->scripts.lib_dir[i] + "/?.lua";  // 添加新的路径
 	current_path += ";" + app()->config->website.dir + "/?.lua";  // 添加新的路径
 	(*lua)["package"]["path"] = current_path;  // 设置修改后的路径
 }

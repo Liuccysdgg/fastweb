@@ -13,7 +13,7 @@ namespace fastweb
 			network::http::ssl_config ssl;
 		};
 		struct scripts {
-			std::vector<std::string> lib_dir;
+			//std::vector<std::string> lib_dir;
 			std::string module_dir;
 			uint32 lua_cache_size = 0;
 			uint32 auto_update_sec = 0;

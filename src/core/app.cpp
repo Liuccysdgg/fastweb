@@ -118,6 +118,9 @@ bool fastweb::app::initialization_script()
 	auto script_filepath = this->config->website.Initialization_script;
 	if (script_filepath == "")
 		return true;
+	if (script_filepath[0] != '/')
+		script_filepath = "/" + script_filepath;
+	script_filepath = config->website.dir + script_filepath;
 	if (ylib::file::exist(script_filepath) == false)
 	{
 		m_lastErrorDesc = "Initialization script not found, filepath: " + script_filepath;

@@ -18,18 +18,7 @@ std::string module::timer::add(const std::string& name, const std::string& filep
         filepath2 = app->config->website.dir + "/" + filepath;
     else
     {
-        
-        filepath2 = app->state->module_manager->search(filepath);
-
-        if (filepath2.empty())
-        {
-            std::string result;
-            result = "not found script lua, Root: " + std::string(app->config->website.dir + "/" + filepath) + "\r\n Lib: ";
-            for (size_t i = 0; i < app->config->scripts.lib_dir.size(); i++)
-                result.append(std::string(app->config->scripts.lib_dir[i] + "/" + filepath)+"\r\n");
-            return result;
-        }
-        
+        return "not found script lua: " + std::string(app->config->website.dir + "/" + filepath);
     }
 
     std::unique_lock<std::mutex> uni(m_mutex);
