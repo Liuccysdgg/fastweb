@@ -1,11 +1,12 @@
-local dkjson = require 'dkjson'
+local dkjson = require("api.dkjson")
 
 function json(data)
 	response:header("Content-Type","application/json")
 	response:send(dkjson.encode(data))
 end
 function session()
-	 return request:session(request:token())
+	 local token = request:header("token")
+	 return request:session(token)
 end
 function param(name)
 	return request:param(name,false)

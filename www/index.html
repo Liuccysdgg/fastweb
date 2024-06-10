@@ -1,65 +1,113 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fast Web</title>
-    <script src="js/jquery-3.4.1.min.js"></script>
+    <title>用户登录</title>
     <style>
-        .button-container {
-            margin-bottom: 10px;
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
         }
-        .button-container button {
-            margin-right: 10px;
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        .login-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .login-container input[type="text"], .login-container input[type="password"] {
+            width: 100%;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
         }
     </style>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script>
+        var token = ""
+        function login() {
+            const username = $('#username').val();
+            const password = $('#password').val();
+            if (!username || !password) {
+                alert('请输入用户名和密码');
+                return;
+            }
+
+            $.ajax({
+                url: '/api/user.lua?action=login',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ username: username, password: password }),
+                success: function(response) {
+                    if (response.code === 200) {
+                        token = response.data.token;
+                        fetchUserInfo();
+                    } else {
+                        $('#errorMessage').text(response.msg || '登录失败，请重试');
+                    }
+                }
+            });
+        }
+
+        function fetchUserInfo() {
+            $.ajax({
+                url: '/api/user.lua?action=getinfo',
+                type: 'GET',
+                headers:{
+                    "token":token
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const userInfo = response.data;
+                        alert(`用户信息：\n登录时间: ${userInfo.login_time}`);
+                    } else {
+                        alert('获取用户信息失败，请重试');
+                    }
+                },
+                error: function() {
+                    alert('获取用户信息失败，请重试');
+                }
+            });
+        }
+    </script>
 </head>
 <body>
-    <h1>Fast Web</h1>
-    <div class="button-container">
-        <button id="admin-btn">需要权限地址</button>
-        <button id="public-btn">公共接口</button>
+    <div class="login-container">
+        <h1>用户登录</h1>
+        <input type="text" id="username" placeholder="请输入用户名">
+        <input type="password" id="password" placeholder="请输入密码">
+        <button onclick="login()">确认</button>
+        <div id="errorMessage" class="error-message"></div>
     </div>
-    <form id="interceptor-form">
-        <label for="path">访问路径:</label>
-        <input type="text" id="path" name="path" required>
-        <br><br>
-        <label for="key">Key:</label>
-        <input type="text" id="key" name="key" required>
-        <br><br>
-        <button type="submit">提交</button>
-    </form>
-
-    <script>
-        $(document).ready(function(){
-            $('#admin-btn').click(function(){
-                $('#path').val('/api/admin/admin.lua');
-            });
-
-            $('#public-btn').click(function(){
-                $('#path').val('/api/public/info.lua');
-            });
-
-            $('#interceptor-form').on('submit', function(event){
-                event.preventDefault();
-                var path = $('#path').val();
-                var key = $('#key').val();
-                var data = JSON.stringify({ key: key });
-
-                $.ajax({
-                    url: path,
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: data,
-                    success: function(response) {
-                        alert('请求成功: ' + response);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        alert('请求失败: ' + textStatus + ' - ' + errorThrown);
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 </html>
