@@ -13,7 +13,9 @@ extern "C" {
 		fastweb::app* app = new fastweb::app();
 		if (app->start(config_filepath) == false)
 		{
+
 			app->log->error("fastweb start failed," + app->last_error(), __FILE__, __func__, __LINE__);
+			app->log->write();
 			delete app;
 			return nullptr;
 		}

@@ -17,6 +17,8 @@ namespace fastweb
 		void warn(const std::string& msg, const std::string& filepath, const std::string& func, int line);
 		void debug(const std::string& msg, const std::string& filepath, const std::string& func, int line);
 		void lua(const std::string& msg);
+
+		bool write();
 	private:
 		void print(const std::string& type, const std::string& msg, const std::string& filepath, const std::string& func, int line, int color, bool error);
 		bool run() override;

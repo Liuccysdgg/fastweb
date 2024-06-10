@@ -46,29 +46,10 @@ bool fastweb::log::run()
         ITHREAD_WAIT_MSEC(1000);
         return true;
     }
-    std::string logcontent;
-    std::string new_time = time::now_time(app()->config->log.name);
-    if (new_time == "")
-    {
-        std::cout << "error: The log file name is incorrect: " << app()->config->log.name << std::endl;
+   
+    if (write() == false)
         return false;
-    }
-    if (m_current_name != new_time)
-    {
-        m_current_name = new_time;
-        ylib::file::create_dir(app()->config->log.dir, true);
-        std::string newfilepath = app()->config->log.dir + "/" + new_time;
-        m_file.close();
-        if (m_file.open(newfilepath) == false)
-        {
-            std::cout << "error: open log file failed, filepath: " << newfilepath << std::endl;
-            return false;
-        }
-    }
-    while (m_queue.pop(logcontent))
-    {
-        m_file.appead(logcontent);
-    }
+
     ITHREAD_WAIT_MSEC(1000);
     return true;
 }
@@ -132,4 +113,32 @@ void fastweb::log::debug(const std::string& msg, const std::string& filepath, co
 void fastweb::log::lua(const std::string& msg)
 {
     this->print("[LUA  ] ", msg,"","",0, ylib::ConsoleTextColor::GREEN | ylib::ConsoleTextColor::RED | ylib::ConsoleTextColor::BLUE, false);
+}
+
+bool fastweb::log::write()
+{
+    std::string logcontent;
+    std::string new_time = time::now_time(app()->config->log.name);
+    if (new_time == "")
+    {
+        std::cout << "error: The log file name is incorrect: " << app()->config->log.name << std::endl;
+        return false;
+    }
+    if (m_current_name != new_time)
+    {
+        m_current_name = new_time;
+        ylib::file::create_dir(app()->config->log.dir, true);
+        std::string newfilepath = app()->config->log.dir + "/" + new_time;
+        m_file.close();
+        if (m_file.open(newfilepath) == false)
+        {
+            std::cout << "error: open log file failed, filepath: " << newfilepath << std::endl;
+            return false;
+        }
+    }
+    while (m_queue.pop(logcontent))
+    {
+        m_file.appead(logcontent);
+    }
+    return true;
 }
