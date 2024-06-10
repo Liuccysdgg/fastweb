@@ -897,7 +897,9 @@ namespace sol { namespace stack {
 			tracking.use(1);
 			void* rawdata = detail::align_usertype_pointer(memory);
 			void** pudata = static_cast<void**>(rawdata);
-			void* udata = *pudata;
+			void* udata = nullptr;
+			if (pudata != nullptr)
+				udata = *pudata;
 			return get_no_lua_nil_from(L, udata, index, tracking);
 		}
 
