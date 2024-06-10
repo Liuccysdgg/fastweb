@@ -10,6 +10,10 @@ module::session::~session()
 
 void module::session::init(module::request& request, const std::string& id)
 {
+	if (&request == nullptr)
+	{
+		throw ylib::exception("the `request` parameter of the init function is nil");
+	}
 	m_session->init((network::http::website*)request.website(),id);
 }
 

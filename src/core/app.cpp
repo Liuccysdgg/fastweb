@@ -89,7 +89,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 		
 	this->subscribe->start();
 
-	if (m_center->start())
+	if (m_center->start() == false)
 	{
 		m_lastErrorDesc = m_center->last_error();
 		return false;

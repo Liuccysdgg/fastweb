@@ -5,7 +5,7 @@ project("fastweb")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
-# 设置自定义配置类型
+# 设置自定义配置类型 
 if(MSVC)
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build config types" FORCE)
 endif()  
