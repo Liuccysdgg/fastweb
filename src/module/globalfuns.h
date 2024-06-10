@@ -44,7 +44,10 @@ namespace module
 		/// </summary>
 		/// <param name="msg"></param>
 		static void throw_string(const std::string& msg);
-
+		/// <summary>
+		/// 网站目录
+		/// </summary>
+		static std::string website_dir(sol::this_state ts);
 
 		static void regist(sol::state* lua);
 	};

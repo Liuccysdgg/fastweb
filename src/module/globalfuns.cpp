@@ -5,6 +5,11 @@
 #include "core/global.h"
 #include "core/app.h"
 static ylib::counter<uint64> s_counter_guid;
+std::string module::globalfuncs::website_dir(sol::this_state ts)
+{
+	GET_APP;
+	return app->config->website.dir;
+}
 void module::globalfuncs::regist(sol::state* lua)
 {
 	lua->set_function("set_ptr", module::globalfuncs::set_ptr);
@@ -13,6 +18,7 @@ void module::globalfuncs::regist(sol::state* lua)
 	lua->set_function("make_software_guid", module::globalfuncs::make_software_guid);
 	lua->set_function("throw_string", module::globalfuncs::throw_string);
 	lua->set_function("print", module::globalfuncs::print);
+	lua->set_function("website_dir", module::globalfuncs::website_dir);
 
 }
 std::string module::globalfuncs::make_software_guid()
