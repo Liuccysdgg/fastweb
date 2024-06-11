@@ -33,6 +33,24 @@ fastweb::module_manager::~module_manager()
 }
 void fastweb::module_manager::start()
 {
+	auto get_last_error_desc = []()->std::string {
+		DWORD dwError = GetLastError();
+		// 获取错误描述  
+		char* lpMsgBuf = nullptr;
+		FormatMessageA(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			dwError,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR)&lpMsgBuf,
+			0,
+			NULL
+		);
+		// 输出错误描述  
+		return std::string(lpMsgBuf);
+	};
 	close();
 	auto ms = modules();
 	for (size_t i = 0; i < ms.size(); i++)
@@ -44,7 +62,7 @@ void fastweb::module_manager::start()
 		mi.dll = LoadLibrary(mod_filepath.c_str());
 		if (mi.dll == nullptr)
 		{
-			LOG_ERROR("module loading failed, filename: " + mod_filepath);
+			LOG_ERROR("module loading failed, filename: " + mod_filepath+","+ codec::to_utf8(get_last_error_desc()));
 			continue;
 		}
 		mi.func = (fastweb_module_regist)GetProcAddress((HMODULE)mi.dll, "fastweb_module_regist");
