@@ -41,7 +41,7 @@ size_t module::process::create(const std::string& filepath, const std::string& w
     }
 
     size_t pid = 0;
-    if (ylib::process::create(filepath, working_directory, vs_args, wait_close, show_window, &pid) == false)
+    if (ylib::process::create(filepath, working_directory, vs_args, wait_close, show_window,nullptr,&pid) == false)
         return 0;
     return pid;
 }

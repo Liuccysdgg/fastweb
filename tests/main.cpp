@@ -32,6 +32,8 @@
 #include <filesystem>
 #include "util/file.h"
 #include "util/strutils.h"
+#include "util/system.h"
+#include "slave.h"
 #define QUIT_WAIT 				std::cout << "Please exit after entering any character...";std::cin.get();return -1
 
 void* start(const char* config_filepath)
@@ -99,6 +101,36 @@ int main(int argc, char* argv[])
 			QUIT_WAIT;
 		}
 	}
+	else if (type == "start2")
+	{
+		if (ylib::file::exist(std::filesystem::absolute(value).string()))
+		{
+			app = start(std::filesystem::absolute(value).string().c_str());
+			if (app == nullptr)
+				return -1;
+			while (true)
+				system::sleep_msec(1000 * 60);
+		}
+		else
+			return -1;
+	}
+	else if (type == "fastwebmanager")
+	{
+		int flag = ylib::stoi(argv[2]);
+		slave s("fastweb_shardmemory", flag);
+
+		app = start(argv[3]);
+		if (app == nullptr)
+		{
+			s.write(1);
+			return -1;
+		}
+		s.write(2);
+		// 等待关闭信号
+		s.wait();
+
+		return 0;
+	}
 	if (argc < 4) { ouput_help(); QUIT_WAIT; }
 
 	if (type == "create")
@@ -113,5 +145,5 @@ int main(int argc, char* argv[])
 			ylib::file::copy_dir("/usr/local/share/fastweb", path);
 		}
 	}
-	return 0;
+	return -1;
 }
