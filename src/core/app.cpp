@@ -85,7 +85,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 			url = "http://";
 		url += host_config.domain;
 		url += ":" + std::to_string(host_config.port);
-		log->warn("URL: " + url, __FILE__, __func__, __LINE__);
+		log->info("URL: " + url, __FILE__, __func__, __LINE__);
 	}
 
 	ws_config.name = "master";
