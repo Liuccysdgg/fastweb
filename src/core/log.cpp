@@ -194,14 +194,18 @@ bool fastweb::log::write()
         }
         if (app()->config->log.sqlite)
         {
-            m_sqlite.open(app()->config->log.dir + "/" + new_time + ".db");
-            m_sqlite.exec(R"(CREATE TABLE "log" (
-            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            "type" INTEGER,
-            "create_at" TEXT,
-            "content" TEXT,
-            "flag" integer
-        ); )");
+            if (m_sqlite.is_open() == false)
+            {
+                m_sqlite.open(app()->config->log.dir + "/log.db");
+                m_sqlite.exec(R"(CREATE TABLE "log" (
+                    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    "type" INTEGER,
+                    "create_at" TEXT,
+                    "content" TEXT,
+                    "flag" integer
+                ); )");
+            }
+            
         }
     }
     log_info li;
