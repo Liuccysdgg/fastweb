@@ -69,10 +69,15 @@ sol::table module::process::list(sol::this_state s)
     return result_table;
 }
 
-size_t module::process::exist(const std::string& filepath)
+sol::table module::process::exist(const std::string& filepath, sol::this_state s)
 {
-    //if(ylib::process::exist(filepath).)
-    return 0;
+    auto list = ylib::process::exist(filepath);
+    sol::state_view lua(s);
+    sol::table result_table = lua.create_table();
+    for (size_t i = 0; i < list.size(); i++)
+        result_table[i + 1] = list[i];
+
+    return result_table;
 }
 
 bool module::process::exist_pid(size_t pid)

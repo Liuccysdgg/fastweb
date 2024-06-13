@@ -35,7 +35,7 @@ namespace module
 		/// </summary>
 		/// <param name="filepath"></param>
 		/// <returns></returns>
-		static size_t exist(const std::string& filepath);
+		static sol::table exist(const std::string& filepath, sol::this_state s);
 		static bool exist_pid(size_t pid);
 		/// <summary>
 		/// 取PID路径
