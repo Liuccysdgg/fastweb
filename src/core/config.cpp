@@ -116,12 +116,12 @@ void fastweb::config::cache()
 
 	website.dir = m_ini.read("website","dir");
 	website.default_404 = m_ini.read("website", "default_404");
-	website.default_index = ylib::json::from(m_ini.read("website", "default_index")).to<std::vector<std::string>>();
+	website.default_index = strutils::split(m_ini.read("website", "default_index"), ',');
 	website.session_dir = m_ini.read("website", "session_dir");
 	website.session_timeout_sec = ylib::stoi(m_ini.read("website", "session_timeout_sec"));
 	website.Initialization_script = m_ini.read("website", "Initialization_script");
 	website.debug = m_ini.read("website", "debug") == "1";
-	website.domain = ylib::json::from(m_ini.read("website", "domain")).to<std::vector<std::string>>();
+	website.domain = strutils::split(m_ini.read("website", "domain"),',');
 	website.direct_url_mapping = m_ini.read("website", "direct_url_mapping") == "1";
 
 	log.enable = m_ini.read("log", "enable") == "1";

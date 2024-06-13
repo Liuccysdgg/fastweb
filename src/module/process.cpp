@@ -71,7 +71,8 @@ sol::table module::process::list(sol::this_state s)
 
 size_t module::process::exist(const std::string& filepath)
 {
-    return ylib::process::exist(filepath);
+    //if(ylib::process::exist(filepath).)
+    return 0;
 }
 
 bool module::process::exist_pid(size_t pid)
