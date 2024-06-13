@@ -58,6 +58,14 @@ void ouput_help()
 }
 int main(int argc, char* argv[]) 
 {
+	std::cout << "|------------------------[FASTWEB]----------------------------" << std::endl;
+	std::cout << "| WorkingDirectory:\t"<< strutils::replace(system::current_dir(),'\\','/') << std::endl;
+	std::cout << "| Args" << std::endl;
+	for (int i = 0; i < argc; i++)
+	{
+		std::cout << "|\t" << argv[i] << std::endl;
+	}
+	std::cout << "|----------------------------------------------------------------" << std::endl;
 	if (argc < 2) { ouput_help(); QUIT_WAIT; }
 	std::string type = argv[1];
 	if (type == "help")
