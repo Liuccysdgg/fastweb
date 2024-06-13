@@ -38,10 +38,11 @@ namespace fastweb
 			bool enable = false;
 			std::string dir;
 			std::string name;
-			bool succ = false;
+			bool sqlite = false;
+			/*bool succ = false;
 			bool info = false;
 			bool warn = false;
-			bool error = false;
+			bool error = false;*/
 		};
 	public:
 		config(fastweb::app* ptr);

@@ -36,28 +36,61 @@
 #include <Windows.h>
 #endif
 #define DEBUG_INFO 0
-void fastweb::log::print(const std::string& type,const std::string& msg,const std::string& filepath, const std::string& func, int line,int color,bool error) {
 
-    std::string __now_time = time::now_time("%m-%d %H:%M:%S");
+inline std::string typestring(fastweb::log::log_type type)
+{
+    std::string type_str;
+    switch (type)
+    {
+    case fastweb::log::LT_SUCCESS:
+        type_str = "[SUCC ] ";
+        break;
+    case fastweb::log::LT_INFO:
+        type_str = "[INFO ] ";
+        break;
+    case fastweb::log::LT_ERROR:
+        type_str = "[ERROR] ";
+        break;
+    case fastweb::log::LT_WARN:
+        type_str = "[WARN ] ";
+        break;
+    case fastweb::log::LT_DEBUG:
+        type_str = "[DEBUG] ";
+        break;
+    case fastweb::log::LT_LUA:
+        type_str = "[LUA  ] ";
+        break;
+    default:
+        type_str = "[NONE ] ";
+        break;
+    }
+    return type_str;
+}
+void fastweb::log::print(log_type type,const std::string& msg,const std::string& filepath, const std::string& func, int line,int color,bool error) {
+
+    std::string typestr = typestring(type);
+    std::string __now_time = time::now_time("%Y-%m-%d %H:%M:%S");
     printf("[%s] ", __now_time.c_str());
 #if DEBUG_INFO == 1
     printf("%s", ylib::file::filename(filepath).c_str());
     printf("%s ", std::string(":" + func + ":" + std::to_string(line) + "\t").c_str());
 #endif
-    ylib::print(" "+type +" ", (ylib::ConsoleTextColor)color);
+    ylib::print(" "+ typestr +" ", (ylib::ConsoleTextColor)color);
 
 #ifdef _WIN32
     ylib::println(codec::to_gbk(msg), (ylib::ConsoleTextColor)color);
 #else
     ylib::println(msg, (ylib::ConsoleTextColor)color);
 #endif
-    std::string logcontent = __now_time + " " + type + " " + msg
-#ifdef _WIN32
-        + "\r\n";
-#else
-        + "\n";
-#endif
-    m_queue.push(logcontent);
+
+    log_info li;
+    li.create_at = __now_time;
+    li.filepath = filepath;
+    li.function = func;
+    li.line = line;
+    li.msg = msg;
+    li.type = type;
+    m_queue.push(li);
 }
 bool fastweb::log::run()
 {
@@ -89,38 +122,36 @@ fastweb::log::~log()
     ::ithread::stop();
     ::ithread::wait();
 }
+void fastweb::log::start()
+{
+
+}
 void fastweb::log::success(const std::string& msg, const std::string& filepath, const std::string& func, int line)
 {
     //log_error();
-    this->print("[SUCC ] ", msg, filepath, func, line, ylib::ConsoleTextColor::GREEN 
+    this->print(LT_SUCCESS ,msg, filepath, func, line, ylib::ConsoleTextColor::GREEN 
     #ifdef _WIN32
     |FOREGROUND_INTENSITY
     #endif
     ,false);
 }
-
 void fastweb::log::info(const std::string& msg, const std::string& filepath, const std::string& func, int line)
 {
-    this->print("[INFO ] ", msg, filepath, func, line, ylib::ConsoleTextColor::GREEN | ylib::ConsoleTextColor::RED | ylib::ConsoleTextColor::BLUE, false);
+    this->print(LT_INFO,msg, filepath, func, line, ylib::ConsoleTextColor::GREEN | ylib::ConsoleTextColor::RED | ylib::ConsoleTextColor::BLUE, false);
     
 }
-
 void fastweb::log::error(const std::string& msg, const std::string& filepath, const std::string& func, int line)
 {
-//#ifdef _DEBUG
-    this->print("[ERROR] ", msg, filepath, func, line, ylib::ConsoleTextColor::RED
+    this->print(LT_ERROR, msg, filepath, func, line, ylib::ConsoleTextColor::RED
     #ifdef _WIN32
     | FOREGROUND_INTENSITY
     #endif
         , true);
-//#else
-    
-//#endif
 }
 
 void fastweb::log::warn(const std::string& msg, const std::string& filepath, const std::string& func, int line)
 {
-    this->print("[WARN ] ", msg, filepath, func, line, ylib::ConsoleTextColor::YELLOW
+    this->print(LT_WARN, msg, filepath, func, line, ylib::ConsoleTextColor::YELLOW
     #ifdef _WIN32
     | FOREGROUND_INTENSITY
     #endif
@@ -129,7 +160,7 @@ void fastweb::log::warn(const std::string& msg, const std::string& filepath, con
 
 void fastweb::log::debug(const std::string& msg, const std::string& filepath, const std::string& func,int line)
 {
-    this->print("[DEBUG] ", msg, filepath, func, line, ylib::ConsoleTextColor::BLUE
+    this->print(LT_DEBUG, msg, filepath, func, line, ylib::ConsoleTextColor::BLUE
     #ifdef _WIN32
     | FOREGROUND_INTENSITY
     #endif
@@ -138,7 +169,7 @@ void fastweb::log::debug(const std::string& msg, const std::string& filepath, co
 
 void fastweb::log::lua(const std::string& msg)
 {
-    this->print("[LUA  ] ", msg,"","",0, ylib::ConsoleTextColor::GREEN | ylib::ConsoleTextColor::RED | ylib::ConsoleTextColor::BLUE, false);
+    this->print(LT_LUA, msg,"","",0, ylib::ConsoleTextColor::GREEN | ylib::ConsoleTextColor::RED | ylib::ConsoleTextColor::BLUE, false);
 }
 
 bool fastweb::log::write()
@@ -161,10 +192,31 @@ bool fastweb::log::write()
             std::cout << "error: open log file failed, filepath: " << newfilepath << std::endl;
             return false;
         }
+        if (app()->config->log.sqlite)
+        {
+            m_sqlite.open(app()->config->log.dir + "/" + new_time + ".db");
+            m_sqlite.exec(R"(CREATE TABLE "log" (
+            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            "type" INTEGER,
+            "create_at" TEXT,
+            "content" TEXT,
+            "flag" integer
+        ); )");
+        }
     }
-    while (m_queue.pop(logcontent))
+    log_info li;
+    while (m_queue.pop(li))
     {
+        std::string typestr = typestring(li.type);
+        std::string logcontent = li.create_at + " " + typestr + " " + li.msg
+#ifdef _WIN32
+            + "\r\n";
+#else
+            + "\n";
+#endif
         m_file.appead(logcontent);
+        if(app()->config->log.sqlite)
+            m_sqlite.exec("INSERT INTO log(type,create_at,content,flag)VALUES(" + std::to_string(li.type) + ",'"+li.create_at+"','"+li.msg+"',0)");
     }
     return true;
 }

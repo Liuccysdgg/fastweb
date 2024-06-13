@@ -4,7 +4,7 @@ project("fastweb")
 # 设置全局属性
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-
+ 
 # 设置自定义配置类型 
 if(MSVC)
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build config types" FORCE)
@@ -54,7 +54,9 @@ if(MSVC)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/soci/include)
 	include_directories(${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Windows/Include)
 	include_directories(${YLIB}/include)
+	include_directories(D:/lib/ylib/3rdparty)
 	add_compile_options(/W3 /wd4819)
+
 else()
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
     include_directories(/usr/include/lua5.3/)
@@ -85,10 +87,12 @@ if(MSVC)
 			$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/leveldb_d.lib>
 			$<$<CONFIG:Debug>:${YLIB}/lib/ylib_d.lib>
+			$<$<CONFIG:Debug>:${YLIB}/lib/sqlite3_d.lib>
 			
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/leveldb.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
+			$<$<CONFIG:Debug>:${YLIB}/lib/sqlite3.lib>
 	)
 
 else()
@@ -107,7 +111,10 @@ else()
 endif()
 
 # 编译测试调用示例
-add_executable(${PROJECT_NAME} tests/main.cpp)
+add_executable(${PROJECT_NAME} 
+	tests/main.cpp
+	tests/slave.cpp
+)
 if(MSVC)
 	target_link_libraries(${PROJECT_NAME} PRIVATE
 				${FASTWEBCORE}
@@ -120,8 +127,10 @@ if(MSVC)
 				${YLIB}/lib/libcrypto_static_win64.lib
 				$<$<CONFIG:Debug>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket_D.lib>
 				$<$<CONFIG:Debug>:${YLIB}/lib/ylib_d.lib>
+
 				$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.lib>
 				$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
+				
 		)
 else()
 	target_link_libraries(${PROJECT_NAME} 

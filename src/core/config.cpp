@@ -127,10 +127,11 @@ void fastweb::config::cache()
 	log.enable = m_ini.read("log", "enable") == "1";
 	log.dir = m_ini.read("log", "dir");
 	log.name = m_ini.read("log", "name");
-	log.succ = m_ini.read("log", "succ") == "1";
-	log.info = m_ini.read("log", "info") == "1";
-	log.warn = m_ini.read("log", "warn") == "1";
-	log.error = m_ini.read("log", "error") == "1";
+	log.sqlite = m_ini.read("log", "sqlite") == "1";
+	//log.succ = m_ini.read("log", "succ") == "1";
+	//log.info = m_ini.read("log", "info") == "1";
+	//log.warn = m_ini.read("log", "warn") == "1";
+	//log.error = m_ini.read("log", "error") == "1";
 
 
 	// website 域名参数

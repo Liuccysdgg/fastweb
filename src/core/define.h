@@ -23,7 +23,7 @@
 
 
 #define ITHREAD_WAIT_MSEC(MSEC)     \
-    for(int i=0;i<(MSEC/10);i++)                \
+    for(int i=0;i<(MSEC/100);i++)                \
     {                                                            \
         if (::ithread::m_state == 1)                \
             break;                                            \
