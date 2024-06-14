@@ -127,27 +127,20 @@ void fastweb::subscribe_manager::other(network::http::request* request, network:
 		}
 	}
 
+	// 文件全路径
+	std::string absolute_path = app()->config->website.dir + filepath;
+	// 扩展名
 	std::string ext = ylib::file::ext(filepath);
-	// 判断LUA
-	if (ext == "lua")
+	if (ylib::file::exist(absolute_path) == false)
 	{
-		if (app()->config->website.direct_url_mapping)
-		{
-			callback(request,response,filepath,filepath);
-		}
-		else
-		{
-			send_404(response);
-		}
+		send_404(response);
+	}
+	else if(ext == "lua" && app()->config->website.direct_url_mapping)
+	{
+		callback(request, response, filepath, filepath);
 		return;
 	}
-
-	// 发送静态文件
-	std::string absolute_path = app()->config->website.dir + filepath;
-	if (ylib::file::exist(absolute_path))
-		response->send_file(absolute_path);
-	else
-		send_404(response);
+	response->send_file(absolute_path);
 }
 
 void fastweb::subscribe_manager::send_404(network::http::response* response)
