@@ -152,7 +152,11 @@ bool fastweb::app::initialization_script()
 	if (script_filepath[0] != '/')
 		script_filepath = "/" + script_filepath;
 	script_filepath = config->website.dir + script_filepath;
+#ifdef _WIN32
+	if (ylib::file::exist(codec::to_gbk(script_filepath)) == false)
+#else
 	if (ylib::file::exist(script_filepath) == false)
+#endif
 	{
 		m_lastErrorDesc = "Initialization script not found, filepath: " + script_filepath;
 		return false;

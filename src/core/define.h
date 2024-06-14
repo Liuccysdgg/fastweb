@@ -29,3 +29,10 @@
             break;                                            \
         system::sleep_msec(100);                  \
     }   
+
+// 
+#ifdef _WIN32
+#define PATH_EX(PATH) codec::to_gbk(PATH)
+#else
+#define PATH_EX(PATH) PATH
+#endif

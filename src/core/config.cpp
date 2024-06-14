@@ -110,14 +110,17 @@ std::vector<std::string> fastweb::config::extractVariableNames(const std::string
 void fastweb::config::cache()
 {
 
-	scripts.module_dir = m_ini.read("scripts", "module_dir");
+	scripts.module_dir = PATH_EX(m_ini.read("scripts", "module_dir"));
 	scripts.lua_cache_size = ylib::stoi(m_ini.read("scripts", "lua_cache_size"));
 	scripts.auto_update_sec = ylib::stoi(m_ini.read("scripts", "auto_update_sec"));
 
-	website.dir = m_ini.read("website","dir");
+	website.dir = PATH_EX(m_ini.read("website","dir"));
+#ifdef _WIN32
+	//website.dir_utf8 = codec::to_utf8(website.dir);
+#endif
 	website.default_404 = m_ini.read("website", "default_404");
 	website.default_index = strutils::split(m_ini.read("website", "default_index"), ',');
-	website.session_dir = m_ini.read("website", "session_dir");
+	website.session_dir = PATH_EX(m_ini.read("website", "session_dir"));
 	website.session_timeout_sec = ylib::stoi(m_ini.read("website", "session_timeout_sec"));
 	website.Initialization_script = m_ini.read("website", "Initialization_script");
 	website.debug = m_ini.read("website", "debug") == "1";
@@ -125,7 +128,7 @@ void fastweb::config::cache()
 	website.direct_url_mapping = m_ini.read("website", "direct_url_mapping") == "1";
 
 	log.enable = m_ini.read("log", "enable") == "1";
-	log.dir = m_ini.read("log", "dir");
+	log.dir = PATH_EX(m_ini.read("log", "dir"));
 	log.name = m_ini.read("log", "name");
 	log.sqlite = m_ini.read("log", "sqlite") == "1";
 	//log.succ = m_ini.read("log", "succ") == "1";
@@ -143,9 +146,9 @@ void fastweb::config::cache()
 		struct config::domain dm;
 		dm.port = ylib::stoi(m_ini.read(website.domain[i], "port"));
 		dm.https = m_ini.read(website.domain[i],"https")=="1";
-		dm.ssl.pem_key = ylib::file::read(m_ini.read(website.domain[i], "ssl_key"));
-		dm.ssl.pem_cert = ylib::file::read(m_ini.read(website.domain[i], "ssl_pem"));
-		dm.ssl.pem_ca = ylib::file::read(m_ini.read(website.domain[i], "ssl_ca"));
+		dm.ssl.pem_key = ylib::file::read(PATH_EX(m_ini.read(website.domain[i], "ssl_key")));
+		dm.ssl.pem_cert = ylib::file::read(PATH_EX(m_ini.read(website.domain[i], "ssl_pem")));
+		dm.ssl.pem_ca = ylib::file::read(PATH_EX(m_ini.read(website.domain[i], "ssl_ca")));
 		dm.ssl.pem_password = m_ini.read(website.domain[i], "ssl_pwd");
 		dm.ssl.type = (network::http::ssl_verify_type)ylib::stoi(m_ini.read(website.domain[i], "ssl_ver_type"));
 		if (dm.port == 0)
