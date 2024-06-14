@@ -106,6 +106,7 @@ else()
 			crypto
 			lua5.3
 			pthread
+			sqlite3
 	)
 
 endif()

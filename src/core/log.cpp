@@ -36,6 +36,15 @@
 #include <Windows.h>
 #endif
 #define DEBUG_INFO 0
+std::string escapeString(const std::string& str) {
+    std::string escapedStr = str;
+    size_t pos = 0;
+    while ((pos = escapedStr.find("'", pos)) != std::string::npos) {
+        escapedStr.insert(pos, "'");
+        pos += 2;
+    }
+    return escapedStr;
+}
 
 inline std::string typestring(fastweb::log::log_type type)
 {
@@ -220,7 +229,7 @@ bool fastweb::log::write()
 #endif
         m_file.appead(logcontent);
         if(app()->config->log.sqlite)
-            m_sqlite.exec("INSERT INTO log(type,create_at,content,flag)VALUES(" + std::to_string(li.type) + ",'"+li.create_at+"','"+li.msg+"',0)");
+            m_sqlite.exec("INSERT INTO log(type,create_at,content,flag)VALUES(" + std::to_string(li.type) + ",'"+li.create_at+"','"+ escapeString(li.msg)+"',0)");
     }
     return true;
 }
