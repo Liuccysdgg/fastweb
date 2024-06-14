@@ -21,7 +21,7 @@
 // separate commercial license is required.To obtain a commercial license,
 // please contact
 // EMail：1585346868@qq.com
-// Mobile：17367918735
+
 // QQ：1585346868
 
 
