@@ -92,7 +92,7 @@ if(MSVC)
 			$<$<CONFIG:Release>:${PROJECT_SOURCE_DIR}/3rdparty/HP-Socket/Lib/HPSocket.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/leveldb.lib>
 			$<$<CONFIG:Release>:${YLIB}/lib/ylib.lib>
-			$<$<CONFIG:Debug>:${YLIB}/lib/sqlite3.lib>
+			$<$<CONFIG:Release>:${YLIB}/lib/sqlite3.lib>
 	)
 
 else()
