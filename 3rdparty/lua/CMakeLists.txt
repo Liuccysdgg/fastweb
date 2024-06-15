@@ -44,7 +44,7 @@ set(LUA_SRC
 )
 include_directories(${PJN_LUALIB} include)
 include_directories(${PJN_LUAEXE} include)
-add_library(${PJN_LUALIB} SHARED  ${LUA_SRC})
+add_library(${PJN_LUALIB} STATIC  ${LUA_SRC})
 
 add_executable(${PJN_LUAEXE} src/lua.c)
 target_link_libraries(${PJN_LUAEXE} ${PJN_LUALIB})
