@@ -23,7 +23,7 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "util/system.h"
 #include "slave.h"
 
-#define FASTWEB_VERSION "V1.0.4"
+#define FASTWEB_VERSION "V1.0.5"
 
 #define QUIT_WAIT 				std::cout << "Please exit after entering any character...";std::cin.get();return -1
 
