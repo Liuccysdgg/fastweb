@@ -4,6 +4,7 @@
 #include "core/structs.h"
 #include "core/define.h"
 typedef int (*fastweb_module_regist)(void*, void*);
+typedef int (*lua_interface)(void*);
 struct module_info {
 	void* dll = nullptr;
 	fastweb_module_regist func = nullptr;
@@ -48,5 +49,8 @@ namespace fastweb
 	private:
 		// DLL模块
 		std::map<std::string, module_info> m_modules;
+		// LUA虚拟机引用
+		std::string m_lua_include_path;
+		std::string m_lua_include_cpath;
 	};
 }

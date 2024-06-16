@@ -35,13 +35,8 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "module/http/subscribe.h"
 #include "module/globalfuns.h"
 #include "module/mutex.h"
-#include "module/codec.h"
-#include "module/time.h"
-#include "module/filesystem.h"
-#include "module/sys.h"
 #include "module/timer.h"
 #include "module/process.h"
-#include "module/ini.h"
 fastweb::module_manager::module_manager(fastweb::app* app):Interface(app)
 {
 }
@@ -88,7 +83,15 @@ void fastweb::module_manager::start()
 		}
 		mi.func = (fastweb_module_regist)GetProcAddress((HMODULE)mi.dll, "fastweb_module_regist");
 		if (mi.func == nullptr) {
-			LOG_ERROR("function not found: `fastweb_module_regist`, filename: " + mod_filepath);
+			
+#if 0
+			std::string filename = ylib::file::filename(mod_filepath,false);
+			std::string funcname = "luaopen_" + filename;
+			if (GetProcAddress((HMODULE)mi.dll, funcname.c_str()) == nullptr)
+			{
+				LOG_ERROR("function not found: `fastweb_module_regist` and `"+ funcname + "`, filename: " + mod_filepath);
+			}
+#endif	
 			FreeLibrary((HMODULE)mi.dll);
 			continue;
 		}
@@ -102,6 +105,42 @@ void fastweb::module_manager::start()
 #else
 
 #endif
+	}
+
+
+	// 查找所有引用
+	{
+#ifdef _WIN32
+#define DLL_EXT "dll"
+#else
+#define DLL_EXT "so"
+#endif
+		// 用户
+		{
+			
+			m_lua_include_path += ";" + app()->config->website.dir + "/?.lua";
+			m_lua_include_path += ";" + app()->config->scripts.module_dir + "/?.lua";
+
+			m_lua_include_cpath += ";" + app()->config->website.dir + "/?." + DLL_EXT;
+			m_lua_include_cpath += ";" + app()->config->scripts.module_dir + "/?." + DLL_EXT;
+		}
+		// FastWeb管理器
+		{
+			std::string search_path = app()->config->scripts.module_dir + "/.install";
+
+			std::map<std::string, bool> dirs;
+			ylib::file::list(search_path, dirs);
+			for_iter(iter, dirs)
+			{
+				if (iter->second == false)
+					continue;
+				if (iter->first == "." || iter->first == "..")
+					continue;
+				m_lua_include_path += ";" + search_path + "/" + iter->first + "/?.lua";
+				m_lua_include_cpath += ";" + search_path + "/" + iter->first + "/?." + DLL_EXT;
+			}
+			
+		}
 	}
 }
 
@@ -151,12 +190,7 @@ void fastweb::module_manager::load_core(sol::state* lua)
 	module::globalfuncs::regist(lua);
 	module::mutex::regist(lua);
 	module::auto_lock::regist(lua);
-	module::codec::regist(lua);
-	module::time::regist(lua);
-	module::filesystem::regist(lua);
-	module::sys::regist(lua);
 	module::timer::regist(lua);
-	module::ini::regist(lua);
 	module::process::regist(lua);
 
 	app()->global->regist(lua);
@@ -176,12 +210,11 @@ void fastweb::module_manager::load_3rdparty(sol::state* lua)
 
 void fastweb::module_manager::load_lualib(sol::state* lua)
 {
-	// 获取当前的package.path，添加新的搜索路径
-	std::string current_path = (*lua)["package"]["path"];  // 获取当前的路径
-	//for (size_t i = 0; i < app()->config->scripts.lib_dir.size(); i++)
-	//	current_path += ";" + app()->config->scripts.lib_dir[i] + "/?.lua";  // 添加新的路径
-	current_path += ";" + app()->config->website.dir + "/?.lua";  // 添加新的路径
-	(*lua)["package"]["path"] = current_path;  // 设置修改后的路径
+	std::string path = (*lua)["package"]["path"];
+	std::string cpath = (*lua)["package"]["cpath"];
+
+	(*lua)["package"]["path"] = path + m_lua_include_path;
+	(*lua)["package"]["cpath"] = cpath + m_lua_include_cpath;
 }
 
 std::vector<std::string> fastweb::module_manager::modules()
