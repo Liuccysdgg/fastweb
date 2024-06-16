@@ -69,7 +69,7 @@ module::auto_lock::~auto_lock()
 
 void module::auto_lock::regist(sol::state* lua)
 {
-    lua->new_usertype<module::auto_lock>("auto_lock",
+    lua->new_usertype<module::auto_lock>("fw_auto_lock",
         "new", sol::constructors<module::auto_lock(module::mutex&)>()
     );
 }
