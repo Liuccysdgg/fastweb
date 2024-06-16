@@ -37,6 +37,9 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "module/mutex.h"
 #include "module/timer.h"
 #include "module/process.h"
+#include "module/ini.h"
+#include "module/codec.h"
+#include "module/sys.h"
 fastweb::module_manager::module_manager(fastweb::app* app):Interface(app)
 {
 }
@@ -70,13 +73,13 @@ void fastweb::module_manager::start()
 	for (size_t i = 0; i < ms.size(); i++)
 	{
 		module_info mi;
-		std::string mod_filepath = app()->config->scripts.module_dir + "/" + ms[i];
+		std::string mod_filepath =ms[i];
 #ifdef _WIN32
 		SetDllDirectoryA(ylib::file::parent_dir(mod_filepath).c_str());
 		mi.dll = LoadLibrary(mod_filepath.c_str());
 		if (mi.dll == nullptr)
 		{
-			LOG_ERROR("module loading failed, filename: " + mod_filepath
+			LOG_DEBUG("module loading failed, filename: " + mod_filepath
 				+","+ codec::to_utf8(get_last_error_desc())
 			);
 			continue;
@@ -192,6 +195,9 @@ void fastweb::module_manager::load_core(sol::state* lua)
 	module::auto_lock::regist(lua);
 	module::timer::regist(lua);
 	module::process::regist(lua);
+	module::ini::regist(lua);
+	module::codec::regist(lua);
+	module::sys::regist(lua);
 
 	app()->global->regist(lua);
 
@@ -220,20 +226,42 @@ void fastweb::module_manager::load_lualib(sol::state* lua)
 std::vector<std::string> fastweb::module_manager::modules()
 {
 	std::vector<std::string> results;
-	auto luas = ylib::file::traverse(app()->config->scripts.module_dir, "(.*\\.dll)");
-	for_iter(iter, luas)
-	{
-		if (iter->second == IS_DIRECTORY)
-			continue;
-		std::string path = strutils::replace(iter->first, '\\', '/');
-		if (path.find("/") != -1)
+
+	auto insert_dll_path = [&](const std::string& dir) {
+		auto luas = ylib::file::traverse(dir, "(.*\\.dll)");
+		for_iter(iter, luas)
 		{
-			if (strutils::split(path, '/').size() != 2)
-				continue;	//多级不支持
-			if (ylib::file::parent_dir(path) != ylib::file::filename(path, false))
+			if (iter->second == IS_DIRECTORY)
 				continue;
+			std::string path = strutils::replace(iter->first, '\\', '/');
+			if (path.find("/") != -1)
+			{
+				if (strutils::split(path, '/').size() != 2)
+					continue;	//多级不支持
+				if (ylib::file::parent_dir(path) != ylib::file::filename(path, false))
+					continue;
+			}
+			results.push_back(dir+"/"+path);
 		}
-		results.push_back(path);
+		};
+
+	std::string search_path = app()->config->scripts.module_dir + "/.install";
+
+	insert_dll_path(app()->config->scripts.module_dir);
+
+	std::map<std::string, bool> dirs;
+	ylib::file::list(search_path, dirs);
+	for_iter(iter, dirs)
+	{
+		if (iter->second == false)
+			continue;
+		if (iter->first == "." || iter->first == "..")
+			continue;
+
+		insert_dll_path(search_path+"/"+iter->first);
 	}
+
+//	auto luas = ylib::file::traverse(app()->config->scripts.module_dir, "(.*\\.dll)");
+	
 	return results;
 }
