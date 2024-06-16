@@ -34,8 +34,9 @@ void module::globalfuncs::regist(sol::state* lua)
 	lua->set_function("fw_set_str", module::globalfuncs::set_str);
 	lua->set_function("fw_make_software_guid", module::globalfuncs::make_software_guid);
 	lua->set_function("fw_throw_string", module::globalfuncs::throw_string);
-	lua->set_function("fw_print", module::globalfuncs::print);
+	lua->set_function("print", module::globalfuncs::print);
 	lua->set_function("fw_website_dir", module::globalfuncs::website_dir);
+	lua->set_function("fw_sleep_msec",ylib::system::sleep_msec);
 
 }
 std::string module::globalfuncs::make_software_guid()
