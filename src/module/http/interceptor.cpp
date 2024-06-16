@@ -52,7 +52,7 @@ void module::interceptor::clear(sol::this_state ts)
 
 void module::interceptor::regist(sol::state* lua)
 {
-	lua->new_usertype<module::interceptor>("interceptor",
+	lua->new_usertype<module::interceptor>("fw_interceptor",
 		"add", &module::interceptor::add,
 		"remove", &module::interceptor::remove,
 		"exist", &module::interceptor::exist,

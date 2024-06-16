@@ -87,7 +87,7 @@ bool module::request::write_file(const std::string& name, const std::string& fil
 void module::request::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
-    lua->new_usertype<module::request>("module_request",
+    lua->new_usertype<module::request>("fw_request",
         "header", &module::request::header,
         "method", &module::request::method,
         "filepath", &module::request::filepath,

@@ -71,8 +71,8 @@ bool fastweb::subscribe_manager::callback(network::http::request* request, netwo
 		}
 		module::request m_request(request);
 		module::response m_response(response);
-		(*lua->state)["response"] = m_response;
-		(*lua->state)["request"] = m_request;
+		(*lua->state)["fw_response"] = m_response;
+		(*lua->state)["fw_request"] = m_request;
 
 		sol::protected_function_result result = script();
 		if (!result.valid()) {

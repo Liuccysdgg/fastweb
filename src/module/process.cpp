@@ -94,7 +94,7 @@ std::string module::process::getpath(size_t pid)
 
 void module::process::regist(sol::state* lua)
 {
-    lua->new_usertype<module::process>("process",
+    lua->new_usertype<module::process>("fw_process",
         "create", &module::process::create,
         "destory", &module::process::destory,
         "exist", &module::process::exist,

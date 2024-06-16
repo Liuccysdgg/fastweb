@@ -52,7 +52,7 @@ void module::subscribe::clear(sol::this_state ts)
 
 void module::subscribe::regist(sol::state* lua)
 {
-	lua->new_usertype<module::subscribe>("subscribe",
+	lua->new_usertype<module::subscribe>("fw_subscribe",
 		"add", &module::subscribe::add,
 		"remove", &module::subscribe::remove,
 		"exist", &module::subscribe::exist,

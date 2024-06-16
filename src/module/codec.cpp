@@ -44,7 +44,7 @@ std::string module::codec::md5(const std::string& value)
 
 void module::codec::regist(sol::state* lua)
 {
-    lua->new_usertype<module::codec>("codec",
+    lua->new_usertype<module::codec>("fw_codec",
         "url_de", &module::codec::url_de,
         "url_en", &module::codec::url_en,
         "to_utf8", &module::codec::to_utf8,

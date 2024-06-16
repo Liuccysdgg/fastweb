@@ -42,7 +42,7 @@ bool module::mutex::try_lock()
 
 void module::mutex::regist(sol::state* lua)
 {
-    lua->new_usertype<module::mutex>("mutex",
+    lua->new_usertype<module::mutex>("fw_mutex",
         "new", sol::constructors<module::mutex()>(),
         "lock", &module::mutex::lock,
         "unlock", &module::mutex::unlock,

@@ -69,8 +69,8 @@ bool fastweb::interceptor_manager::callback(network::http::reqpack* reqpack, con
 		}
 		module::request m_request(reqpack->request());
 		module::response m_response(reqpack->response());
-		(*lua->state)["response"] = m_response;
-		(*lua->state)["request"] = m_request;
+		(*lua->state)["fw_response"] = m_response;
+		(*lua->state)["fw_request"] = m_request;
 
 		sol::protected_function_result result = script();
 		if (!result.valid()) {

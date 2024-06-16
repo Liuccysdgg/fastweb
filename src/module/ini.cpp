@@ -103,7 +103,7 @@ sol::table module::ini::table(sol::this_state s)
 
 void module::ini::regist(sol::state* lua)
 {
-    lua->new_usertype<module::ini>("ini",
+    lua->new_usertype<module::ini>("fw_ini",
         "new", sol::constructors<module::ini()>(),
         "close", &module::ini::close,
         "del", &module::ini::del,

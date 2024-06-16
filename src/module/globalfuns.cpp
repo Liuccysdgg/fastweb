@@ -29,13 +29,13 @@ std::string module::globalfuncs::website_dir(sol::this_state ts)
 }
 void module::globalfuncs::regist(sol::state* lua)
 {
-	lua->set_function("set_ptr", module::globalfuncs::set_ptr);
-	lua->set_function("get_str", module::globalfuncs::get_str);
-	lua->set_function("set_str", module::globalfuncs::set_str);
-	lua->set_function("make_software_guid", module::globalfuncs::make_software_guid);
-	lua->set_function("throw_string", module::globalfuncs::throw_string);
-	lua->set_function("print", module::globalfuncs::print);
-	lua->set_function("website_dir", module::globalfuncs::website_dir);
+	lua->set_function("fw_set_ptr", module::globalfuncs::set_ptr);
+	lua->set_function("fw_get_str", module::globalfuncs::get_str);
+	lua->set_function("fw_set_str", module::globalfuncs::set_str);
+	lua->set_function("fw_make_software_guid", module::globalfuncs::make_software_guid);
+	lua->set_function("fw_throw_string", module::globalfuncs::throw_string);
+	lua->set_function("fw_print", module::globalfuncs::print);
+	lua->set_function("fw_website_dir", module::globalfuncs::website_dir);
 
 }
 std::string module::globalfuncs::make_software_guid()

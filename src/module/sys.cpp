@@ -24,7 +24,7 @@ void module::sys::sleep_msec(uint32 msec)
 
 void module::sys::regist(sol::state* lua)
 {
-    lua->new_usertype<module::sys>("sys",
+    lua->new_usertype<module::sys>("fw_sys",
         "sleep_msec", &module::sys::sleep_msec
       
     );

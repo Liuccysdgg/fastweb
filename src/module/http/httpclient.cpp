@@ -62,7 +62,7 @@ ushort module::httpclient::status()
 
 void module::httpclient::regist(sol::state* lua)
 {
-	lua->new_usertype<module::httpclient>("httpclient",
+	lua->new_usertype<module::httpclient>("fw_httpclient",
 		"new", sol::constructors<module::httpclient()>(),
 		"get", &module::httpclient::get,
 		"post", &module::httpclient::post,

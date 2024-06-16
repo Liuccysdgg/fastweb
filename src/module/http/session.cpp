@@ -61,7 +61,7 @@ bool module::session::check()
 
 void module::session::regist(sol::state* lua)
 {
-	lua->new_usertype<module::session>("module_session",
+	lua->new_usertype<module::session>("fw_session",
 		"check", &module::session::check,
 		"get", &module::session::get,
 		"id", &module::session::id,

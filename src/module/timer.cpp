@@ -64,7 +64,7 @@ void module::timer::remove(const std::string& name, sol::this_state ts)
 }
 void module::timer::regist(sol::state* lua)
 {
-    lua->new_usertype<module::timer>("timer",
+    lua->new_usertype<module::timer>("fw_timer",
         "new", sol::constructors<module::timer()>(),
         "add", &module::timer::add,
         "remove", &module::timer::remove,
