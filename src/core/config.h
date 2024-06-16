@@ -32,6 +32,7 @@ namespace fastweb
 			bool debug = false;
 			std::vector<std::string> domain;
 			bool direct_url_mapping = false;
+			uint64 max_upload_size = 0;
 		};
 
 		struct log {
@@ -47,8 +48,12 @@ namespace fastweb
 	public:
 		config(fastweb::app* ptr);
 		bool open(const std::string& ini_filepath);
-
 		std::vector<std::string> lua_lib_files();
+
+
+		void write_runtime(const ylib::json& data);
+		ylib::json read_runtime();
+
 	private:
 		// INI配置文件
 		ylib::ini m_ini;
@@ -64,6 +69,7 @@ namespace fastweb
 		/// </summary>
 		void cache();
 	public:
+		std::string m_ini_filepath;
 		scripts scripts;
 		website website;
 		log log;

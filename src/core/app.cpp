@@ -50,8 +50,9 @@ bool fastweb::app::start(const std::string& config_filepath)
 		m_lastErrorDesc = "open config failed, " + config->last_error();
 		return false;
 	}
+	config->write_runtime(ylib::json());
 	// 虚拟机管理器
-	if(state->start() == false)
+	if (state->start() == false)
 	{
 		m_lastErrorDesc = state->last_error();
 		return false;
@@ -60,7 +61,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 	m_center = new network::http::center();
 	network::http::start_config config;
 	network::http::website_config ws_config;
-	
+	config.max_upload_size = this->config->website.max_upload_size;
 	for_iter(iter, this->config->domain)
 	{
 		network::http::host_config host_config;
@@ -80,7 +81,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 	}
 
 	ws_config.name = "master";
-	
+
 	ws_config.router.threadpool.size = 40;
 	ws_config.router.threadpool.queuemax = 10000;
 	ws_config.session.dirpath = this->config->website.session_dir;
@@ -88,7 +89,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 	config.website.push_back(ws_config);
 	for_iter(iter, this->config->domain)
 	{
-		if(iter->second.https) 
+		if (iter->second.https)
 			config.cert.emplace(iter->first, iter->second.ssl);
 	}
 
@@ -99,11 +100,11 @@ bool fastweb::app::start(const std::string& config_filepath)
 	}
 	auto website = m_center->website_byname(ws_config.name);
 	router = website->router();
-	
+
 	// 初始化脚本
 	if (initialization_script() == false)
 		return false;
-		
+
 	this->subscribe->start();
 
 	if (m_center->start() == false)
@@ -111,6 +112,13 @@ bool fastweb::app::start(const std::string& config_filepath)
 		m_lastErrorDesc = m_center->last_error();
 		return false;
 	}
+
+	{
+		ylib::json data;
+		data["started"] = true;
+		this->config->write_runtime(data);
+	}
+	
 	return true;
 }
 
@@ -133,6 +141,7 @@ void fastweb::app::stop()
 		delete m_state_init;
 	m_state_init = nullptr;
 	state->close();
+
 }
 
 bool fastweb::app::initialization_script()

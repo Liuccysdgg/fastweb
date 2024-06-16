@@ -22,6 +22,7 @@ fastweb::config::config(fastweb::app* ptr):Interface(ptr)
 }
 bool fastweb::config::open(const std::string& ini_filepath)
 {
+	m_ini_filepath = ini_filepath;
 	if (ylib::file::exist(ini_filepath) == false)
 	{
 		LOG_ERROR("not found file: " + ini_filepath);
@@ -83,6 +84,14 @@ std::vector<std::string> fastweb::config::lua_lib_files()
 	
 	return results;
 }
+void fastweb::config::write_runtime(const ylib::json& data)
+{
+	ylib::file::write(ylib::file::parent_dir(m_ini_filepath) + "/.fastweb_runtime", data.to_string());
+}
+ylib::json fastweb::config::read_runtime()
+{
+	return ylib::json::from(ylib::file::read(ylib::file::parent_dir(m_ini_filepath) + "/.fastweb_runtime"));
+}
 std::vector<std::string> fastweb::config::extractVariableNames(const std::string& text)
 {
 	std::regex pattern("\\$\\{([^}]+)\\}"); // 使用捕获组提取中间的内容
@@ -116,6 +125,7 @@ void fastweb::config::cache()
 	website.debug = m_ini.read("website", "debug") == "1";
 	website.domain = strutils::split(m_ini.read("website", "domain"),',');
 	website.direct_url_mapping = m_ini.read("website", "direct_url_mapping") == "1";
+	website.max_upload_size = ylib::stoll(m_ini.read("website", "max_upload_size"));
 
 	log.enable = m_ini.read("log", "enable") == "1";
 	log.dir = PATH_EX(m_ini.read("log", "dir"));
