@@ -107,6 +107,8 @@ else()
 			lua5.3
 			pthread
 			sqlite3
+			dl
+			rt
 	)
 
 endif()
