@@ -93,12 +93,16 @@ namespace module
         /// <returns></returns>
         bool write_file(const std::string& name,const std::string& filepath);
 
+
+        void set(const std::string& name,const std::string& value);
+        std::string get(const std::string& name);
         static void regist(sol::state* lua);
     private:
         bool request_param(const std::string& name, std::string& value);
     private:
         network::http::request* m_request = nullptr;
         module::session* m_session = nullptr;
+
     };
 
 }

@@ -33,6 +33,7 @@ void module::response::regist(sol::state* lua)
     lua->new_usertype<module::response>("fw_response",
         "send_data", &module::response::send_data,
         "send", &module::response::send,
+        "sendex", &module::response::sendex,
         "send_file", &module::response::send_file,
         "header", &module::response::header,
         "redirect", &module::response::redirect,

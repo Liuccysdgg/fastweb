@@ -84,6 +84,37 @@ bool module::request::write_file(const std::string& name, const std::string& fil
 {
     return m_request->parser()->form()->write_file(name,filepath);
 }
+//void module::request::set(const std::string& name, const sol::object& obj, sol::this_state ts)
+//{
+//    /*auto type = obj.get_type();
+//    if (obj.get_type() == sol::type::string)*/
+//        m_request->reqpack()->extra()[name] = obj.as<std::string>();
+//    //else if (obj.get_type() == sol::type::number)
+//    //    m_request->reqpack()->extra()[name] = obj.as<double>();
+//    //else if (obj.get_type() == sol::type::boolean)
+//    //    m_request->reqpack()->extra()[name] = obj.as<bool>();
+//    //else
+//        //throw ylib::exception("Unsupported temporary data");
+//}
+//sol::object module::request::get(const std::string& name, sol::this_state ts)
+//{
+//    //if (m_request->reqpack()->extra()[name].is_string())
+//        return sol::make_object(ts, m_request->reqpack()->extra()[name].to<std::string>());
+//    //else if (m_request->reqpack()->extra()[name].is_number())
+//    //    return sol::make_object(ts, m_request->reqpack()->extra()[name].to<double>());
+//    //else if (m_request->reqpack()->extra()[name].is_bool())
+//    //    return sol::make_object(ts, m_request->reqpack()->extra()[name].to<bool>());
+//    //else
+////        return sol::make_object(ts,sol::nil);
+//}
+void module::request::set(const std::string& name, const std::string& value)
+{
+    m_request->reqpack()->extra()[name] = value;
+} 
+std::string module::request::get(const std::string& name)
+{
+    return m_request->reqpack()->extra()[name].to<std::string>();
+}
 void module::request::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
@@ -100,7 +131,9 @@ void module::request::regist(sol::state* lua)
         "url_param", &module::request::url_param,
         "body", &module::request::body,
         "files", &module::request::files,
-        "write_file", &module::request::write_file
+        "write_file", &module::request::write_file,
+        "get", &module::request::get,
+        "set", &module::request::set
     );
     (*lua)["GET"] = (int)network::http::GET;
     (*lua)["POST"] = (int)network::http::POST;
