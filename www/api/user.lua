@@ -1,10 +1,23 @@
-require("api.website")
-local dkjson = require("api.dkjson")
+local request = require("fastweb.request")
+local response = require("fastweb.response")
+local fw = require("fastweb")
+local cjson = require("cjson")
+local function reply(code,msg,data)
+    
+    response.header("Content-Type","application/json")
+    response.send(cjson.encode({
+        code = code,
+        msg = msg,
+        data = data
+    }))
+    
+end
 
 -- 登录
 local function login()
+    local token = request.header("token")
     -- 获取session
-    local session = session()
+    local session = request.session(token)
     -- 验证session有效
     if session:check() then
         reply(201,"你已经登录过了")
@@ -12,18 +25,18 @@ local function login()
     end
 
     -- 验证账号密码
-    if param("username") ~= "fastweb" or param("password") ~= "123456" then
+    if request.param("username") ~= "fastweb" or request.param("password") ~= "123456" then
         reply(201,"账号或密码不正确")
         return
     end
 
     -- 生成TOKEN
-    local token = make_software_guid()
-    session:init(request,token)
+    token = fw.make_software_guid()
+    session:init(token)
 
 
     -- 填充用户信息
-    session:set("login_time",time.now_time("%Y-%m-%d %H:%M:%S"))
+    session:set("login_time",os.date("%Y-%m-%d %H:%M:%S"))
 
     reply(200,"",{
         token = token
@@ -31,7 +44,9 @@ local function login()
 end
 -- 获取个人信息
 local function getinfo()
-    local session = session()
+    local token = request.header("token")
+    -- 获取session
+    local session = request.session(token)
     if session:check() == false then
         reply(401,"登录信息已过期")
         return
@@ -43,8 +58,8 @@ local function getinfo()
 end
 
 -- 判断请求类型
-if param("action") == "login" then
+if request.param("action") == "login" then
     login()
-elseif param("action") == "getinfo" then
+elseif request.param("action") == "getinfo" then
     getinfo()
 end
