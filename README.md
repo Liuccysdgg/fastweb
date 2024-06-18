@@ -16,7 +16,7 @@ Fast Web 是一个网站服务程序，以快速开发、部署简单为理念�
 ## ⚡立即开始
 无论您是编程新手还是经验丰富的开发人员，学习和使用 Fast Web 都很容易。
 
-<a href="https://doc.fwlua.com">从我们的新手指南开始</a>
+<a href="https://fwlua.com">FastWeb官网</a>
 
 ## 下载⬇️
 
