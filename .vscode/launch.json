@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",        // 配置名称，可以根据需要修改
+            "type": "cppdbg",              // 调试器类型
+            "request": "launch",           // 请求类型：启动调试
+            "program": "${workspaceFolder}/build/fastweb",  // 指定要调试的可执行程序路径
+            "args": [
+                "start",
+                "/home/nianhua/www/config.ini"
+            ],                    // 程序运行时的命令行参数
+            "stopAtEntry": false,          // 是否在程序入口停止
+            "cwd": "/home/nianhua/www",   // 工作目录
+            "environment": [],             // 运行时的环境变量
+            "externalConsole": false,      // 是否使用外部终端
+            "MIMode": "gdb",               // 使用GDB作为调试器
+            "miDebuggerPath": "/usr/bin/gdb",  // GDB的路径
+            "preLaunchTask": "build",      // 调试前执行的任务
+            "logging": {
+                "engineLogging": true      // 启用引擎日志记录
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
