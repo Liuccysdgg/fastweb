@@ -117,6 +117,13 @@ void fastweb::module_manager::start()
 #else
 #define DLL_EXT "so"
 #endif
+#ifndef _WIN32
+		// Linux
+		{
+			m_lua_include_path += ";/usr/local/lib/lua/5.3/?.lua";
+			m_lua_include_cpath += ";/usr/local/share/lua/5.3/?.lua";
+		}
+#endif
 		// 用户
 		{
 			
