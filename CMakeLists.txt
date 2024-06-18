@@ -109,6 +109,7 @@ else()
 			sqlite3
 			dl
 			rt
+			stdc++fs
 	)
 
 endif()
