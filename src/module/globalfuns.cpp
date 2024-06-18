@@ -16,16 +16,48 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 */
 
 #include "globalfuns.h"
+#include <thread>
 #include "util/counter.hpp"
 #include "util/codec.h"
 #include "util/time.h"
 #include "core/global.h"
 #include "core/app.h"
+#include "core/statemanager.h"
 static ylib::counter<uint64> s_counter_guid;
 std::string module::globalfuncs::website_dir(sol::this_state ts)
 {
 	GET_APP;
 	return app->config->website.dir;
+}
+void module::globalfuncs::create_env(const std::string& lua_filepath,sol::this_state ts)
+{
+	GET_APP;
+	std::thread t([](std::string lua_filepath,fastweb::app* a) {
+		auto lua = a->state->get();
+		std::string exception_string;
+		try
+		{
+			sol::load_result script = lua->state->load_file(a->config->website.dir + lua_filepath);
+			if (!script.valid()) {
+				sol::error err = script;
+				throw ylib::exception(err.what());
+			}
+			sol::protected_function_result result = script();
+			if (!result.valid()) {
+				sol::error err = result;
+				throw ylib::exception(err.what());
+			}
+		}
+		catch (const std::exception& e)
+		{
+			if (a->config->website.debug)
+				a->log->error("[create_env][" + lua_filepath + "]: " + e.what(), __FILE__, __func__, __LINE__);
+		}
+		lua->state->collect_garbage();
+		a->state->push(lua);
+	},lua_filepath,app);
+
+	t.detach();
 }
 void module::globalfuncs::regist(sol::state* lua)
 {
@@ -39,6 +71,7 @@ void module::globalfuncs::regist(sol::state* lua)
 	lua->set_function("fw_sleep_msec",ylib::system::sleep_msec);
 	lua->set_function("fw_now_msec", ylib::time::now_msec);
 	lua->set_function("fw_now_sec", ylib::time::now_sec);
+	lua->set_function("fw_create_env", module::globalfuncs::create_env);
 
 }
 std::string module::globalfuncs::make_software_guid()

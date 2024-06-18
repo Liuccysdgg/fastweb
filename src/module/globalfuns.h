@@ -48,6 +48,11 @@ namespace module
 		/// 网站目录
 		/// </summary>
 		static std::string website_dir(sol::this_state ts);
+		/// <summary>
+		/// 创建环境
+		/// </summary>
+		/// <returns></returns>
+		static void create_env(const std::string& lua_filepath,sol::this_state ts);
 
 		static void regist(sol::state* lua);
 	};
