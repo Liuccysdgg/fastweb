@@ -120,8 +120,8 @@ void fastweb::module_manager::start()
 #ifndef _WIN32
 		// Linux
 		{
-			m_lua_include_path += ";/usr/local/lib/lua/5.3/?.lua";
-			m_lua_include_cpath += ";/usr/local/share/lua/5.3/?.lua";
+			m_lua_include_path += ";/opt/luarocks/lib/lua/5.4/?.lua";
+			m_lua_include_cpath += ";/opt/luarocks/lib/lua/5.4/?.so";
 		}
 #endif
 		// 用户

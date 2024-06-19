@@ -3,6 +3,7 @@
 #include <regex>
 #include <string>
 #include <tuple>
+#include <filesystem>
 #include "util/ini.h"
 #include "util/file.h"
 #include "util/system.h"
@@ -44,7 +45,7 @@ std::tuple<bool,std::string> parseconfig(ylib::ini &ini,const std::string& ini_f
 	src_content = strutils::replace(src_content, "${current_dir}", strutils::replace(system::current_dir(),'\\','/'));
 	// 配置文件目录
 	{
-		std::string ini_dir = ylib::file::parent_dir(ini_filepath);
+		std::string ini_dir = ylib::file::parent_dir(std::filesystem::absolute(ini_filepath).string());
 		src_content = strutils::replace(strutils::replace(src_content, "${config_dir}", ini_dir), '\\', '/');
 	}
 	

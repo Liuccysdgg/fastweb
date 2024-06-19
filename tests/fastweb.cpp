@@ -426,7 +426,7 @@ void fastweb::install_module_linux(fastweb::module_info info)
             return;
         }
         std::cout<<"正在安装 `"<<info.name_en<<"` 库"<<std::endl;
-        auto [code,err] = execute_command("sudo luarocks install "+info.name_en+" LUA_INCDIR=/opt/lua54/include LUA_LIBDIR=/opt/lua54/lib");
+        auto [code,err] = execute_command("sudo /opt/luarocks/bin/luarocks install "+info.name_en+" LUA_INCDIR=/opt/lua54/include LUA_LIBDIR=/opt/lua54/lib");
         if(code == 0)
         {
             std::cout<<"安装成功"<<std::endl;
