@@ -26,7 +26,7 @@ private:
     /// @brief 启动
     /// @param ini_filepath 
     /// @param wait
-    void start(std::string ini_filepath,bool wait);
+    void start(std::string ini_filepath);
     /// @brief 停止
     /// @param app 
     void stop(void* app);

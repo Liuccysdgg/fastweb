@@ -59,7 +59,8 @@ if(MSVC)
 
 else()
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
-    include_directories(/usr/include/lua5.3/)
+    include_directories(/usr/local/include)
+	add_definitions(-DfPIC)
 endif()
 
 
@@ -105,7 +106,7 @@ else()
 			ylib
 			leveldb
 			crypto
-			lua5.3
+			lua
 			pthread
 			sqlite3
 			dl
@@ -116,6 +117,7 @@ else()
 endif()
 
 add_definitions(-DFASTWEB_EXE)
+
 # 编译测试调用示例
 add_executable(${PROJECT_NAME} 
 	tests/main.cpp

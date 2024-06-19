@@ -91,11 +91,11 @@ fastweb::fastweb(const std::vector<std::string> &param)
 
     if(equals({"start"},2))
     {
-        start(param[1],false);
+        start(param[1]);
     }
     else if(equals({"start2"},2))
     {
-        start(param[1],true);
+        start(param[1]);
     }
     else if(equals({"create","config"},3))
     {
@@ -127,7 +127,7 @@ fastweb::~fastweb()
 {
 }
 
-void fastweb::start(std::string ini_filepath, bool wait)
+void fastweb::start(std::string ini_filepath)
 {
     ini_filepath = std::filesystem::absolute(ini_filepath).string();
 
@@ -135,6 +135,7 @@ void fastweb::start(std::string ini_filepath, bool wait)
     {
         if (fastweb_start(ini_filepath.c_str()) == nullptr)
             return;
+        wait();
     }
     else
     {
