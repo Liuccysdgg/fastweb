@@ -146,6 +146,7 @@ else()
 			hpsocket
 			ylib
 			pthread
+			mysqlcppconn
 	)
 endif()
 
