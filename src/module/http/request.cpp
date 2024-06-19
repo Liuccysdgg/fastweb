@@ -36,8 +36,8 @@ sol::table module::request::body_param(sol::this_state s)
 {
     sol::state_view lua(s);
     sol::table result_table = lua.create_table();
-    auto map = m_request->parser()->body_param();
-    for_iter(iter,map)
+    auto &map = m_request->body_param();
+    for_iter(iter,(*map.get()))
         result_table[iter->first] = iter->second;
     return result_table;
 }
@@ -45,44 +45,62 @@ sol::table module::request::url_param(sol::this_state s)
 {
     sol::state_view lua(s);
     sol::table result_table = lua.create_table();
-    auto map = m_request->parser()->url_param();
-    for_iter(iter, map)
+    auto& map = m_request->url_param();
+    for_iter(iter, (*map.get()))
         result_table[iter->first] = iter->second;
     return result_table;
 }
 std::string module::request::body()
 {
-    return m_request->parser()->text();
+    return m_request->body();
 }
-void* module::request::website()
+sol::table module::request::multipart(sol::this_state s)
 {
-    return m_request->website();
-}
-sol::table module::request::files(sol::this_state s)
-{
-    auto names = m_request->parser()->form()->names();
+    auto multipart = m_request->multipart();
     sol::state_view lua(s);
     sol::table result_table = lua.create_table();
 
     int count = 1;
-    for (size_t i = 0; i < names.size(); i++)
+    for (size_t i = 0; i < multipart->size(); i++)
     {
         sol::table file = lua.create_table();
-        network::http::form_info fi;
-        if (m_request->parser()->form()->get(names[i], fi))
         {
-            file["type"] = fi.content_type;
-            file["size"] = fi.data.size();
-            file["filename"] = fi.filename;
-            result_table[count] = file;
-            count++;
+            sol::table param = lua.create_table();
+            for_iter(iter, multipart->at(i).param)
+            {
+                param[iter->first] = iter->second;// multipart->at(i).header;
+                file["param"] = param;
+            }
         }
+        file["id"] = i+1;
+        file["size"] = multipart->at(i).length;
+        result_table[count] = file;
+        count++;
     }
     return result_table;
 }
-bool module::request::write_file(const std::string& name, const std::string& filepath)
+std::string module::request::multipart_content(int id)
 {
-    return m_request->parser()->form()->write_file(name,filepath);
+    multipart_content_check(id);
+    auto mult_info = m_request->multipart()->at(id - 1);
+    return std::string(m_request->body().data() + mult_info.offset, mult_info.length);
+}
+bool module::request::multipart_content_save(int id, const std::string& filepath)
+{
+    ylib::file_io file;
+    if (file.open(filepath) == false)
+    {
+        throw ylib::exception("open file failed," + file.last_error());
+    }
+    multipart_content_check(id);
+    auto mult_info = m_request->multipart()->at(id - 1);
+    if (file.write(m_request->body().data() + mult_info.offset, mult_info.length) == false)
+    {
+        throw ylib::exception("write file failed,"+file.last_error());
+        return false;
+    }
+    file.close();
+    return true;
 }
 //void module::request::set(const std::string& name, const sol::object& obj, sol::this_state ts)
 //{
@@ -115,6 +133,10 @@ std::string module::request::get(const std::string& name)
 {
     return m_request->reqpack()->extra()[name].to<std::string>();
 }
+network::http::website* module::request::website()
+{
+    return m_request->website();
+}
 void module::request::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
@@ -130,26 +152,33 @@ void module::request::regist(sol::state* lua)
         "body_param", &module::request::body_param,
         "url_param", &module::request::url_param,
         "body", &module::request::body,
-        "files", &module::request::files,
-        "write_file", &module::request::write_file,
+        "multipart", &module::request::multipart,
+        "multipart_content", &module::request::multipart_content,
+        "multipart_content_save", &module::request::multipart_content_save,
         "get", &module::request::get,
         "set", &module::request::set
     );
-    (*lua)["GET"] = (int)network::http::GET;
-    (*lua)["POST"] = (int)network::http::POST;
-    (*lua)["DEL"] = (int)network::http::DEL;
-    (*lua)["HEAD"] = (int)network::http::HEAD;
-    (*lua)["PUT"] = (int)network::http::PUT;
 }
 
-
+void module::request::multipart_content_check(int id)
+{
+    if (m_request->multipart()->size() < id)
+    {
+        throw ylib::exception("The maximum ID is " + std::to_string(m_request->multipart()->size()) + ", and the incoming ID is " + std::to_string(id));
+    }
+    auto mult_info = m_request->multipart()->at(id - 1);
+    if (mult_info.offset + mult_info.length > m_request->body().length())
+    {
+        throw ylib::exception("Fastweb internal exception, offset: " + std::to_string(mult_info.offset) + " length: " + std::to_string(mult_info.length) + " body: " + std::to_string(m_request->body().length()));
+    }
+}
 std::string module::request::header(const std::string& name)
 {
     std::string value;
     m_request->header(name, value);
     return value;
 }
-ylib::network::http::method module::request::method()
+std::string module::request::method()
 {
     return m_request->method();
 }
@@ -176,15 +205,15 @@ sol::object module::request::param(const std::string& name, bool throw_,sol::thi
 
 std::string module::request::remote_ipaddress()
 {
-    return m_request->remote_ipaddress(false);
+    return m_request->remote().address;
 }
 ushort module::request::remote_port()
 {
-    return m_request->remote_port();
+    return m_request->remote().port;
 }
 bool module::request::request_param(const std::string& name, std::string& value)
 {
-    if (m_request->parser()->url_param(name, value) == false)
-        return m_request->parser()->body_param(name, value);
+    if (m_request->get_url_param(name, value) == false)
+        return m_request->get_body_param(name, value);
     return true;
 }

@@ -1,4 +1,4 @@
-/*Software License
+﻿/*Software License
 
 Copyright(C) 2024[liuyingjie]
 License Terms
@@ -24,7 +24,7 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "../src/utils/parseconfig.hpp"
 #include "net/http_client_plus.h"
 #include "core/entry.h"
-
+#include "zip.h"
 
 
 
@@ -33,6 +33,7 @@ bool exsit_install_software(std::string name){
     int result = std::system(command.c_str());
     return (result == 0);
 };
+#ifndef _WIN32
 std::pair<int,std::string> execute_command(const std::string& command){
     std::array<char, 128> buffer;
     std::string result;
@@ -52,6 +53,7 @@ std::pair<int,std::string> execute_command(const std::string& command){
     
     return std::make_pair(return_code, command+"\n"+result);
 };
+#endif
 
 
 
@@ -77,15 +79,20 @@ fastweb::fastweb(const std::vector<std::string> &param)
     std::cout << "|------------------------[FASTWEB]----------------------------" << std::endl;
 	std::cout << "| 软件版本:\t"<< FASTWEB_VERSION << std::endl;
 	std::cout << "| 工作目录:\t"<< strutils::replace(system::current_dir(),'\\','/') << std::endl;
-#ifdef _WIN32
-    std::cout << "| Windows平台推荐使用网站管理器部署：https://fwlua.com/thread-3-1-1.html"<<std::endl;
-#endif
+    
+
 	std::cout << "| 启动参数" << std::endl;
     
 	for (int i = 0; i < param.size(); i++)
 	{
 		std::cout << "|\t" << param[i] << std::endl;
 	}
+    std::cout << "|" << std::endl;
+    std::cout << "|" << std::endl;
+    ylib::println("| 重要提示:\t创建项目后请务必安装 `fastwebcore` 模块", ylib::ConsoleTextColor::RED);
+#ifdef _WIN32
+    ylib::println("| Windows平台推荐使用网站管理器部署：https://fwlua.com/thread-3-1-1.html", ylib::ConsoleTextColor::BLUE);
+#endif
 	std::cout << "|----------------------------------------------------------------" << std::endl;
 
 
@@ -326,7 +333,7 @@ bool fastweb::module_infos(std::vector<fastweb::module_info>& list)
             info.desc = td[k]["desc"].to<std::string>();
             info.doc = td[k]["doc"].to<std::string>();
             info.type = types[i];
-            info.download_win64 = td[k]["doc"].to<std::string>();
+            info.download_win64 = td[k]["download"]["win64"].to<std::string>();
             info.download_linux_url = td[k]["download"]["linux"]["url"].to<std::string>();
             info.download_linux_type = td[k]["download"]["linux"]["type"].to<std::string>();
 
@@ -341,7 +348,7 @@ void fastweb::wait()
     while(true)
         system::sleep_msec(1000*60);
 }
-
+#ifndef _WIN32
 void fastweb::install_module_linux(fastweb::module_info info)
 {
   
@@ -439,7 +446,7 @@ void fastweb::install_module_linux(fastweb::module_info info)
     }
     
 }
-
+#else
 void fastweb::install_module_windows(fastweb::module_info info)
 {
 
@@ -456,26 +463,17 @@ void fastweb::install_module_windows(fastweb::module_info info)
         return;
     }
     std::string zip_filepath = ylib::file::temp_filepath()+".zip";
-    ylib:file::write(zip_filepath,client.response());
+    ylib::file::write(zip_filepath,client.response());
 
     
     std::string new_module_dirpath = m_ini.read("scripts","module_dir")+"/.install/"+info.id;
     ylib::file::create_dir(new_module_dirpath,true);
-    std::string cmd = "unzip -o -q "+zip_filepath+" -d "+new_module_dirpath;
-    
-    auto [code,err] = execute_command(cmd);
-    if(code != 0)
-    {
-        std::cerr<<"安装失败："<<std::endl;
-        std::cerr<<cmd<<std::endl;
-        std::cerr<<err<<std::endl;
-    }
-    else
-    {
-        std::cerr<<"安装成功"<<std::endl;
-    }
-}
 
+
+    zip_extract(zip_filepath.c_str(), new_module_dirpath.c_str(), nullptr, nullptr);
+    std::cerr<<"安装成功"<<std::endl;
+}
+#endif
 bool fastweb::parse_config(const std::string &ini_filepath)
 {
     auto [result,err] = parseconfig(m_ini,ini_filepath);

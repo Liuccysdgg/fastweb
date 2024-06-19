@@ -22,7 +22,7 @@ namespace module
         /// 取请求类型
         /// </summary>
         /// <returns></returns>
-        network::http::method method();
+        std::string method();
         /// <summary>
         /// 取请求路径
         /// </summary>
@@ -75,29 +75,46 @@ namespace module
         /// <returns></returns>
         std::string body();
         /// <summary>
-        /// 取网站指针
+        /// 取表单列表
         /// </summary>
         /// <returns></returns>
-        void* website();
-
+        sol::table multipart(sol::this_state s);
         /// <summary>
-        /// 取文件列表
+        /// 取表单内容文本
         /// </summary>
+        /// <param name="id"></param>
         /// <returns></returns>
-        sol::table files(sol::this_state s);
+        std::string multipart_content(int id);
         /// <summary>
         /// 保存文件
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="id"></param>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        bool write_file(const std::string& name,const std::string& filepath);
+        bool multipart_content_save(int id,const std::string& filepath);
 
 
+        /// <summary>
+        /// 置临时数据
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
         void set(const std::string& name,const std::string& value);
+        /// <summary>
+        /// 取临时数据
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         std::string get(const std::string& name);
+        /// <summary>
+        /// 网站指针
+        /// </summary>
+        /// <returns></returns>
+        network::http::website* website();
         static void regist(sol::state* lua);
     private:
+        void multipart_content_check(int id);
+
         bool request_param(const std::string& name, std::string& value);
     private:
         network::http::request* m_request = nullptr;

@@ -67,8 +67,8 @@ bool fastweb::interceptor_manager::callback(network::http::reqpack* reqpack, con
 			sol::error err = script;
 			throw ylib::exception(err.what());
 		}
-		module::request m_request(reqpack->request());
-		module::response m_response(reqpack->response());
+		module::request m_request(reqpack->request().get());
+		module::response m_response(reqpack->response().get());
 		(*lua->state)["fw_response"] = m_response;
 		(*lua->state)["fw_request"] = m_request;
 

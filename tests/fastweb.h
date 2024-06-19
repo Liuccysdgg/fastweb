@@ -3,7 +3,7 @@
 #include <string>
 #include "base/define.h"
 #include "util/ini.h"
-#define FASTWEB_VERSION "V1.0.5"
+#define FASTWEB_VERSION "V1.0.6"
 #define FASTWEB_MODULE_JSON_URL "https://download.fwlua.com/module/module.json"
 class fastweb
 {
@@ -61,10 +61,11 @@ private:
 private:
     /// @brief 无限等待
     void wait();
-
+#ifndef _WIN32
     void install_module_linux(fastweb::module_info info);
+#else
     void install_module_windows(fastweb::module_info info);
-
+#endif
 
 
     /// @brief 解析INI配置文件
