@@ -25,7 +25,7 @@ local function login()
     end
 
     -- 验证账号密码
-    if request.param("username") ~= "fastweb" or request.param("password") ~= "123456" then
+    if request.param("username",false) ~= "fastweb" or request.param("password",false) ~= "123456" then
         reply(201,"账号或密码不正确")
         return
     end
@@ -58,8 +58,8 @@ local function getinfo()
 end
 
 -- 判断请求类型
-if request.param("action") == "login" then
+if request.param("action",false) == "login" then
     login()
-elseif request.param("action") == "getinfo" then
+elseif request.param("action",false) == "getinfo" then
     getinfo()
 end
