@@ -60,6 +60,7 @@ if(MSVC)
 else()
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
     include_directories(/usr/local/include)
+	include_directories(/opt/lua54/include)
 	add_definitions(-DfPIC)
 endif()
 
@@ -106,7 +107,7 @@ else()
 			ylib
 			leveldb
 			crypto
-			lua
+			/opt/lua54/lib/liblua.a
 			pthread
 			sqlite3
 			dl

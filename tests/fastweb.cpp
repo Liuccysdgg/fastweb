@@ -246,7 +246,7 @@ void fastweb::uninstall_module(std::string ini_filepath, std::string name)
         }
     }
 #ifndef _WIN32
-    if(info.type == "lua")
+    if(info.type == "/opt/lua54/bin/lua")
     {
         std::cout<<"正在卸载 `"<<info.name_en<<"` 库"<<std::endl;
         auto [code,err] = execute_command("sudo luarocks remove "+info.name_en);
@@ -346,7 +346,7 @@ void fastweb::install_module_linux(fastweb::module_info info)
 {
   
     
-    if(exsit_install_software("lua") == false)
+    if(exsit_install_software("/opt/lua54/bin/lua") == false)
     {
         std::cout<<"LUA未安装，请重新执行fastweb一键构建脚本并确认lua编译安装部分正确执行"<<std::endl;
         return;
@@ -426,7 +426,7 @@ void fastweb::install_module_linux(fastweb::module_info info)
             return;
         }
         std::cout<<"正在安装 `"<<info.name_en<<"` 库"<<std::endl;
-        auto [code,err] = execute_command("sudo luarocks install "+info.name_en+" LUA_INCDIR=/usr/local/include LUA_LIBDIR=/usr/loca/lib/liblua.a");
+        auto [code,err] = execute_command("sudo luarocks install "+info.name_en+" LUA_INCDIR=/opt/lua54/include LUA_LIBDIR=/opt/lua54/lib");
         if(code == 0)
         {
             std::cout<<"安装成功"<<std::endl;
