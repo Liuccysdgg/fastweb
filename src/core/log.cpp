@@ -80,7 +80,7 @@ void fastweb::log::print(log_type type,const std::string& msg,const std::string&
 #ifdef _WIN32
     ylib::println(codec::to_gbk(msg), (ylib::ConsoleTextColor)color);
 #else
-    ylib::println(msg, (ylib::ConsoleTextColor)color);
+    ylib::print(msg, (ylib::ConsoleTextColor)color);
 #endif
 
     log_info li;

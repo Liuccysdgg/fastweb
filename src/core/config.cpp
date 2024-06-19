@@ -17,51 +17,20 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "config.h"
 #include <regex>
 #include "core/app.h"
+#include "utils/parseconfig.hpp"
 fastweb::config::config(fastweb::app* ptr):Interface(ptr)
 {
 }
 bool fastweb::config::open(const std::string& ini_filepath)
 {
 	m_ini_filepath = ini_filepath;
-	if (ylib::file::exist(ini_filepath) == false)
-	{
-		LOG_ERROR("not found file: " + ini_filepath);
-		return false;
-	}
-	std::string temp_filepath =  ylib::file::temp_filepath() + ".bak";
-	if (ylib::file::copy(ini_filepath, temp_filepath) == false)
-	{
-		LOG_ERROR("Failed to copy temporary INI configuration file from '" + ini_filepath + "' to '" + temp_filepath + "'.");
-		return false;
-	}
-	std::string src_content = ylib::file::read(temp_filepath);
-	// EXE运行目录
-	src_content = strutils::replace(src_content, "${current_dir}", strutils::replace(system::current_dir(),'\\','/'));
-	// 配置文件目录
-	{
-		std::string ini_dir = ylib::file::parent_dir(ini_filepath);
-		src_content = strutils::replace(strutils::replace(src_content, "${config_dir}", ini_dir), '\\', '/');
-	}
 	
-
-
-	ylib::file::write(temp_filepath,src_content);
-	if (m_ini.open(temp_filepath))
+	auto [result,err] = parseconfig(m_ini,ini_filepath);
+	if(result == false)
 	{
-		auto vars = extractVariableNames(ylib::file::read(temp_filepath));
-		for (size_t i = 0; i < vars.size(); i++)
-		{
-			if (m_ini.read("variable", vars[i]) == "")
-			{
-				LOG_ERROR("Variable declaration not found or empty content: ${" + vars[i] + "}");
-				return false;
-			}
-			src_content = strutils::replace(src_content, "${" + vars[i] + "}", m_ini.read("variable", vars[i]));
-		}
+		LOG_ERROR(err);
+		return false;
 	}
-	ylib::file::write(temp_filepath,src_content);
-	m_ini.close();
-	m_ini.open(temp_filepath);
 	cache();
 	return true;
 }
@@ -91,19 +60,6 @@ void fastweb::config::write_runtime(const ylib::json& data)
 ylib::json fastweb::config::read_runtime()
 {
 	return ylib::json::from(ylib::file::read(ylib::file::parent_dir(m_ini_filepath) + "/.fastweb_runtime"));
-}
-std::vector<std::string> fastweb::config::extractVariableNames(const std::string& text)
-{
-	std::regex pattern("\\$\\{([^}]+)\\}"); // 使用捕获组提取中间的内容
-	std::vector<std::string> results;
-	// 使用 std::sregex_iterator 迭代所有匹配项
-	auto begin = std::sregex_iterator(text.begin(), text.end(), pattern);
-	auto end = std::sregex_iterator();
-	for (std::sregex_iterator i = begin; i != end; ++i) {
-		std::smatch match = *i;
-		results.push_back(match[1]); // 仅添加捕获组的内容
-	}
-	return results;
 }
 
 void fastweb::config::cache()

@@ -10,7 +10,7 @@ if(MSVC)
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Build config types" FORCE)
 endif()  
 # C++等级 
-set(CMAKE_CXX_STANDARD 20)  
+set(CMAKE_CXX_STANDARD 17)  
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(FASTWEBCORE ${PROJECT_NAME}core)  
 # 安装复制
@@ -61,6 +61,7 @@ else()
     include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
     include_directories(/usr/include/lua5.3/)
 endif()
+
 
 
 # 根据构建类型添加定义
@@ -114,10 +115,11 @@ else()
 
 endif()
 
+add_definitions(-DFASTWEB_EXE)
 # 编译测试调用示例
 add_executable(${PROJECT_NAME} 
 	tests/main.cpp
-	tests/slave.cpp
+	tests/fastweb.cpp
 )
 if(MSVC)
 	target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -163,9 +165,9 @@ if(MSVC)
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/www DESTINATION bin/release)
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/config DESTINATION bin/release) 
 	install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include)
-	install(FILES ${PROJECT_SOURCE_DIR}/module/dll_interface.h DESTINATION include)
+	install(FILES ${PROJECT_SOURCE_DIR}/include/dll_interface.h DESTINATION include)
 	install(FILES ${PROJECT_SOURCE_DIR}/src/module/basemodule.h DESTINATION include)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/sol DESTINATION include)
+
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/lua/include/ DESTINATION include/lua)
 else()
 	
@@ -173,7 +175,7 @@ else()
 	install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 	install(FILES ${PROJECT_SOURCE_DIR}/src/core/entry.h DESTINATION include/${PROJECT_NAME})
-	install(FILES ${PROJECT_SOURCE_DIR}/module/dll_interface.h DESTINATION include/${PROJECT_NAME})
+	install(FILES ${PROJECT_SOURCE_DIR}/include/dll_interface.h DESTINATION include/${PROJECT_NAME})
 	install(FILES ${PROJECT_SOURCE_DIR}/src/module/basemodule.h DESTINATION include/${PROJECT_NAME})
 
 
@@ -186,4 +188,5 @@ endif()
 
 
 
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/sol DESTINATION include)
 

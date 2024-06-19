@@ -82,7 +82,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 
 	ws_config.name = "master";
 
-	ws_config.router.threadpool.size = 40;
+	ws_config.router.threadpool.size = 10;
 	ws_config.router.threadpool.queuemax = 10000;
 	ws_config.session.dirpath = this->config->website.session_dir;
 	ws_config.session.timeout_sec = this->config->website.session_timeout_sec;
