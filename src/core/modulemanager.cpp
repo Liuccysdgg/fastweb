@@ -24,7 +24,7 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #ifdef _WIN32
 #include <Windows.h>
 #else
-
+#include <dlfcn.h>
 #endif
 
 #include "module/http/request.h"
@@ -85,27 +85,25 @@ void fastweb::module_manager::start()
 		}
 		mi.func = (fastweb_module_regist)GetProcAddress((HMODULE)mi.dll, "fastweb_module_regist");
 		if (mi.func == nullptr) {
-			
-#if 0
-			std::string filename = ylib::file::filename(mod_filepath,false);
-			std::string funcname = "luaopen_" + filename;
-			if (GetProcAddress((HMODULE)mi.dll, funcname.c_str()) == nullptr)
-			{
-				LOG_ERROR("function not found: `fastweb_module_regist` and `"+ funcname + "`, filename: " + mod_filepath);
-			}
-#endif	
 			FreeLibrary((HMODULE)mi.dll);
 			continue;
 		}
 		m_modules.emplace(mod_filepath, mi);
-		/*if (api_func(lua, lua->lua_state()) == 0)
+#else
+		mi.dll = dlopen(mod_filepath.c_str(), RTLD_LAZY);
+		if (mi.dll == nullptr)
 		{
-			LOG_INFO("successfully regist module, filename: " + mod_filepath);
+			LOG_DEBUG("module loading failed, filename: " + mod_filepath
+				+ ", " + dlerror()
+			);
 			continue;
 		}
-		LOG_ERROR("regist module failed, filename: " + mod_filepath);*/
-#else
-
+		mi.func = (fastweb_module_regist)dlsym(mi.dll, "fastweb_module_regist");
+		if (mi.func == nullptr) {
+			dlclose(mi.dll);
+			continue;
+		}
+		m_modules.emplace(mod_filepath, mi);
 #endif
 	}
 
@@ -160,6 +158,7 @@ void fastweb::module_manager::close()
 #ifdef _WIN32
 		FreeLibrary((HMODULE)iter->second.dll);
 #else
+		dlclose(iter->second.dll);
 #endif
 	}
 	m_modules.clear();
@@ -233,7 +232,11 @@ std::vector<std::string> fastweb::module_manager::modules()
 	std::vector<std::string> results;
 
 	auto insert_dll_path = [&](const std::string& dir) {
+		#ifdef _WIN32
 		auto luas = ylib::file::traverse(dir, "(.*\\.dll)");
+		#else
+		auto luas = ylib::file::traverse(dir, "(.*\\.so)");
+		#endif
 		for_iter(iter, luas)
 		{
 			if (iter->second == IS_DIRECTORY)
