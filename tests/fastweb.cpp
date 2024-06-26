@@ -256,7 +256,7 @@ void fastweb::uninstall_module(std::string ini_filepath, std::string name)
     if(info.type == "/opt/lua54/bin/lua")
     {
         std::cout<<"正在卸载 `"<<info.name_en<<"` 库"<<std::endl;
-        auto [code,err] = execute_command("sudo luarocks remove "+info.name_en);
+        auto [code,err] = execute_command("sudo /opt/luarocks/bin/luarocks remove "+info.name_en);
         if(code == 0)
         {
             std::cout<<"卸载成功"<<std::endl;
@@ -427,7 +427,7 @@ void fastweb::install_module_linux(fastweb::module_info info)
     }
     else if(info.type == "lua")
     {
-        if(exsit_install_software("luarocks") == false)
+        if(exsit_install_software("/opt/luarocks/bin/luarocks") == false)
         {
             std::cout<<"`luarocks` 未安装，请先执行以下命令安装：sudo apt install luarocks"<<std::endl;
             return;
