@@ -111,6 +111,11 @@ namespace module
         /// </summary>
         /// <returns></returns>
         network::http::website* website();
+        /// <summary>
+        /// 保存请求体
+        /// </summary>
+        /// <returns></returns>
+        bool save_body(const std::string& filepath);
         static void regist(sol::state* lua);
     private:
         void multipart_content_check(int id);

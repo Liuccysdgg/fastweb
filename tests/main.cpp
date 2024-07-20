@@ -16,8 +16,10 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 */
 #include <iostream>
 #include "fastweb.h"
+#include "util/window.h"
 int main(int argv,char* argc[])
 {
+
 	std::vector<std::string> param;
 	for(size_t i=1;i<argv;i++)
 		param.push_back(argc[i]);

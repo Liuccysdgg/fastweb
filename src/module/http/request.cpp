@@ -137,6 +137,10 @@ network::http::website* module::request::website()
 {
     return m_request->website();
 }
+bool module::request::save_body(const std::string& filepath)
+{
+    return ylib::file::write(filepath, m_request->body());
+}
 void module::request::regist(sol::state* lua)
 {
     // 绑定 Request 类到 Lua
@@ -156,7 +160,8 @@ void module::request::regist(sol::state* lua)
         "multipart_content", &module::request::multipart_content,
         "multipart_content_save", &module::request::multipart_content_save,
         "get", &module::request::get,
-        "set", &module::request::set
+        "set", &module::request::set,
+        "save_body", &module::request::save_body
     );
 }
 
