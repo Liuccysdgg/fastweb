@@ -17,7 +17,7 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 
 #include "response.h"
 #include "net/http_reqpack.h"
-
+#include "util/codec.h"
 module::response::response(network::http::response* response) :m_response(response)
 {
 
@@ -25,6 +25,45 @@ module::response::response(network::http::response* response) :m_response(respon
 
 module::response::~response()
 {
+}
+
+void module::response::set(const std::string& name, const std::string& value)
+{
+    m_sets[name] = value;
+}
+
+void module::response::sets(sol::table& lua_table)
+{
+    // Lambda 表达式用于递归解析 Lua 表
+    auto parse_lua_table = [](const sol::table& table, auto& self) -> std::map<std::string, std::string> {
+        std::map<std::string, std::string> result;
+        for (const auto& pair : table) {
+            auto key = pair.first.as<std::string>();
+            sol::object value = pair.second;
+
+            if (value.get_type() == sol::type::table) {
+                // 如果是子表，递归解析并将子键展开
+                auto sub_table = self(value.as<sol::table>(), self);
+                for (const auto& sub_pair : sub_table) {
+                    result[key + "." + sub_pair.first] = sub_pair.second;
+                }
+            }
+            else if (value.get_type() == sol::type::string) {
+                // 如果是字符串
+                result[key] = value.as<std::string>();
+            }
+            else if (value.get_type() == sol::type::number) {
+                // 如果是数字，转换为字符串
+                result[key] = std::to_string(value.as<double>());
+            }
+            else {
+                std::cerr << "Unsupported Lua type for key: " << key << std::endl;
+            }
+        }
+        return result;
+    };
+
+    m_sets = parse_lua_table(lua_table, parse_lua_table);
 }
 
 void module::response::regist(sol::state* lua)
@@ -37,7 +76,9 @@ void module::response::regist(sol::state* lua)
         "send_file", &module::response::send_file,
         "header", &module::response::header,
         "redirect", &module::response::redirect,
-        "forward", &module::response::forward
+        "forward", &module::response::forward,
+        "set", &module::response::set,
+        "sets", &module::response::sets
     );
 }
 bool module::response::send_data(const char* buf, size_t buf_len, ushort stateNum, const std::string& stateDesc)
@@ -54,7 +95,18 @@ bool module::response::sendex(const std::string& value, ushort stateNum, const s
 }
 bool module::response::send_file(const std::string& filepath, int32 downbaud, ushort stateNum, const std::string& stateDesc)
 {
-    return m_response->send_file(filepath, downbaud, stateNum, stateDesc);
+    std::string end_filepath = system::temp_path() + "/" + codec::md5(filepath) + ".tmp";
+
+    if (m_sets.size() != 0 && ylib::file::size(filepath) < 1024 * 1024)
+    {
+        std::string data = ylib::file::read(filepath);
+        for_iter(iter, m_sets)
+            data = strutils::replace(data, "{" + iter->first + "}", iter->second);
+        ylib::file::write(end_filepath, data);
+    }
+    else
+        end_filepath = filepath;
+    return m_response->send_file(end_filepath, downbaud, stateNum, stateDesc);
 }
 bool module::response::redirect(const std::string& filepath, bool MovedPermanently)
 {

@@ -30,6 +30,8 @@ namespace module
 		/// <returns></returns>
 		static std::string md5(const std::string& value);
 
+		static std::string sha1(const std::string_view& value);
+
 		static void regist(sol::state* lua);
 	};
 

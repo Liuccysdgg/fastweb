@@ -42,6 +42,11 @@ std::string module::codec::md5(const std::string& value)
     return ylib::codec::md5(value);
 }
 
+std::string module::codec::sha1(const std::string_view& value)
+{
+    return ylib::codec::sha1(ylib::buffer(value.data(), value.length())).to_hex();
+}
+
 void module::codec::regist(sol::state* lua)
 {
     lua->new_usertype<module::codec>("fw_codec",
@@ -49,6 +54,7 @@ void module::codec::regist(sol::state* lua)
         "url_en", &module::codec::url_en,
         "to_utf8", &module::codec::to_utf8,
         "to_gbk", &module::codec::to_gbk,
-        "md5", &module::codec::md5
+        "md5", &module::codec::md5,
+        "sha1", &module::codec::sha1
     );
 }

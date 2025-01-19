@@ -34,7 +34,7 @@ void fastweb::subscribe_manager::start()
 
 	app()->router->other([&](network::http::request* request, network::http::response* response) {
 		this->other(request, response);
-		});
+	});
 }
 bool fastweb::subscribe_manager::add(const std::string& pattern, const std::string& filepath)
 {
