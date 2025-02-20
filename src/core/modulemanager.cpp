@@ -120,6 +120,8 @@ void fastweb::module_manager::start()
 		{
 			m_lua_include_path += ";/opt/luarocks/lib/lua/5.4/?.lua";
 			m_lua_include_cpath += ";/opt/luarocks/lib/lua/5.4/?.so";
+			m_lua_include_path += ";/opt/luarocks/share/lua/5.4/?.lua";
+			m_lua_include_cpath += "/opt/luarocks/share/lua/5.4/?.so";
 		}
 #endif
 		// 用户
