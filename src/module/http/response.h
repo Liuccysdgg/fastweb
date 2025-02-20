@@ -20,7 +20,7 @@ namespace module
         void header(const std::string& name, const std::string& value);
 
         void set(const std::string& name,const std::string& value);
-        void sets(sol::table& lua_table);
+        void sets(const sol::table& lua_table);
         static void regist(sol::state* lua);
     private:
         network::http::response* m_response = nullptr;

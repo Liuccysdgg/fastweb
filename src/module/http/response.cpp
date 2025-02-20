@@ -32,7 +32,7 @@ void module::response::set(const std::string& name, const std::string& value)
     m_sets[name] = value;
 }
 
-void module::response::sets(sol::table& lua_table)
+void module::response::sets(const sol::table& lua_table)
 {
     auto parse_lua_table = [](const sol::table& table, const auto& self) -> std::map<std::string, std::string> {
         std::map<std::string, std::string> result;
