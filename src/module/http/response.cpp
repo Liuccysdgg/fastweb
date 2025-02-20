@@ -34,26 +34,21 @@ void module::response::set(const std::string& name, const std::string& value)
 
 void module::response::sets(sol::table& lua_table)
 {
-    // Lambda 表达式用于递归解析 Lua 表
-    auto parse_lua_table = [](const sol::table& table, auto& self) -> std::map<std::string, std::string> {
+    auto parse_lua_table = [](const sol::table& table, const auto& self) -> std::map<std::string, std::string> {
         std::map<std::string, std::string> result;
         for (const auto& pair : table) {
             auto key = pair.first.as<std::string>();
             sol::object value = pair.second;
-
             if (value.get_type() == sol::type::table) {
-                // 如果是子表，递归解析并将子键展开
                 auto sub_table = self(value.as<sol::table>(), self);
                 for (const auto& sub_pair : sub_table) {
                     result[key + "." + sub_pair.first] = sub_pair.second;
                 }
             }
             else if (value.get_type() == sol::type::string) {
-                // 如果是字符串
                 result[key] = value.as<std::string>();
             }
             else if (value.get_type() == sol::type::number) {
-                // 如果是数字，转换为字符串
                 result[key] = std::to_string(value.as<double>());
             }
             else {
@@ -61,10 +56,11 @@ void module::response::sets(sol::table& lua_table)
             }
         }
         return result;
-    };
+        };
 
     m_sets = parse_lua_table(lua_table, parse_lua_table);
 }
+
 
 void module::response::regist(sol::state* lua)
 {
