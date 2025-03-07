@@ -53,6 +53,12 @@ namespace module
 		/// </summary>
 		/// <returns></returns>
 		static void create_env(const std::string& lua_filepath,sol::this_state ts);
+		/// <summary>
+		/// 转INT
+		/// </summary>
+		/// <returns></returns>
+		static std::optional<int> toint(const sol::object& arg);
+
 
 		static void regist(sol::state* lua);
 	};
