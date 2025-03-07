@@ -57,7 +57,7 @@ namespace module
 		/// 转INT
 		/// </summary>
 		/// <returns></returns>
-		static std::optional<int> toint(const sol::object& arg);
+		static std::optional<int64> toint(const sol::object& arg);
 
 
 		static void regist(sol::state* lua);

@@ -59,18 +59,18 @@ void module::globalfuncs::create_env(const std::string& lua_filepath,sol::this_s
 
 	t.detach();
 }
-std::optional<int> module::globalfuncs::toint(const sol::object& obj)
+std::optional<int64> module::globalfuncs::toint(const sol::object& obj)
 {
 	sol::type t = obj.get_type();
 	switch (t) {
 	case sol::type::number:
 		// 直接将数字转换为 int
-		return obj.as<int>();
+		return obj.as<int64>();
 	case sol::type::string: {
 		// 尝试将字符串转换为 int
 		std::string s = obj.as<std::string>();
 		try {
-			return std::stoi(s);
+			return std::stoll(s);
 		}
 		catch (const std::exception&) {
 			return std::nullopt;
