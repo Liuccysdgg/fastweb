@@ -97,6 +97,8 @@ void module::globalfuncs::regist(sol::state* lua)
 	lua->set_function("fw_now_msec", ylib::time::now_msec);
 	lua->set_function("fw_now_sec", ylib::time::now_sec);
 	lua->set_function("fw_create_env", module::globalfuncs::create_env);
+	lua->set_function("fw_toint", module::globalfuncs::toint);
+	
 
 }
 std::string module::globalfuncs::make_software_guid()
