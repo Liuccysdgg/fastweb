@@ -64,12 +64,14 @@ std::optional<int64> module::globalfuncs::toint(const sol::object& obj)
 	sol::type t = obj.get_type();
 	switch (t) {
 	case sol::type::number:
+	{
 		double value = obj.as<double>();
 		// 检查小数部分是否为零
 		if (std::floor(value) == value) {
 			return static_cast<int64>(value);
 		}
 		return std::nullopt;
+	}
 	case sol::type::string: {
 		// 尝试将字符串转换为 int
 		std::string s = obj.as<std::string>();
