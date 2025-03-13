@@ -46,7 +46,10 @@ std::string module::codec::sha1(const std::string_view& value)
 {
     return ylib::codec::sha1(ylib::buffer(value.data(), value.length())).to_hex();
 }
-
+std::string module::codec::sha256(const std::string_view& value)
+{
+    return ylib::codec::sha256(ylib::buffer(value.data(), value.length())).to_hex();
+}
 void module::codec::regist(sol::state* lua)
 {
     lua->new_usertype<module::codec>("fw_codec",
@@ -55,6 +58,7 @@ void module::codec::regist(sol::state* lua)
         "to_utf8", &module::codec::to_utf8,
         "to_gbk", &module::codec::to_gbk,
         "md5", &module::codec::md5,
-        "sha1", &module::codec::sha1
+        "sha1", &module::codec::sha1,
+        "sha256", &module::codec::sha256,
     );
 }
