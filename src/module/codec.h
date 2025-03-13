@@ -32,7 +32,7 @@ namespace module
 
 		static std::string sha1(const std::string_view& value);
 		static std::string sha256(const std::string_view& value);
-		static std::string hmac_sha256(const std::string& key,const std::string_view& value);
+		static std::string hmac_sha256(const std::string_view& key,const std::string_view& value);
 
 		static void regist(sol::state* lua);
 	};

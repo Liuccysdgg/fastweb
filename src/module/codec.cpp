@@ -50,9 +50,9 @@ std::string module::codec::sha256(const std::string_view& value)
 {
     return ylib::codec::sha256(ylib::buffer(value.data(), value.length())).to_hex();
 }
-std::string module::codec::hmac_sha256(const std::string& key, const std::string_view& value)
+std::string module::codec::hmac_sha256(const std::string_view& key, const std::string_view& value)
 {
-    return ylib::codec::hmac_sha256(key,ylib::buffer(value.data(), value.length())).to_hex();
+    return ylib::codec::hmac_sha256(ylib::buffer(key.data(), key.length()),ylib::buffer(value.data(), value.length())).to_hex();
 }
 void module::codec::regist(sol::state* lua)
 {
