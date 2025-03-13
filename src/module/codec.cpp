@@ -59,6 +59,6 @@ void module::codec::regist(sol::state* lua)
         "to_gbk", &module::codec::to_gbk,
         "md5", &module::codec::md5,
         "sha1", &module::codec::sha1,
-        "sha256", &module::codec::sha256,
+        "sha256", &module::codec::sha256
     );
 }
