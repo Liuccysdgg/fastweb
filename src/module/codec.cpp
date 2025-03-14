@@ -54,6 +54,45 @@ std::string module::codec::hmac_sha256(const std::string_view& key, const std::s
 {
     return ylib::codec::hmac_sha256(ylib::buffer(key.data(), key.length()),ylib::buffer(value.data(), value.length())).to_hex();
 }
+std::string module::codec::aes_encode(const std::string_view& value, const std::string_view& key, const std::string& variant, const std::string& mode)
+{
+    ylib::codec::aes::variant v = ylib::codec::aes::variant::AES256;;
+    ylib::codec::aes::mode m = ylib::codec::aes::mode::CBC;
+
+    if (variant == "aes-256") 
+        v = ylib::codec::aes::variant::AES256;
+    else if (variant == "aes-192")
+        v = ylib::codec::aes::variant::AES192;
+    else if (variant == "aes-128")
+        v = ylib::codec::aes::variant::AES128;
+
+    if (variant == "cbc")
+        m = ylib::codec::aes::mode::CBC;
+    else if (variant == "ebc")
+        m = ylib::codec::aes::mode::ECB;
+
+    return ylib::codec::aes::en(ylib::buffer(value.data(), value.length()), ylib::buffer(key.data(), key.length()), v, m).to_hex();
+
+}
+std::string module::codec::aes_decode(const std::string_view& value, const std::string_view& key, const std::string& variant, const std::string& mode)
+{
+    ylib::codec::aes::variant v = ylib::codec::aes::variant::AES256;;
+    ylib::codec::aes::mode m = ylib::codec::aes::mode::CBC;
+
+    if (variant == "aes-256")
+        v = ylib::codec::aes::variant::AES256;
+    else if (variant == "aes-192")
+        v = ylib::codec::aes::variant::AES192;
+    else if (variant == "aes-128")
+        v = ylib::codec::aes::variant::AES128;
+
+    if (variant == "cbc")
+        m = ylib::codec::aes::mode::CBC;
+    else if (variant == "ebc")
+        m = ylib::codec::aes::mode::ECB;
+
+    return ylib::codec::aes::de(ylib::buffer(value.data(), value.length()), ylib::buffer(key.data(), key.length()), v, m).to_hex();
+}
 void module::codec::regist(sol::state* lua)
 {
     lua->new_usertype<module::codec>("fw_codec",
