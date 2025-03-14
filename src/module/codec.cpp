@@ -54,7 +54,7 @@ std::string module::codec::hmac_sha256(const std::string_view& key, const std::s
 {
     return ylib::codec::hmac_sha256(ylib::buffer(key.data(), key.length()),ylib::buffer(value.data(), value.length())).to_hex();
 }
-std::string module::codec::aes_encode(const std::string_view& value, const std::string_view& key, const std::string& variant, const std::string& mode)
+std::string module::codec::aes_en(const std::string_view& value, const std::string_view& key, const std::string& variant, const std::string& mode)
 {
     ylib::codec::aes::variant v = ylib::codec::aes::variant::AES256;;
     ylib::codec::aes::mode m = ylib::codec::aes::mode::CBC;
@@ -74,7 +74,7 @@ std::string module::codec::aes_encode(const std::string_view& value, const std::
     return ylib::codec::aes::en(ylib::buffer(value.data(), value.length()), ylib::buffer(key.data(), key.length()), v, m).to_hex();
 
 }
-std::string module::codec::aes_decode(const std::string_view& value, const std::string_view& key, const std::string& variant, const std::string& mode)
+std::string module::codec::aes_de(const std::string_view& value, const std::string_view& key, const std::string& variant, const std::string& mode)
 {
     ylib::codec::aes::variant v = ylib::codec::aes::variant::AES256;;
     ylib::codec::aes::mode m = ylib::codec::aes::mode::CBC;
@@ -103,6 +103,8 @@ void module::codec::regist(sol::state* lua)
         "md5", &module::codec::md5,
         "sha1", &module::codec::sha1,
         "sha256", &module::codec::sha256,
-        "hmac_sha256", &module::codec::hmac_sha256
+        "hmac_sha256", &module::codec::hmac_sha256,
+        "aes_decode", &module::codec::aes_decode,
+        "aes_encode", &module::codec::aes_encode,
     );
 }

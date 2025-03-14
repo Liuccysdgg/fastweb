@@ -34,8 +34,8 @@ namespace module
 		static std::string sha256(const std::string_view& value);
 		static std::string hmac_sha256(const std::string_view& key,const std::string_view& value);
 
-		static std::string aes_encode(const std::string_view& value, const std::string_view& key, const std::string& variant,const std::string& mode);
-		static std::string aes_decode(const std::string_view& value,const std::string_view& key, , const std::string& variant, const std::string& mode);
+		static std::string aes_en(const std::string_view& value, const std::string_view& key, const std::string& variant,const std::string& mode);
+		static std::string aes_de(const std::string_view& value,const std::string_view& key, const std::string& variant, const std::string& mode);
 
 
 		static void regist(sol::state* lua);
