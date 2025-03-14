@@ -104,7 +104,7 @@ void module::codec::regist(sol::state* lua)
         "sha1", &module::codec::sha1,
         "sha256", &module::codec::sha256,
         "hmac_sha256", &module::codec::hmac_sha256,
-        "aes_decode", &module::codec::aes_decode,
-        "aes_encode", &module::codec::aes_encode,
+        "aes_decode", &module::codec::aes_de,
+        "aes_encode", &module::codec::aes_en
     );
 }
