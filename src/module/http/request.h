@@ -19,6 +19,11 @@ namespace module
         /// <returns></returns>
         std::string header(const std::string& name);
         /// <summary>
+        /// 取协议头列表
+        /// </summary>
+        /// <returns></returns>
+        sol::object headers();
+        /// <summary>
         /// 取请求类型
         /// </summary>
         /// <returns></returns>
