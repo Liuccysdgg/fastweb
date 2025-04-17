@@ -103,7 +103,7 @@ else()
 	link_directories(/usr/lib/x86_64-linux-gnu)
 	link_directories(/usr/local/lib)
 	target_link_libraries(${FASTWEBCORE} 
-			hpsocket
+			${PROJECT_SOURCE_DIR}/../3rdparty/hpsocket-linux/libhpsocket.a 
 			ylib
 			leveldb
 			crypto
@@ -144,10 +144,12 @@ if(MSVC)
 else()
 	target_link_libraries(${PROJECT_NAME} 
 			${FASTWEBCORE}
-			hpsocket
+			${PROJECT_SOURCE_DIR}/../3rdparty/hpsocket-linux/libhpsocket.a
 			ylib
 			pthread
 			mysqlcppconn
+			ssl
+			z
 	)
 endif()
 
