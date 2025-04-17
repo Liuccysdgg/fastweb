@@ -22,7 +22,7 @@ namespace module
         /// 取协议头列表
         /// </summary>
         /// <returns></returns>
-        sol::table headers();
+        sol::table headers(sol::this_state s);
         /// <summary>
         /// 取请求类型
         /// </summary>
