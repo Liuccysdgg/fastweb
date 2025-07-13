@@ -133,6 +133,18 @@ std::string module::request::get(const std::string& name)
 {
     return m_request->reqpack()->extra()[name].to<std::string>();
 }
+sol::table module::request::gets(sol::this_state s)
+{
+    sol::state_view lua(s);
+    sol::table result_table = lua.create_table();
+
+
+    auto keys = m_request->reqpack()->extra().keys();
+    for (size_t i = 0; i < keys.size(); i++)
+        result_table[keys[i]] = m_request->reqpack()->extra()[keys[i]].to<std::string>();
+
+    return result_table;
+}
 network::http::website* module::request::website()
 {
     return m_request->website();
@@ -160,6 +172,7 @@ void module::request::regist(sol::state* lua)
         "multipart_content", &module::request::multipart_content,
         "multipart_content_save", &module::request::multipart_content_save,
         "get", &module::request::get,
+        "gets", &module::request::gets,
         "set", &module::request::set,
         "save_body", &module::request::save_body
     );

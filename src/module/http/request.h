@@ -111,6 +111,7 @@ namespace module
         /// <param name="name"></param>
         /// <returns></returns>
         std::string get(const std::string& name);
+        sol::table gets(sol::this_state s);
         /// <summary>
         /// 网站指针
         /// </summary>

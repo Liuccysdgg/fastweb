@@ -448,30 +448,30 @@ void fastweb::install_module_linux(fastweb::module_info info)
 }
 #else
 void fastweb::install_module_windows(fastweb::module_info info)
-{
+{ 
 
-    std::cout<<"正在安装 `"<<info.name_en<<"` 库"<<std::endl;
-    network::http::client_plus client;
-    if(client.get(info.download_win64) == false)
-    {
-        std::cerr<<"下载模块压缩包失败: "<<info.download_win64<<", "<<client.last_error()<<std::endl;
-        return;
-    }
-    if(client.status() != 200)
-    {
-        std::cerr<<"下载模块压缩包失败: "<<info.download_win64<<", status: "<<client.status()<<std::endl;
-        return;
-    }
-    std::string zip_filepath = ylib::file::temp_filepath()+".zip";
-    ylib::file::write(zip_filepath,client.response());
+    //std::cout<<"正在安装 `"<<info.name_en<<"` 库"<<std::endl;
+    //network::http::client_plus client;
+    //if(client.get(info.download_win64) == false)
+    //{
+    //    std::cerr<<"下载模块压缩包失败: "<<info.download_win64<<", "<<client.last_error()<<std::endl;
+    //    return;
+    //}
+    //if(client.status() != 200)
+    //{
+    //    std::cerr<<"下载模块压缩包失败: "<<info.download_win64<<", status: "<<client.status()<<std::endl;
+    //    return;
+    //}
+    //std::string zip_filepath = ylib::file::temp_filepath()+".zip";
+    //ylib::file::write(zip_filepath,client.response());
 
-    
-    std::string new_module_dirpath = m_ini.read("scripts","module_dir")+"/.install/"+info.id;
-    ylib::file::create_dir(new_module_dirpath,true);
+    //
+    //std::string new_module_dirpath = m_ini.read("scripts","module_dir")+"/.install/"+info.id;
+    //ylib::file::create_dir(new_module_dirpath,true);
 
 
-    zip_extract(zip_filepath.c_str(), new_module_dirpath.c_str(), nullptr, nullptr);
-    std::cerr<<"安装成功"<<std::endl;
+    //zip_extract(zip_filepath.c_str(), new_module_dirpath.c_str(), nullptr, nullptr);
+    //std::cerr<<"安装成功"<<std::endl;
 }
 #endif
 bool fastweb::parse_config(const std::string &ini_filepath)
