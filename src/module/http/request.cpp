@@ -158,6 +158,7 @@ void module::request::regist(sol::state* lua)
     // 绑定 Request 类到 Lua
     lua->new_usertype<module::request>("fw_request",
         "header", &module::request::header,
+        "headers", &module::request::headers,
         "method", &module::request::method,
         "filepath", &module::request::filepath,
         "host", &module::request::host,
@@ -195,6 +196,16 @@ std::string module::request::header(const std::string& name)
     std::string value;
     m_request->header(name, value);
     return value;
+}
+sol::table module::request::headers(sol::this_state s)
+{
+    sol::state_view lua(s);
+    sol::table result_table = lua.create_table();
+
+    auto headers = m_request->headers();
+    for (size_t i = 0; i < headers.size(); i++)
+        result_table[headers[i].name] = headers[i].value;
+    return result_table;
 }
 std::string module::request::method()
 {
