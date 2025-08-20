@@ -63,6 +63,11 @@ namespace module
 		/// </summary>
 		/// <returns></returns>
 		static void sleep_msec(int msec);
+		/// <summary>
+		/// 当前时间毫秒
+		/// </summary>
+		/// <returns></returns>
+		static int64 now_msec();
 
 		static void regist(sol::state* lua);
 	};

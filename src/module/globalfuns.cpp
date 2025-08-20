@@ -95,6 +95,10 @@ void module::globalfuncs::sleep_msec(int msec)
 {
 	system::sleep_msec(msec);
 }
+int64 module::globalfuncs::now_msec()
+{
+	return time::now_msec();
+}
 void module::globalfuncs::regist(sol::state* lua)
 {
 	lua->set_function("fw_set_ptr", module::globalfuncs::set_ptr);
@@ -110,6 +114,7 @@ void module::globalfuncs::regist(sol::state* lua)
 	lua->set_function("fw_create_env", module::globalfuncs::create_env);
 	lua->set_function("fw_toint", module::globalfuncs::toint);
 	lua->set_function("fw_sleep_msec", module::globalfuncs::sleep_msec);
+	lua->set_function("fw_now_msec", module::globalfuncs::now_msec);
 	
 
 }
