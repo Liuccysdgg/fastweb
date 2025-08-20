@@ -11,11 +11,8 @@ namespace module
 	struct timer_info {
 		std::string filepath;
 		std::string name;
-		std::string funname;
-		bool loop = false;
 		timestamp exec_msec = 0;
 		timestamp msec = 0;
-		luastate* lua = nullptr;
 		sol::function function;
 	};
 	/// <summary>
@@ -30,11 +27,10 @@ namespace module
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="filepath"></param>
-		/// <param name="funname"></param>
 		/// <param name="msec"></param>
 		/// <param name="loop"></param>
 		/// <returns></returns>
-		std::string add(const std::string& name,const std::string& filepath,const std::string& funname,int msec,bool loop, sol::this_state ts);
+		std::string add(const std::string& name,const std::string& filepath,int msec, sol::this_state ts);
 		/// <summary>
 		/// 移除
 		/// </summary>

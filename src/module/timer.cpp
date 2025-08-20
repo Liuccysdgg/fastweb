@@ -27,7 +27,7 @@ module::timer::~timer()
     ::ithread::stop();
     ::ithread::wait();
 }
-std::string module::timer::add(const std::string& name, const std::string& filepath, const std::string& funname, int msec, bool loop, sol::this_state ts)
+std::string module::timer::add(const std::string& name, const std::string& filepath,int msec, sol::this_state ts)
 {
     GET_APP;
     std::string filepath2;
@@ -48,9 +48,7 @@ std::string module::timer::add(const std::string& name, const std::string& filep
 
     timer_info ti;
     ti.name = name;
-    ti.funname = funname;
     ti.filepath = filepath2;
-    ti.loop = loop;
     ti.msec = msec;
     ti.exec_msec = time::now_msec() + msec;
 
@@ -106,33 +104,19 @@ bool module::timer::run()
     };
     auto exec_func = [&](timer_info& ti)->bool {
         std::string exception_string;
+        auto lua = m_app->state->get();
         try
         {
-            // 加载LUA文件
-            if (ti.lua == nullptr)
+            auto lbResult = lua->state->load_file(ti.filepath);
+            if (lbResult.valid() == false)
             {
-                ti.lua = m_app->state->get();
-                auto lbResult = ti.lua->state->load_file(ti.filepath);
-                if (lbResult.valid() == false)
-                {
-                    sol::error err = lbResult;
-                    throw ylib::exception("Failed to load script, " + std::string(err.what()));
-                }
-                lbResult();
+                sol::error err = lbResult;
+                throw ylib::exception("Failed to load script, " + std::string(err.what()));
             }
-            // 加载函数
-            if (ti.funname != "" && ti.function.valid() == false)
-                ti.function = (*ti.lua->state)[ti.funname];
-            // 执行函数
-            if (ti.function.valid())
-            {
-                auto result = ti.function();
-                if (!result.valid()) {
-                    sol::error err = result;
-                    throw ylib::exception(err.what());
-                }
-                bool rd = result;
-                return rd;
+            sol::protected_function_result result = lbResult();
+            if (!result.valid()) {
+                sol::error err = result;
+                throw ylib::exception(err.what());
             }
         }
         catch (const std::exception& e)
@@ -142,6 +126,8 @@ bool module::timer::run()
                 m_app->log->error("[timer][" + ti.filepath + "]: " + e.what(), __FILE__, __func__, __LINE__);
             return false;
         }
+        lua->state->collect_garbage();
+        m_app->state->push(lua);
         return false;
     };
     // 获取等待时间
@@ -156,40 +142,20 @@ bool module::timer::run()
 
     std::unique_lock<std::mutex> uni(m_mutex);
     auto now_msec = time::now_msec();
-    for (auto iter = m_list.begin(); iter != m_list.end();)
+    for (auto iter = m_list.begin(); iter != m_list.end();iter++)
     {
         if (iter->second.exec_msec <= now_msec)
         {
-            bool ready_remove = false;
-            if (exec_func(iter->second) == false)
-                ready_remove = true;
-            if (ready_remove == false)
-            {
-                if (iter->second.loop == false)
-                    ready_remove = true;
-                else
-                {
-                    iter->second.exec_msec = now_msec + iter->second.msec;
-                }
-            }
-            if (ready_remove)
-                iter = m_list.erase(iter);
-            else
-                iter++;
+            exec_func(iter->second);
+            iter->second.exec_msec = now_msec + iter->second.msec;
         }
-        else
-            iter++;
     }
     std::string name;
     while (m_removed.pop(name))
     {
         auto iter = m_list.find(name);
         if (iter != m_list.end())
-        {
-            iter->second.lua->state->collect_garbage();
-            m_app->state->push(iter->second.lua);
             m_list.erase(iter);
-        }
     }
         
 
