@@ -20,6 +20,7 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "util/counter.hpp"
 #include "util/codec.h"
 #include "util/time.h"
+#include "util/system.h"
 #include "core/global.h"
 #include "core/app.h"
 #include "core/statemanager.h"
@@ -90,6 +91,10 @@ std::optional<int64> module::globalfuncs::toint(const sol::object& obj)
 		return std::nullopt;
 	}
 }
+void module::globalfuncs::sleep_msec(int msec)
+{
+	system::sleep_msec(msec);
+}
 void module::globalfuncs::regist(sol::state* lua)
 {
 	lua->set_function("fw_set_ptr", module::globalfuncs::set_ptr);
@@ -104,6 +109,7 @@ void module::globalfuncs::regist(sol::state* lua)
 	lua->set_function("fw_now_sec", ylib::time::now_sec);
 	lua->set_function("fw_create_env", module::globalfuncs::create_env);
 	lua->set_function("fw_toint", module::globalfuncs::toint);
+	lua->set_function("fw_sleep_msec", module::globalfuncs::sleep_msec);
 	
 
 }

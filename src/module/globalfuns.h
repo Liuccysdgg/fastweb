@@ -58,7 +58,11 @@ namespace module
 		/// </summary>
 		/// <returns></returns>
 		static std::optional<int64> toint(const sol::object& arg);
-
+		/// <summary>
+		/// 延迟
+		/// </summary>
+		/// <returns></returns>
+		static void sleep_msec(int msec);
 
 		static void regist(sol::state* lua);
 	};
