@@ -39,6 +39,7 @@ If you have any questions, please contact us: 1585346868@qq.com Or visit our web
 #include "module/process.h"
 #include "module/ini.h"
 #include "module/codec.h"
+#include "module/queue.h"
 fastweb::module_manager::module_manager(fastweb::app* app):Interface(app)
 {
 }
@@ -205,6 +206,7 @@ void fastweb::module_manager::load_core(sol::state* lua)
 	module::process::regist(lua);
 	module::ini::regist(lua);
 	module::codec::regist(lua);
+	module::queue::regist(lua);
 
 	app()->global->regist(lua);
 
