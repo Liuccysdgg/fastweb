@@ -101,6 +101,7 @@ void fastweb::config::cache()
 
 		struct config::domain dm;
 		dm.port = ylib::stoi(m_ini.read(website.domain[i], "port"));
+		dm.port_ssl = ylib::stoi(m_ini.read(website.domain[i], "port_ssl"));
 		dm.https = m_ini.read(website.domain[i],"https")=="1";
 		dm.ssl.pem_key = ylib::file::read(PATH_EX(m_ini.read(website.domain[i], "ssl_key")));
 		dm.ssl.pem_cert = ylib::file::read(PATH_EX(m_ini.read(website.domain[i], "ssl_pem")));

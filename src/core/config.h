@@ -10,6 +10,7 @@ namespace fastweb
 		struct domain {
 			bool https = false;
 			ushort port = 0;
+			ushort port_ssl = 0;
 			network::http::ssl_config ssl;
 		};
 		struct scripts {

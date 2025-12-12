@@ -67,6 +67,7 @@ bool fastweb::app::start(const std::string& config_filepath)
 		network::http::host_config host_config;
 		host_config.domain = iter->first;
 		host_config.port = iter->second.port;
+		host_config.port_ssl = iter->second.port_ssl;
 		host_config.ssl = iter->second.https;
 		ws_config.host.push_back(host_config);
 
